@@ -1,5 +1,7 @@
 #include "ShaderProgram.h"
 
+//kde je v programovatelné pipelinì? - DOTAZ
+
 ShaderProgram::ShaderProgram(const char* VERTEX_SHADER, const char* FRAGMENT_SHADER) : mVertexShader(VERTEX_SHADER), mFragmentShader(FRAGMENT_SHADER)
 {
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -33,7 +35,9 @@ ShaderProgram::ShaderProgram(const char* VERTEX_SHADER, const char* FRAGMENT_SHA
 
 ShaderProgram::~ShaderProgram() { glDeleteProgram(mID); }
 
-void ShaderProgram::use() const
+void ShaderProgram::use(glm::mat4 M)
 {
 	glUseProgram(mID);
+	GLint idModelTransform = glGetUniformLocation(mID, "modelMatrix");
+	glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &M[0][0]);
 }

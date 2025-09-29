@@ -2,6 +2,7 @@
 
 Model::Model(const std::vector<float> &VERTICES): mVertices(VERTICES)
 {
+	//K èemu manuánì assignujeme èísla VAO a VBO?
 	glGenBuffers(1, &mVBO); // generate the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 	glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), mVertices.data(), GL_STATIC_DRAW);

@@ -53,7 +53,7 @@ bool Application::init() {
     glViewport(0, 0, mWindowWidth, mWindowHeight);
 
     // Register callbacks
-    //Dotaz na cvièení - k èemu?
+    //K èemu? - DOTAZ
     glfwSetKeyCallback(mWindow, keyCallback);
     glfwSetWindowFocusCallback(mWindow, windowFocusCallback);
     glfwSetWindowIconifyCallback(mWindow, windowIconifyCallback);
@@ -65,14 +65,25 @@ bool Application::init() {
 }
 
 void Application::run() {
+
+    glm::mat4 M = glm::mat4(1.0f); // construct identity matrix
+
+    //M = glm::rotate(glm::mat4(1.0f), glm::radians(2.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+    //M = glm::rotate(M, glm::radians(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    // M = glm::translate(M, glm::vec3(0.0f, 1.0f, 1.0));
+    M = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)); //proè nelze využít pùvodní matici M? -DOTAZ
+    //M = glm::rotate(M, glm::radians(rads), glm::vec3(0.0f, 0.0f, 1.0f));
+    //M = glm::translate(M, glm::vec3(0.0f, 0.001f, 0.0f));
+    float rads = 0.5;
     while (!glfwWindowShouldClose(mWindow)) {
+
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
         
-        mShaderPrograms[2]->use();
+        mShaderPrograms[2]->use(M);
         mModels[1]->put();
         
-        mShaderPrograms[1]->use();
+        mShaderPrograms[1]->use(M);
         mModels[0]->put();
 
         glfwSwapBuffers(mWindow);  // Swap buffers
@@ -97,6 +108,14 @@ void Application::createShaders()
         "void main () {"
         "     gl_Position = vec4 (vp, 1.0);"
         "}";
+    const char* vertex_shader_trns =
+        "#version 330\n"
+        "layout(location=0) in vec3 vp;"
+        "uniform mat4 modelMatrix;"
+        "void main () {"
+        "     gl_Position = modelMatrix * vec4 (vp, 1.0);"
+        "}";
+
 
     const char* fragment_shader =
         "#version 330\n"
@@ -133,7 +152,7 @@ void Application::createShaders()
 
     ShaderProgram *sp = new ShaderProgram(vertex_shader, fragment_shader);
     mShaderPrograms.push_back(sp);
-    sp = new ShaderProgram(vertex_shader, fragment_shader_t);
+    sp = new ShaderProgram(vertex_shader_trns, fragment_shader_t);
     mShaderPrograms.push_back(sp);
     sp = new ShaderProgram(vertex_shader_n, fragment_shader_n);
     mShaderPrograms.push_back(sp);

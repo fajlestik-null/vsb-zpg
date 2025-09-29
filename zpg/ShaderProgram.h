@@ -12,5 +12,5 @@ private:
 public:
     ShaderProgram(const char* VERTEX_SHADER, const char* FRAGMENT_SHADER);
     ~ShaderProgram();
-    void use() const;
+    void use(glm::mat4 M);
 };
