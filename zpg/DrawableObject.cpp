@@ -1,6 +1,6 @@
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram, Transformation * transformation)
+DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram, TransformBase * transformation)
 {
 	addModel(model);
 	addShaderProgram(shaderProgram);
@@ -22,13 +22,13 @@ void DrawableObject::addShaderProgram(ShaderProgram* shaderProgram)
 {
 	mShaderPrograms.push_back(shaderProgram);
 }
-void DrawableObject::addTransformation(Transformation* transformation)
+void DrawableObject::addTransformation(TransformBase* transformation)
 {
 	mTransformations.push_back(transformation);
 	dynamicTrasformations();
 }
 
-void DrawableObject::staticTransformation(Transformation * transformation)
+void DrawableObject::staticTransformation(TransformBase * transformation)
 {
 	updateMatrix(transformation);
 }
@@ -45,7 +45,7 @@ void DrawableObject::dynamicTrasformations()
 	}
 }
 
-void DrawableObject::updateMatrix(Transformation * transformation)
+void DrawableObject::updateMatrix(TransformBase * transformation)
 {
 	mMatrix = mMatrix * transformation->getModelMatrix();
 }

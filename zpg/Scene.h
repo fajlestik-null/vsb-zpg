@@ -14,7 +14,7 @@ private:
 	std::vector<DrawableObject*> mDrawableObjects;
 public:
 	Scene(){};
-    void addObject(DrawableObject* drwobj) { mDrawableObjects.push_back(drwobj); }
+    void addObject(DrawableObject* drawableObject) { mDrawableObjects.push_back(drawableObject); }
 	void render();
 
 };

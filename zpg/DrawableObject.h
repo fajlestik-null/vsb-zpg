@@ -8,20 +8,20 @@ class DrawableObject
 private:
 	Model* mModel;
 	std::vector<ShaderProgram*> mShaderPrograms;
-	std::vector<Transformation*> mTransformations;
+	std::vector<TransformBase*> mTransformations;
 	glm::mat4 mMatrix = glm::mat4(1.0f);
 	glm::mat4 mDynamicMatrix = glm::mat4(1.0f);
 
 public:
-	DrawableObject(Model* model, ShaderProgram* shaderProgram, Transformation * transformation);
+	DrawableObject(Model* model, ShaderProgram* shaderProgram, TransformBase * transformation);
 	DrawableObject(Model* model, ShaderProgram* shaderProgram);
 
 	void addModel(Model* model);
 	void addShaderProgram(ShaderProgram* shaderProgram);
-	void addTransformation(Transformation* transformation);
-	void staticTransformation(Transformation* transformation);
+	void addTransformation(TransformBase* transformation);
+	void staticTransformation(TransformBase* transformation);
 	void dynamicTrasformations();
-	void updateMatrix(Transformation* transformation);
+	void updateMatrix(TransformBase* transformation);
 
 	void draw();
 };
