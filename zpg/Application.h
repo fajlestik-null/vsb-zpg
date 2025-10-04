@@ -1,7 +1,6 @@
 #pragma once
 #include "Includes.h"
-#include "Model.h"
-#include "ShaderProgram.h"
+#include "Scene.h"
 
 class Application
 {
@@ -10,17 +9,16 @@ private:
     GLFWwindow* mWindow;
     int mWindowWidth;
     int mWindowHeight;
-    std::vector<ShaderProgram*> mShaderPrograms;
-    std::vector<Model*> mModels;
+    std::vector<Scene> mScenes;
+	Scene *mGeneralScene;
+
 
 public:
     Application(const int windoWidth, const int windowHeight);
     ~Application();
     bool init();
     void run();
-    void createShaders();
-    void createModels();
-    bool terminate();
+    void switchScene(std::vector<Scene* (*)()> scenes);
     GLFWwindow* GetWindow() const { return mWindow; }
 
 private:

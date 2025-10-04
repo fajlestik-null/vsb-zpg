@@ -1,7 +1,5 @@
 #include "ShaderProgram.h"
 
-//kde je v programovatelné pipelinì? - DOTAZ
-
 ShaderProgram::ShaderProgram(const char* VERTEX_SHADER, const char* FRAGMENT_SHADER) : mVertexShader(VERTEX_SHADER), mFragmentShader(FRAGMENT_SHADER)
 {
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -33,9 +31,38 @@ ShaderProgram::ShaderProgram(const char* VERTEX_SHADER, const char* FRAGMENT_SHA
 	glDeleteShader(fragmentShader);
 }
 
-ShaderProgram::~ShaderProgram() { glDeleteProgram(mID); }
 
-void ShaderProgram::use(glm::mat4 M)
+void ShaderProgram::setUniform(const std::string& name, const glm::mat4& matrix)
+{
+
+	GLint location = glGetUniformLocation(mID, name.c_str());
+	if (location == -1)
+	{
+		std::cerr << "Uniform " << name << "not found in shader!" << std::endl;
+	}
+
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+
+}
+
+void ShaderProgram::setUniform(const std::string& name, const glm::vec3& vector)
+{
+	GLint location = glGetUniformLocation(mID, name.c_str());
+	if (location == -1)
+	{
+		std::cerr << "Uniform " << name << " not found in shader!" << std::endl;
+		return;
+	}
+
+	glUniform3fv(location, 1, glm::value_ptr(vector));
+}
+
+void ShaderProgram::useShader()
+{
+	glUseProgram(mID);
+}
+
+void ShaderProgram::useShader(glm::mat4 M)
 {
 	glUseProgram(mID);
 	GLint idModelTransform = glGetUniformLocation(mID, "modelMatrix");

@@ -4,7 +4,5 @@ int main(void)
 {
 	Application* app = new Application(800,600);
 	app->init();
-	app->createShaders();
-	app->createModels();
 	app->run();
 }

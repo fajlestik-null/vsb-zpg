@@ -61,125 +61,42 @@ bool Application::init() {
     glfwSetCursorPosCallback(mWindow, cursorCallback);
     glfwSetMouseButtonCallback(mWindow, buttonCallback);
 
+    mGeneralScene = new Scene();
+
     return true;
 }
 
 void Application::run() {
 
-    glm::mat4 M = glm::mat4(1.0f); // construct identity matrix
-
-    //M = glm::rotate(glm::mat4(1.0f), glm::radians(2.5f), glm::vec3(0.0f, 1.0f, 0.0f));
-    //M = glm::rotate(M, glm::radians(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    // M = glm::translate(M, glm::vec3(0.0f, 1.0f, 1.0));
-    M = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)); //proè nelze využít pùvodní matici M? -DOTAZ
-    //M = glm::rotate(M, glm::radians(rads), glm::vec3(0.0f, 0.0f, 1.0f));
-    //M = glm::translate(M, glm::vec3(0.0f, 0.001f, 0.0f));
-    float rads = 0.5;
+    glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(mWindow)) {
 
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
+
         
-        mShaderPrograms[2]->use(M);
-        mModels[1]->put();
-        
-        mShaderPrograms[1]->use(M);
-        mModels[0]->put();
+        switchScene({ sceneDefault, sceneTriangle, sceneSpheres, sceneMess});
+
+        mGeneralScene->render();
 
         glfwSwapBuffers(mWindow);  // Swap buffers
         glfwPollEvents();
     }
 }
 
-bool Application::terminate() {
-    if (mWindow) {
-        glfwDestroyWindow(mWindow);
-        mWindow = NULL;
+void Application::switchScene(std::vector<Scene* (*)()> scenes)
+{
+    for (int i = 0; i < (int)scenes.size(); i++)
+    {
+        if (glfwGetKey(mWindow, GLFW_KEY_1 + i) == GLFW_PRESS)
+        {
+            delete mGeneralScene;
+            mGeneralScene = scenes[i]();
+        }
     }
-    glfwTerminate();
-    return true;
 }
 
-void Application::createShaders()
-{
-    const char* vertex_shader =
-        "#version 330\n"
-        "layout(location=0) in vec3 vp;"
-        "void main () {"
-        "     gl_Position = vec4 (vp, 1.0);"
-        "}";
-    const char* vertex_shader_trns =
-        "#version 330\n"
-        "layout(location=0) in vec3 vp;"
-        "uniform mat4 modelMatrix;"
-        "void main () {"
-        "     gl_Position = modelMatrix * vec4 (vp, 1.0);"
-        "}";
 
-
-    const char* fragment_shader =
-        "#version 330\n"
-        "out vec4 fragColor;"
-        "void main () {"
-        "     fragColor = vec4 (0.5, 0.0, 0.5, 1.0);"
-        "}";
-
-    const char* fragment_shader_t =
-        "#version 330\n"
-        "out vec4 fragColor;"
-        "void main () {"
-        "     fragColor = vec4 (0.5, 0.25, 0.75, 1.0);"
-        "}";
-
-
-    const char* vertex_shader_n =
-        "#version 330 core\n"
-        "layout(location = 0) in vec3 pos;"
-        "layout(location = 1) in vec3 color;"
-        "out vec3 vertexColor;"
-        "void main() {"
-        "    gl_Position = vec4(pos, 1.0);"
-        "    vertexColor = color;"
-        "}";
-
-    const char* fragment_shader_n =
-        "#version 330 core\n"
-        "in vec3 vertexColor;"
-        "out vec4 fragColor;"
-        "void main() {"
-        "    fragColor = vec4(vertexColor, 1.0);"
-        "}";
-
-    ShaderProgram *sp = new ShaderProgram(vertex_shader, fragment_shader);
-    mShaderPrograms.push_back(sp);
-    sp = new ShaderProgram(vertex_shader_trns, fragment_shader_t);
-    mShaderPrograms.push_back(sp);
-    sp = new ShaderProgram(vertex_shader_n, fragment_shader_n);
-    mShaderPrograms.push_back(sp);
-}
-
-void Application::createModels()
-{
-    std::vector<float> square = {
-        -0.25f, -0.25f, 0.0f, 1.0f, 0.0f, 0.0f,
-        0.25f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f,
-        0.25f, 0.25f, 0.0f, 0.0f, 0.0f, 1.0f,
-        0.25f, 0.25f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -0.25f, 0.25f, 0.0f, 1.0f, 1.0f, 0.0f,
-        - 0.25f, -0.25f, 0.0f, 1.0f, 0.0f, 0.0f
-    };
-
-    std::vector<float>triangle = {
-        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-         0.5f, -0.5f, 0.0f,1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f
-    };
-
-    Model* m = new Model(square);
-    mModels.push_back(m);
-    m = new Model(triangle);
-    mModels.push_back(m);
-}
 
 void Application::errorCallback(int error, const char* description) { fputs(description, stderr); }
 
