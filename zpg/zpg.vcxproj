@@ -150,10 +150,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="Includes.h" />
     <ClInclude Include="Model.h" />
@@ -161,6 +163,7 @@
     <ClInclude Include="Res\sphere.h" />
     <ClInclude Include="Res\suzi_smooth.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Transformation.h" />
   </ItemGroup>

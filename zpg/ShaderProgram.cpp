@@ -1,16 +1,15 @@
 #include "ShaderProgram.h"
 
-ShaderProgram::ShaderProgram(const char* VERTEX_SHADER, const char* FRAGMENT_SHADER) : mVertexShader(VERTEX_SHADER), mFragmentShader(FRAGMENT_SHADER)
+/*ShaderProgram::ShaderProgram()
 {
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &mVertexShader, NULL);
-	glCompileShader(vertexShader);
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &mFragmentShader, NULL);
-	glCompileShader(fragmentShader);
+	mVertexShader = new Shader();
+	mVertexShader->createShader(GL_VERTEX_SHADER, vertex_shader_def);
+	mFragmentShader = new Shader();
+	mFragmentShader->createShader(GL_FRAGMENT_SHADER, fragment_shader_def);
+
 	mID = glCreateProgram();
-	glAttachShader(mID, fragmentShader);
-	glAttachShader(mID, vertexShader);
+	mVertexShader->attachShader(mID);
+	mFragmentShader->attachShader(mID);
 	glLinkProgram(mID);
 
 	GLint status;
@@ -26,9 +25,33 @@ ShaderProgram::ShaderProgram(const char* VERTEX_SHADER, const char* FRAGMENT_SHA
 		exit(EXIT_FAILURE);
 
 	}
+}*/
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+ShaderProgram::ShaderProgram(const char* vertexShader, const char* fragmentShader)
+{
+	mVertexShader = new Shader();
+	mVertexShader->createShader(GL_VERTEX_SHADER, vertexShader);
+	mFragmentShader = new Shader();
+	mFragmentShader->createShader(GL_FRAGMENT_SHADER, fragmentShader);
+
+	mID = glCreateProgram();
+	mVertexShader->attachShader(mID);
+	mFragmentShader->attachShader(mID);
+	glLinkProgram(mID);
+
+	GLint status;
+	glGetProgramiv(mID, GL_LINK_STATUS, &status);
+	if (status == GL_FALSE)
+	{
+		GLint infoLogLength;
+		glGetProgramiv(mID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		GLchar* strInfoLog = new GLchar[infoLogLength + 1];
+		glGetProgramInfoLog(mID, infoLogLength, NULL, strInfoLog);
+		fprintf(stderr, "Linker failure: %s\n", strInfoLog);
+		delete[] strInfoLog;
+		exit(EXIT_FAILURE);
+
+	}
 }
 
 
