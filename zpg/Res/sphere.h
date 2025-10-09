@@ -11,8 +11,9 @@
  * @year 2023
  **/
 #include <vector>
+using namespace std;
 
-const std::vector<float> sphere = {
+static vector<float> sphere = {
 -0.831470f , -0.555570f , 0.000000f , -0.833338f , -0.552751f , 0.000000f , 
 -0.923880f , -0.382683f , 0.000000f , -0.924741f , -0.380535f , 0.000000f , 
 -0.815493f , -0.555570f , -0.162212f , -0.817316f , -0.552751f , -0.162572f , 

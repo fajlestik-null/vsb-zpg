@@ -11,9 +11,9 @@
  * @year 2023
  **/
 #include <vector>
+using namespace std;
 
-
-const std::vector<float> bushes = {
+static vector<float> bushes = {
    -0.010f , -0.001f , 0.010f , -0.760f , 0.489f , 0.429f ,
    0.016f , 0.036f , 0.020f , -0.705f , 0.615f , -0.353f ,
    0.016f , 0.036f , 0.017f , -0.785f , 0.533f , 0.316f ,

@@ -1,4 +1,5 @@
 #include "ShaderProgram.h"
+#include "Camera.h"
 
 /*ShaderProgram::ShaderProgram()
 {
@@ -54,7 +55,6 @@ ShaderProgram::ShaderProgram(const char* vertexShader, const char* fragmentShade
 	}
 }
 
-
 void ShaderProgram::setUniform(const std::string& name, const glm::mat4& matrix)
 {
 
@@ -90,4 +90,11 @@ void ShaderProgram::useShader(glm::mat4 M)
 	glUseProgram(mID);
 	GLint idModelTransform = glGetUniformLocation(mID, "modelMatrix");
 	glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &M[0][0]);
+}
+
+
+void ShaderProgram::onCameraChanged(Camera* camera)
+{
+	setUniform("viewMatrix", camera->getViewMatrix());
+	setUniform("projectionMatrix", camera->getProjectionMatrix());
 }

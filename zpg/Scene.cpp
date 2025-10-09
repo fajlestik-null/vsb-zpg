@@ -1,44 +1,50 @@
 #include "Scene.h"
 
+void Scene::processCamera(GLFWwindow* window, Controls* controls)
+{
+	mCamera->processKeyboard(window, 0.016f, controls);
+	mCamera->processMouse(controls->getMouseDeltaX(), controls->getMouseDeltaY());
+	mCamera->notifyObservers();
+	controls->resetMouseDelta();
+}
+
 void Scene::render()
 {
     for (auto& obj : mDrawableObjects)
+    {
         obj->draw();
+    }
 }
 
 Scene* sceneDefault()
 {
-    {
-        const char* vertex_shader_n =
-            "#version 330 core\n"
-            "layout(location = 0) in vec3 pos;"
-            "layout(location = 1) in vec3 color;"
+		const char* vertex_shader =
+        "#version 330\n"
+            "layout(location=0) in vec3 vp;"
+            "layout(location = 1) in vec3 vertexColor;"
+            "out vec3 fragmentColor;"
             "uniform mat4 modelMatrix;"
-            "out vec3 vertexColor;"
-            "void main() {"
-            "    gl_Position = vec4(pos, 1.0);"
-            "    vertexColor = color;"
+            "uniform mat4 viewMatrix;"
+            "uniform mat4 projectionMatrix;"
+            "void main () {"
+            "     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4 (vp, 1.0);"
+            "     fragmentColor = vertexColor;"
             "}";
 
-        const char* fragment_shader_n =
-            "#version 330 core\n"
-            "in vec3 vertexColor;"
-            "out vec4 fragColor;"
-            "void main() {"
-            "    fragColor = vec4(vertexColor, 1.0);"
+        const char* fragment_shader =
+            "#version 330\n"
+            "in vec3 fragmentColor;"
+            "out vec3 fragColor;"
+            "void main () {"
+            "     fragColor = fragmentColor;"
             "}";
-
-        std::vector<float>triangle = {
-        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-         0.5f, -0.5f, 0.0f,1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f
-        };
-
+        ICameraObserver* cameraObserver = new ShaderProgram(vertex_shader, fragment_shader);
         Scene* s = new Scene();
-        DrawableObject* object = new DrawableObject(new Model(triangle), new ShaderProgram(vertex_shader_n, fragment_shader_n), new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
+        DrawableObject* object = new DrawableObject(new Model(&bushes), (ShaderProgram *) cameraObserver, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
         s->addObject(object);
+		s->addCameraObserver(cameraObserver);
         return s;
-    }
+    
 }
 
 Scene* sceneTriangle()
@@ -65,7 +71,7 @@ Scene* sceneTriangle()
     };
 
     Scene* s = new Scene();
-    DrawableObject* object = new DrawableObject(new Model(triangle), new ShaderProgram(vertex_shader, fragment_shader), new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
+    DrawableObject* object = new DrawableObject(new Model(&triangle), new ShaderProgram(vertex_shader, fragment_shader), new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
     object->addTransformation(new Rotation(glm::vec3(0.0f, 100.0f, 0.0f)));
     s->addObject(object);
     return s;
@@ -102,7 +108,7 @@ Scene* sceneSpheres()
 
     for (int i = 0; i < 4; i++)
     {
-        modelSphere = new Model(sphere);
+        modelSphere = new Model(&sphere);
 
         shaderProgram = new ShaderProgram(vertex_shader, fragment_shader);
 
@@ -194,12 +200,12 @@ Scene* sceneMess()
     DrawableObject* drawableObject;
 
 	std::vector<DrawableObject*> objectsCollection;
-    std::vector<std::vector<float>> verticesCollection = { bushes,sphere,suziSmooth };
+    std::vector<std::vector<float>> verticesCollection = { bushes,sphere,suziSmooth};
 
     for (int i = 0; i < 30; i++)
     {
         int modelIndex = rand() % verticesCollection.size();
-        model = new Model(verticesCollection[modelIndex]);
+        model = new Model(&verticesCollection[modelIndex]);
 
         switch (rand() % 5)
         {

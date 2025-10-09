@@ -6,7 +6,7 @@ Application::Application(const int WINDOW_WIDTH, const int WINDOW_HEIGHT)
 Application::~Application() { terminate(); }
 
 bool Application::init() {
-    glfwSetErrorCallback(errorCallback);
+    glfwSetErrorCallback(Controls::errorCallback);
 
     if (!glfwInit()) {
         std::cerr << "ERROR: could not start GLFW3\n";
@@ -52,14 +52,8 @@ bool Application::init() {
     glfwGetFramebufferSize(mWindow, &mWindowWidth, &mWindowHeight);
     glViewport(0, 0, mWindowWidth, mWindowHeight);
 
-    // Register callbacks
-    //K èemu? - DOTAZ
-    glfwSetKeyCallback(mWindow, keyCallback);
-    glfwSetWindowFocusCallback(mWindow, windowFocusCallback);
-    glfwSetWindowIconifyCallback(mWindow, windowIconifyCallback);
-    glfwSetWindowSizeCallback(mWindow, windowSizeCallback);
-    glfwSetCursorPosCallback(mWindow, cursorCallback);
-    glfwSetMouseButtonCallback(mWindow, buttonCallback);
+	// Attach controls to window
+	mControls->attachToWindow(mWindow);
 
     mGeneralScene = new Scene();
 
@@ -71,6 +65,7 @@ void Application::run() {
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(mWindow)) {
 
+		mGeneralScene->processCamera(mWindow, mControls);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
 
@@ -94,30 +89,4 @@ void Application::switchScene(std::vector<Scene* (*)()> scenes)
             mGeneralScene = scenes[i]();
         }
     }
-}
-
-
-
-void Application::errorCallback(int error, const char* description) { fputs(description, stderr); }
-
-void Application::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    printf("key_callback [%d,%d,%d,%d] \n", key, scancode, action, mods);
-}
-
-void Application::windowFocusCallback(GLFWwindow* window, int focused) { printf("window_focus_callback \n"); }
-
-void Application::windowIconifyCallback(GLFWwindow* window, int iconified) { printf("window_iconify_callback \n"); }
-
-void Application::windowSizeCallback(GLFWwindow* window, int width, int height) {
-    printf("resize %d, %d \n", width, height);
-    glViewport(0, 0, width, height);
-}
-
-void Application::cursorCallback(GLFWwindow* window, double x, double y) { printf("cursor_callback \n"); }
-
-void Application::buttonCallback(GLFWwindow* window, int button, int action, int mode) {
-    if (action == GLFW_PRESS) printf("button_callback [%d,%d,%d]\n", button, action, mode);
 }

@@ -8,9 +8,9 @@ class Model
 {
 private:
 	GLuint mVBO, mVAO;
-	std::vector<float> mVertices;
+	int mVerticesSize;
 public:
-	Model(const std::vector<float> &VERTICES);
+	Model(const std::vector<float> *VERTICES);
 	~Model();
 	void put() const;
 };

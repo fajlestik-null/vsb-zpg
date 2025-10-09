@@ -146,6 +146,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Controls.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -156,12 +158,15 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Controls.h" />
     <ClInclude Include="DrawableObject.h" />
+    <ClInclude Include="ICameraObserver.h" />
     <ClInclude Include="Includes.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Res\bushes.h" />
     <ClInclude Include="Res\sphere.h" />
     <ClInclude Include="Res\suzi_smooth.h" />
+    <ClInclude Include="Res\tree.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />

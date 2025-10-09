@@ -11,9 +11,9 @@
  * @year 2023
  **/
 #include <vector>
+using namespace std;
 
-
-const std::vector<float> suziSmooth = {
+static vector<float> suziSmooth = {
 0.468750f , 0.242187f , 0.757812f , 0.970580f , -0.015168f , 0.240181f ,
 0.437500f , 0.164062f , 0.765625f , 0.711631f , -0.679250f , 0.179327f ,
 0.562500f , 0.242187f , 0.671875f , 0.801782f , -0.000977f , 0.597583f ,
