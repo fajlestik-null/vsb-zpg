@@ -1,13 +1,15 @@
 #pragma once
 #include "Includes.h"
+
+#include "ArraysOfVertices.h"
+
 #include "Model.h"
 #include "ShaderProgram.h"
 #include "DrawableObject.h"
 #include "Camera.h"
-#include "./Res/sphere.h"
-#include "./Res/suzi_smooth.h"
-#include "./Res/bushes.h"
-#include "./Res/tree.h"
+
+
+
 
 
 class Scene
@@ -19,7 +21,7 @@ public:
 	Scene(){};
     void addObject(DrawableObject* drawableObject) { mDrawableObjects.push_back(drawableObject); }
 	void addCameraObserver(ICameraObserver* observer) { mCamera->attach(observer); }
-	void processCamera(GLFWwindow * window, Controls * controls);
+	void processCamera(GLFWwindow* window, const float WINDOW_WIDTH, const float WINDOW_HEIGHT, Controls* controls);
 	void render();
 
 };

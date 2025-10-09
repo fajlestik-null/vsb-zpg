@@ -65,15 +65,6 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Res\sphere.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Res\suzi_smooth.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Res\bushes.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -86,8 +77,8 @@
     <ClInclude Include="ICameraObserver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Res\tree.h">
-      <Filter>Resource Files</Filter>
+    <ClInclude Include="ArraysOfVertices.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

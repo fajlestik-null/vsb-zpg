@@ -1,13 +1,11 @@
 #include "Model.h"
 
-Model::Model(const std::vector<float> *VERTICES)
+Model::Model(const std::vector<float> &VERTICES): mVertices(VERTICES)
 {
-
-	mVerticesSize = VERTICES->size();
 
 	glGenBuffers(1, &mVBO); // generate the VBO id
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-	glBufferData(GL_ARRAY_BUFFER, mVerticesSize * sizeof(float), VERTICES->data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), mVertices.data(), GL_STATIC_DRAW);
 
 	glGenVertexArrays(1, &mVAO); //generate the VAO id
 	glBindVertexArray(mVAO); //bind the VAO
@@ -28,6 +26,5 @@ Model::~Model()
 void Model::put() const
 {
 	glBindVertexArray(mVAO);
-	
-	glDrawArrays(GL_TRIANGLES, 0, mVerticesSize/6);
+	glDrawArrays(GL_TRIANGLES, 0, mVertices.size()/6);
 }

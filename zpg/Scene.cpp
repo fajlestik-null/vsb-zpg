@@ -1,11 +1,19 @@
 #include "Scene.h"
 
-void Scene::processCamera(GLFWwindow* window, Controls* controls)
+void Scene::processCamera(GLFWwindow* window ,const float WINDOW_WIDTH, const float WINDOW_HEIGHT, Controls* controls)
 {
+	mCamera->updateWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	mCamera->processKeyboard(window, 0.016f, controls);
-	mCamera->processMouse(controls->getMouseDeltaX(), controls->getMouseDeltaY());
+    if (controls->isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
+    {
+        mCamera->processMouse(controls->getMouseDeltaX(), controls->getMouseDeltaY());
+    }
+    controls->resetMouseDelta();
+
+   // mCamera->recalculateCameraVectors();
+
+
 	mCamera->notifyObservers();
-	controls->resetMouseDelta();
 }
 
 void Scene::render()
@@ -40,7 +48,7 @@ Scene* sceneDefault()
             "}";
         ICameraObserver* cameraObserver = new ShaderProgram(vertex_shader, fragment_shader);
         Scene* s = new Scene();
-        DrawableObject* object = new DrawableObject(new Model(&bushes), (ShaderProgram *) cameraObserver, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
+        DrawableObject* object = new DrawableObject(new Model(tree), (ShaderProgram *) cameraObserver, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
         s->addObject(object);
 		s->addCameraObserver(cameraObserver);
         return s;
@@ -71,11 +79,12 @@ Scene* sceneTriangle()
     };
 
     Scene* s = new Scene();
-    DrawableObject* object = new DrawableObject(new Model(&triangle), new ShaderProgram(vertex_shader, fragment_shader), new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
+    DrawableObject* object = new DrawableObject(new Model(triangle), new ShaderProgram(vertex_shader, fragment_shader), new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
     object->addTransformation(new Rotation(glm::vec3(0.0f, 100.0f, 0.0f)));
     s->addObject(object);
     return s;
 }
+
 
 Scene* sceneSpheres()
 {
@@ -108,7 +117,7 @@ Scene* sceneSpheres()
 
     for (int i = 0; i < 4; i++)
     {
-        modelSphere = new Model(&sphere);
+        modelSphere = new Model(sphere);
 
         shaderProgram = new ShaderProgram(vertex_shader, fragment_shader);
 
@@ -205,7 +214,7 @@ Scene* sceneMess()
     for (int i = 0; i < 30; i++)
     {
         int modelIndex = rand() % verticesCollection.size();
-        model = new Model(&verticesCollection[modelIndex]);
+        model = new Model(verticesCollection[modelIndex]);
 
         switch (rand() % 5)
         {

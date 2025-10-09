@@ -1,7 +1,10 @@
 #include "Application.h"
 
 Application::Application(const int WINDOW_WIDTH, const int WINDOW_HEIGHT)
-	: mWindowWidth(WINDOW_WIDTH), mWindowHeight(WINDOW_HEIGHT), mWindow(NULL) {}
+	: mWindowWidth(WINDOW_WIDTH), mWindowHeight(WINDOW_HEIGHT), mWindow(NULL)
+{
+	mGeneralScene = new Scene();
+}
 
 Application::~Application() { terminate(); }
 
@@ -65,13 +68,13 @@ void Application::run() {
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(mWindow)) {
 
-		mGeneralScene->processCamera(mWindow, mControls);
+		mGeneralScene->processCamera(mWindow, mWindowWidth, mWindowHeight, mControls);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
 
         
         switchScene({ sceneDefault, sceneTriangle, sceneSpheres, sceneMess});
-
+        
         mGeneralScene->render();
 
         glfwSwapBuffers(mWindow);  // Swap buffers
