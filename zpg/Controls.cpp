@@ -18,7 +18,7 @@ void Controls::attachToWindow(GLFWwindow* window)
     glfwSetKeyCallback(window, keyCallback);
     glfwSetMouseButtonCallback(window, mouseButtonCallback);
     glfwSetCursorPosCallback(window, cursorPositionCallback);
-
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
     glfwSetWindowUserPointer(window, this);
 }
 
@@ -73,6 +73,11 @@ void Controls::cursorPositionCallback(GLFWwindow* window, double xPos, double yP
 
     lastMouseX = xPos;
     lastMouseY = yPos;
+}
+
+void Controls::framebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
 }
 
 void Controls::resetMouseDelta()

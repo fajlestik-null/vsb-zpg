@@ -13,6 +13,7 @@ private:
 	glm::mat4 mDynamicMatrix = glm::mat4(1.0f);
 
 public:
+	DrawableObject() {};
 	DrawableObject(Model* model, ShaderProgram* shaderProgram, TransformBase * transformation);
 	DrawableObject(Model* model, ShaderProgram* shaderProgram);
 

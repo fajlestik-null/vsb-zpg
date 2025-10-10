@@ -10,6 +10,7 @@ private:
 	GLuint mVBO, mVAO;
 	std::vector<float> mVertices;
 public:
+	Model() {};
 	Model(const std::vector<float> &VERTICES);
 	~Model();
 	void put() const;

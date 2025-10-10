@@ -33,3 +33,5 @@ Scene* sceneTriangle();
 Scene* sceneSpheres();
 
 Scene* sceneMess();
+
+Scene* sceneTreesAndBushes();

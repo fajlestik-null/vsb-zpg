@@ -18,8 +18,8 @@ private:
 	vec3 mTarget = vec3(0.0f, 0.0f, -1.0f);
 	vec3 mUp = vec3(0.0f, 1.0f, 0.0f);
 
-	vec3 mWorldUp = vec3(1.0f);
-	vec3 mRight = vec3(1.0f);
+	vec3 mWorldUp = vec3(0.0f, 1.0f, 0.0f);
+	vec3 mRight = vec3(0.0f);
 
 	float mWindowWidth = 800.0f;
 	float mWindowHeight = 600.0f;
@@ -27,7 +27,7 @@ private:
 	vector<ICameraObserver*> mObservers;
 
 public:
-	Camera() {};
+	Camera();
 	~Camera() {};
 	void attach(ICameraObserver* observer);
 	void detach(ICameraObserver* observer);

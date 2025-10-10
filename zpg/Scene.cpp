@@ -10,8 +10,7 @@ void Scene::processCamera(GLFWwindow* window ,const float WINDOW_WIDTH, const fl
     }
     controls->resetMouseDelta();
 
-   // mCamera->recalculateCameraVectors();
-
+   mCamera->recalculateCameraVectors();
 
 	mCamera->notifyObservers();
 }
@@ -46,6 +45,7 @@ Scene* sceneDefault()
             "void main () {"
             "     fragColor = fragmentColor;"
             "}";
+
         ICameraObserver* cameraObserver = new ShaderProgram(vertex_shader, fragment_shader);
         Scene* s = new Scene();
         DrawableObject* object = new DrawableObject(new Model(tree), (ShaderProgram *) cameraObserver, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
@@ -255,4 +255,72 @@ Scene* sceneMess()
     return scene;
     
 }
+
+Scene* sceneTreesAndBushes()
+{
+    Scene* scene = new Scene();
+
+
+    const char* vertex_shader =
+        "#version 330\n"
+        "layout(location=0) in vec3 vp;"
+        "layout(location = 1) in vec3 vertexColor;"
+        "out vec3 fragmentColor;"
+        "uniform mat4 modelMatrix;"
+        "uniform mat4 viewMatrix;"
+        "uniform mat4 projectionMatrix;"
+        "void main () {"
+        "     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4 (vp, 1.0);"
+        "     fragmentColor = vertexColor;"
+        "}";
+
+    const char* fragment_shader =
+        "#version 330\n"
+        "in vec3 fragmentColor;"
+        "out vec3 fragColor;"
+        "void main () {"
+        "     fragColor = fragmentColor;"
+        "}";
+
+    ICameraObserver* cameraObserver = new ShaderProgram(vertex_shader, fragment_shader);
+	scene->addCameraObserver(cameraObserver);
+
+    Model* model = new Model();
+
+
+    DrawableObject* obj = new DrawableObject();
+    ICameraObserver *observer = new ShaderProgram(vertex_shader, fragment_shader);
+
+    for (int i = 0; i < 100; i++)
+    {
+
+        model = new Model(tree);
+
+        obj = new DrawableObject(model,(ShaderProgram*) observer);
+
+        obj->staticTransformation(new Translation(vec3(rand() % 50 / (float)10, 0.0f, rand() % 50 / (float)10)));
+
+        float random = (float)(rand() % 20) / (float)100 + 0.1f;
+        obj->staticTransformation(new Scaling(glm::vec3(random, random, random)));
+
+        scene->addObject(obj);
+    }
+
+    for (int i = 0; i < 100; i++)
+    {
+        model = new Model(bushes);
+
+        obj = new DrawableObject(model, (ShaderProgram *) observer);
+
+        obj->staticTransformation(new Translation(vec3(rand() % 50 / (float)10, 0.0f, rand() % 50 / (float)10)));
+
+        float random = (float)(rand() % 10) / (float)100 + 0.15f;
+        obj->staticTransformation(new Scaling(glm::vec3(random, random, random)));
+
+        scene->addObject(obj);
+    }
+
+	return scene;
+}
+
 
