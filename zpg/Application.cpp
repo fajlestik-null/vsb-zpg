@@ -68,7 +68,7 @@ void Application::run() {
     glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(mWindow)) {
 
-		mGeneralScene->processCamera(mWindow, mWindowWidth, mWindowHeight, mControls);
+		mGeneralScene->processCamera(mWindow, (float) mWindowWidth, (float) mWindowHeight, mControls);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
 

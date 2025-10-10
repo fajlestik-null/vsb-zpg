@@ -17,6 +17,8 @@ Model::Model(const std::vector<float> &VERTICES): mVertices(VERTICES)
 
 }
 
+Model::Model() :mVAO(0), mVBO(0) {}
+
 Model::~Model()
 {
 	glDeleteVertexArrays(1, &mVAO);
@@ -26,5 +28,5 @@ Model::~Model()
 void Model::put() const
 {
 	glBindVertexArray(mVAO);
-	glDrawArrays(GL_TRIANGLES, 0, mVertices.size()/6);
+	glDrawArrays(GL_TRIANGLES, 0, (GLsizei) mVertices.size()/6);
 }
