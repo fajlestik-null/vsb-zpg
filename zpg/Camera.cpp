@@ -5,21 +5,6 @@ Camera::Camera() : mPhi(0.0f), mAlpha(-90.0f)
 
 }
 
-void Camera::attach(ICameraObserver* observer)
-{
-	mObservers.push_back(observer);
-}
-void Camera::detach(ICameraObserver* observer)
-{
-	mObservers.erase(remove(mObservers.begin(), mObservers.end(), observer), mObservers.end());
-}
-
-void Camera::notifyObservers(){
-	for (ICameraObserver* observer : mObservers) {
-		observer->onCameraChanged(this);
-	}
-}
-
 void Camera::processKeyboard(GLFWwindow* window, float deltaTime, Controls* controls)
 {
     float movementSpeed = 2.5f;

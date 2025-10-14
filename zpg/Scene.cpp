@@ -46,7 +46,7 @@ Scene* sceneDefault()
             "     fragColor = fragmentColor;"
             "}";
 
-        ICameraObserver* cameraObserver = new ShaderProgram(vertex_shader, fragment_shader);
+        IObserver* cameraObserver = new ShaderProgram(vertex_shader, fragment_shader);
         Scene* s = new Scene();
         DrawableObject* object = new DrawableObject(new Model(tree), (ShaderProgram *) cameraObserver, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
         s->addObject(object);
@@ -99,13 +99,50 @@ Scene* sceneSpheres()
         "     fragmentColor = vertexColor;"
         "}";
 
-    const char* fragment_shader =
+     const char* fragment_shader =
         "#version 330\n"
         "in vec3 fragmentColor;"
         "out vec3 fragColor;"
         "void main () {"
         "     fragColor = fragmentColor;"
         "}";
+
+     const char* vertex_shader_l =
+         "#version 330\n"
+         "layout(location=0) in vec3 vp;"
+         "layout(location = 1) in vec3 vn;"
+         "out vec3 fragmentColor;"
+         "uniform mat4 modelMatrix;"
+         "uniform mat4 viewMatrix;"
+         "uniform mat4 projectionMatrix;"
+         "void main () {"
+         "gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(vp, 1.0f);"
+         "worldPosition = modelMatrix * vec4(vp, 1.0f);"
+         "worldNormal = vn; //next lesson"
+         "}";
+        /* "#version 330\n"
+         "layout(location=0) in vec3 vp;"
+         "uniform mat4 modelMatrix;"
+         "uniform mat4 viewMatrix;"
+         "uniform mat4 projectionMatrix;"
+         "void main(void) {"
+         "gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(vp, 1.0f);"
+         "worldPosition = modelMatrix * vec4(vp, 1.0f);"
+         "worldNormal = vn; //next lesson"
+          "}";*/
+
+     const char* fragment_shader_l =
+         "#version 330\n"
+         "in vec4 worldPosition;"
+         "in vec3 worldNormal;"
+         "out vec4 out_Color;"
+         "void main(void) {"
+         "vec3 lightPosition = vec3(10.0, 10.0, 10.0); //Point Light position"
+         "float dotProduct = max(dot(normalize(lightToVector), normalize(worldNormal)), 0.0);"
+         "vec4 diffuse = dotProduct * vec4(0.385, 0.647, 0.812, 1.0);"
+         "vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0);"
+         "out_Color = ambient + diffuse;"
+         "}";
 
     Scene* scene = new Scene();
 
@@ -119,7 +156,7 @@ Scene* sceneSpheres()
     {
         modelSphere = new Model(sphere);
 
-        shaderProgram = new ShaderProgram(vertex_shader, fragment_shader);
+        shaderProgram = new ShaderProgram(vertex_shader_l, fragment_shader_l);
 
         switch (i)
         {
@@ -282,14 +319,13 @@ Scene* sceneTreesAndBushes()
         "     fragColor = fragmentColor;"
         "}";
 
-    ICameraObserver* cameraObserver = new ShaderProgram(vertex_shader, fragment_shader);
-	scene->addCameraObserver(cameraObserver);
+    IObserver* observer = new ShaderProgram(vertex_shader, fragment_shader);
+    scene->addCameraObserver(observer);
 
     Model* model = new Model();
 
 
     DrawableObject* obj = new DrawableObject();
-    ICameraObserver *observer = new ShaderProgram(vertex_shader, fragment_shader);
 
     for (int i = 0; i < 100; i++)
     {

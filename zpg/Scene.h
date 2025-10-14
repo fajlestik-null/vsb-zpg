@@ -20,7 +20,7 @@ private:
 public:
 	Scene(){};
     void addObject(DrawableObject* drawableObject) { mDrawableObjects.push_back(drawableObject); }
-	void addCameraObserver(ICameraObserver* observer) { mCamera->attach(observer); }
+	void addCameraObserver(IObserver* observer) { mCamera->attach(observer); }
 	void processCamera(GLFWwindow* window, const float WINDOW_WIDTH, const float WINDOW_HEIGHT, Controls* controls);
 	void render();
 

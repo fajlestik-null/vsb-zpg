@@ -1,5 +1,6 @@
 #include "ShaderProgram.h"
-#include "Camera.h"
+#include "ISubject.h"
+#include "Light.h"
 
 /*ShaderProgram::ShaderProgram()
 {
@@ -92,6 +93,17 @@ void ShaderProgram::useShader(glm::mat4 M)
 	glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &M[0][0]);
 }
 
+void ShaderProgram::notify(ISubject* subject)
+{		
+	if (!subject) return;
+
+	if (Camera* camera = dynamic_cast<Camera*>(subject)) {
+		onCameraChanged(camera);
+	}
+	/*else if (Light* light = dynamic_cast<Light*>(subject)) {
+		onLightChanged(light);
+	}*/
+}
 
 void ShaderProgram::onCameraChanged(Camera* camera)
 {

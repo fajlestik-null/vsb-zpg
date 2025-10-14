@@ -1,7 +1,9 @@
 #pragma once
 #include "Includes.h"
 #include "Shader.h"
-#include "ICameraObserver.h"
+#include "IObserver.h"
+#include "Camera.h"
+
 
 /*extern const char* vertex_shader_def =
 "#version 330\n"
@@ -18,7 +20,7 @@ extern const char* fragment_shader_def =
 "     fragColor = vec4 (0.5, 0.0, 0.5, 1.0);"
 "}";*/
 
-class ShaderProgram : public ICameraObserver
+class ShaderProgram : public IObserver
 {
 private:
     GLuint mID;
@@ -30,7 +32,10 @@ public:
     ShaderProgram(const char* vertexShader, const char* fragmentShader);
     //ShaderProgram(std::string VertexShaderPath, std::string fragmentShaderPath);
     ~ShaderProgram() { glDeleteProgram(mID); }
-    void onCameraChanged(Camera* camera) override;
+
+	void notify(ISubject* subject) override;
+
+    void onCameraChanged(Camera* camera);
     void createShader(int a) {};
     void setUniform(const std::string& name, const glm::mat4& matrix);
     void setUniform(const std::string& name, const glm::vec3& vector);

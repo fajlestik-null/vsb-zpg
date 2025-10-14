@@ -1,11 +1,11 @@
 #pragma once
 #include "Includes.h"
-#include "ICameraObserver.h"
+#include "ISubject.h"
 #include "Controls.h"
 using namespace std;
 using namespace glm;
 
-class Camera
+class Camera:public ISubject
 {
 private:
 	mat4 mProjectionMatrix = mat4(1.0f);
@@ -24,14 +24,16 @@ private:
 	float mWindowWidth = 800.0f;
 	float mWindowHeight = 600.0f;
 
-	vector<ICameraObserver*> mObservers;
-
 public:
 	Camera();
 	~Camera() {};
-	void attach(ICameraObserver* observer);
-	void detach(ICameraObserver* observer);
-	void notifyObservers();
+
+
+	/*void attach(IObserver* observer);
+	void detach(IObserver* observer);
+	void notifyObservers() overrride;*/
+
+
 	void processKeyboard(GLFWwindow* window, float deltaTime, Controls* controls);
 	void processMouse(double xOffset, double yOffset);
 	void updateWindowSize(const float WINDOW_WIDTH, const float WINDOW_HEIGHT);
