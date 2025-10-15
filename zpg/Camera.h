@@ -40,4 +40,5 @@ public:
 	void recalculateCameraVectors();
 	mat4 getProjectionMatrix();
 	mat4 getViewMatrix();
+	vec3 getPosition();
 };

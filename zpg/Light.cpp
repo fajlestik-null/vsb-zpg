@@ -1,14 +1,15 @@
 #include "Light.h"
 
-Light::Light(glm::vec3 position, glm::vec3 color):mPosition(position), mColor(color)
+Light::Light(vec3 position, vec3 color):mPosition(position), mColor(color)
 {
+	notifyObservers();
 }
-glm::vec3 Light::getColor()
+vec3 Light::getColor()
 {
 	return this->mColor;
 }
-/*glm::vec3 Light::getReflection()
+vec3 Light::getPosition()
 {
-	//testovací, nebude fungovat
-	return glm::vec3(0.0);
-}*/
+	return this->mPosition;
+}
+

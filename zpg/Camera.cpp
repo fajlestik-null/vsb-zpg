@@ -54,10 +54,17 @@ mat4 Camera::getViewMatrix(void)
 		return mViewMatrix;
 }
 
+vec3 Camera::getPosition()
+{
+	return mEye;
+}
+
 mat4 Camera::getProjectionMatrix(void)
 {
 	return mProjectionMatrix;
 }
+
+
 
 void Camera::recalculateCameraVectors()
 {

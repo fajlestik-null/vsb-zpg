@@ -25,53 +25,17 @@ void Scene::render()
 
 Scene* sceneDefault()
 {
-		const char* vertex_shader =
-        "#version 330\n"
-            "layout(location=0) in vec3 vp;"
-            "layout(location = 1) in vec3 vertexColor;"
-            "out vec3 fragmentColor;"
-            "uniform mat4 modelMatrix;"
-            "uniform mat4 viewMatrix;"
-            "uniform mat4 projectionMatrix;"
-            "void main () {"
-            "     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4 (vp, 1.0);"
-            "     fragmentColor = vertexColor;"
-            "}";
-
-        const char* fragment_shader =
-            "#version 330\n"
-            "in vec3 fragmentColor;"
-            "out vec3 fragColor;"
-            "void main () {"
-            "     fragColor = fragmentColor;"
-            "}";
-
-        IObserver* cameraObserver = new ShaderProgram(vertex_shader, fragment_shader);
+        IObserver* observer = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
         Scene* s = new Scene();
-        DrawableObject* object = new DrawableObject(new Model(tree), (ShaderProgram *) cameraObserver, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
+        DrawableObject* object = new DrawableObject(new Model(tree), (ShaderProgram *) observer, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
         s->addObject(object);
-		s->addCameraObserver(cameraObserver);
+		s->addCameraObserver(observer);
         return s;
     
 }
 
 Scene* sceneTriangle()
 {
-    const char* vertex_shader =
-        "#version 330\n"
-        "layout(location=0) in vec3 vp;"
-        "uniform mat4 modelMatrix;"
-        "void main () {"
-        "     gl_Position = modelMatrix * vec4 (vp, 1.0);"
-        "}";
-
-    const char* fragment_shader =
-        "#version 330\n"
-        "out vec4 fragColor;"
-        "void main () {"
-        "     fragColor = vec4 (0.5, 0.0, 0.5, 1.0);"
-        "}";
-
     std::vector<float>triangle = {
     0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
      0.5f, -0.5f, 0.0f,1.0f, 0.0f, 0.0f,
@@ -79,7 +43,9 @@ Scene* sceneTriangle()
     };
 
     Scene* s = new Scene();
-    DrawableObject* object = new DrawableObject(new Model(triangle), new ShaderProgram(vertex_shader, fragment_shader), new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
+    IObserver* observer = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
+    s->addCameraObserver(observer);
+    DrawableObject* object = new DrawableObject(new Model(triangle), (ShaderProgram *) observer, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
     object->addTransformation(new Rotation(glm::vec3(0.0f, 100.0f, 0.0f)));
     s->addObject(object);
     return s;
@@ -88,7 +54,7 @@ Scene* sceneTriangle()
 
 Scene* sceneSpheres()
 {
-    const char* vertex_shader =
+    /*const char* vertex_shader =
         "#version 330\n"
         "layout(location=0) in vec3 vp;"
         "layout(location = 1) in vec3 vertexColor;"
@@ -105,50 +71,63 @@ Scene* sceneSpheres()
         "out vec3 fragColor;"
         "void main () {"
         "     fragColor = fragmentColor;"
-        "}";
+        "}";*/
 
      const char* vertex_shader_l =
          "#version 330\n"
-         "layout(location=0) in vec3 vp;"
+         "layout(location = 0) in vec3 vp;"
          "layout(location = 1) in vec3 vn;"
-         "out vec3 fragmentColor;"
          "uniform mat4 modelMatrix;"
          "uniform mat4 viewMatrix;"
          "uniform mat4 projectionMatrix;"
+         "out vec4 worldPosition;"
+         "out vec3 worldNormal;"
          "void main () {"
          "gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(vp, 1.0f);"
          "worldPosition = modelMatrix * vec4(vp, 1.0f);"
-         "worldNormal = vn; //next lesson"
+         "worldNormal = vn;"
          "}";
-        /* "#version 330\n"
-         "layout(location=0) in vec3 vp;"
-         "uniform mat4 modelMatrix;"
-         "uniform mat4 viewMatrix;"
-         "uniform mat4 projectionMatrix;"
-         "void main(void) {"
-         "gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(vp, 1.0f);"
-         "worldPosition = modelMatrix * vec4(vp, 1.0f);"
-         "worldNormal = vn; //next lesson"
-          "}";*/
 
      const char* fragment_shader_l =
          "#version 330\n"
          "in vec4 worldPosition;"
          "in vec3 worldNormal;"
-         "out vec4 out_Color;"
-         "void main(void) {"
-         "vec3 lightPosition = vec3(10.0, 10.0, 10.0); //Point Light position"
-         "float dotProduct = max(dot(normalize(lightToVector), normalize(worldNormal)), 0.0);"
-         "vec4 diffuse = dotProduct * vec4(0.385, 0.647, 0.812, 1.0);"
-         "vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0);"
-         "out_Color = ambient + diffuse;"
+         "out vec4 fragColor;"
+         "void main () {"
+         "   vec3 lightPosition = vec3(10.0, 10.0, 10.0);"
+         "   vec3 lightToVector = lightPosition - worldPosition.xyz;"
+         "   float dotProduct = max(dot(normalize(lightToVector), normalize(worldNormal)), 0.0);"
+         "   vec4 diffuse = dotProduct * vec4( 0.385, 0.647, 0.812, 1.0);"
+         "   vec4 ambient = vec4( 0.1, 0.1, 0.1, 1.0);"
+         "   fragColor = ambient + diffuse;"
+         "}";
+
+     const char* fragment_shader_p =
+         "#version 330\n"
+         "in vec4 worldPosition;"
+         "in vec3 worldNormal;"
+		 "uniform vec3 lightPosition;"
+		 "uniform vec3 lightColor;"
+         "uniform vec3 cameraPosition;"
+         "out vec4 fragColor;"
+         "void main () {"
+         "   vec3 lightToVector = normalize(lightPosition - worldPosition.xyz);"
+		 "   vec3 mirrorVector = reflect(-lightToVector, worldNormal);"
+		 "   float specular = pow(max(dot(normalize(mirrorVector), normalize(cameraPosition)), 0.0), 32);"
+         "   float dotProduct = max(dot(lightToVector, normalize(worldNormal)), 0.0);"
+         "   vec4 diffuse = dotProduct * vec4(lightColor, 1.0);"
+         "   vec4 ambient = vec4( 0.1, 0.1, 0.1, 1.0);"
+         "   fragColor = ambient + diffuse + (specular * vec4(1.0));"
          "}";
 
     Scene* scene = new Scene();
 
     Model* modelSphere;
-    ShaderProgram* shaderProgram;
+    IObserver* observer = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
+    scene->setLight(new Light(glm::vec3(0.0), glm::vec3(0.385, 0.647, 0.812)), observer);
+	scene->addCameraObserver(observer);
     DrawableObject* drawableObject;
+
 
     std::vector<DrawableObject*> setterCollection;
 
@@ -156,24 +135,23 @@ Scene* sceneSpheres()
     {
         modelSphere = new Model(sphere);
 
-        shaderProgram = new ShaderProgram(vertex_shader_l, fragment_shader_l);
 
         switch (i)
         {
         default:
-            drawableObject = new DrawableObject(modelSphere, shaderProgram, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
+            drawableObject = new DrawableObject(modelSphere, (ShaderProgram *) observer, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
             drawableObject->staticTransformation(new Translation(glm::vec3(0.0f, 5.0f, 0.0f)));
             break;
         case 1:
-            drawableObject = new DrawableObject(modelSphere, shaderProgram, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
+            drawableObject = new DrawableObject(modelSphere, (ShaderProgram*)observer, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
             drawableObject->staticTransformation(new Translation(glm::vec3(5.0f, 0.0f, 0.0f)));
             break;
         case 2:
-            drawableObject = new DrawableObject(modelSphere, shaderProgram, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
+            drawableObject = new DrawableObject(modelSphere, (ShaderProgram*)observer, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
             drawableObject->staticTransformation(new Translation(glm::vec3(-5.0f, 0.0f, 0.0f)));
             break;
         case 3:
-            drawableObject = new DrawableObject(modelSphere, shaderProgram, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
+            drawableObject = new DrawableObject(modelSphere, (ShaderProgram*)observer, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
             drawableObject->staticTransformation(new Translation(glm::vec3(0.0f, -5.0f, 0.0f)));
             break;
         }

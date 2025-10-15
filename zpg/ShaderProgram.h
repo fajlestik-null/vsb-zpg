@@ -3,22 +3,8 @@
 #include "Shader.h"
 #include "IObserver.h"
 #include "Camera.h"
-
-
-/*extern const char* vertex_shader_def =
-"#version 330\n"
-"layout(location=0) in vec3 vp;"
-"uniform mat4 modelMatrix;"
-"void main () {"
-"     gl_Position = modelMatrix * vec4 (vp, 1.0);"
-"}";
-
-extern const char* fragment_shader_def =
-"#version 330\n"
-"out vec4 fragColor;"
-"void main () {"
-"     fragColor = vec4 (0.5, 0.0, 0.5, 1.0);"
-"}";*/
+#include "Light.h"
+#include "ShaderLoadType.h"
 
 class ShaderProgram : public IObserver
 {
@@ -30,12 +16,13 @@ private:
 public:
     //ShaderProgram();
     ShaderProgram(const char* vertexShader, const char* fragmentShader);
-    //ShaderProgram(std::string VertexShaderPath, std::string fragmentShaderPath);
+    ShaderProgram(ShaderLoadType type, const char* vertexShader, const char* fragmentShader);
     ~ShaderProgram() { glDeleteProgram(mID); }
 
 	void notify(ISubject* subject) override;
 
     void onCameraChanged(Camera* camera);
+	void onLightChanged(Light* light);
     void createShader(int a) {};
     void setUniform(const std::string& name, const glm::mat4& matrix);
     void setUniform(const std::string& name, const glm::vec3& vector);

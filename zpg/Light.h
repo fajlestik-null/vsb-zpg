@@ -1,15 +1,17 @@
 #pragma once
 #include "Includes.h"
+#include "ISubject.h"
 
-//using namespace glm;
+using namespace glm;
 
-class Light
+class Light : public ISubject
 {
 private:
-	glm::vec3 mPosition;
-	glm::vec3 mColor;
+	vec3 mPosition;
+	vec3 mColor;
 public:
-	Light(glm::vec3 position, glm::vec3 color);
-	glm::vec3 getColor();
-	//glm::vec3 getReflection();
+	Light() {};
+	Light(vec3 position, vec3 color);
+	vec3 getColor();
+	vec3 getPosition();
 };

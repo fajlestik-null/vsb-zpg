@@ -1,5 +1,6 @@
 #pragma once
 #include "Includes.h"
+#include <fstream>
 
 class Shader
 {
@@ -9,5 +10,6 @@ public:
 	Shader();
 	~Shader() {};
 	void createShader(GLenum type, const char* shader);
+	void createShaderFromFile(GLenum shaderType, const char* shaderFile);
 	void attachShader(GLuint shaderProgramID);
 };
