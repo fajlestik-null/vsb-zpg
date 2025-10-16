@@ -14,8 +14,6 @@ private:
     Shader* mFragmentShader = nullptr;
 
 public:
-    //ShaderProgram();
-    ShaderProgram(const char* vertexShader, const char* fragmentShader);
     ShaderProgram(ShaderLoadType type, const char* vertexShader, const char* fragmentShader);
     ~ShaderProgram() { glDeleteProgram(mID); }
 
@@ -23,9 +21,9 @@ public:
 
     void onCameraChanged(Camera* camera);
 	void onLightChanged(Light* light);
-    void createShader(int a) {};
     void setUniform(const std::string& name, const glm::mat4& matrix);
     void setUniform(const std::string& name, const glm::vec3& vector);
+    void checkLinker();
     void useShader();
     void useShader(glm::mat4 M);
 };

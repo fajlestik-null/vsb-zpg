@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera() : mPhi(0.0f), mAlpha(-90.0f)
+Camera::Camera() : mPhi(glm::radians(-90.0f)), mAlpha(glm::radians(90.0f))
 {
 
 }
@@ -35,17 +35,18 @@ void Camera::processMouse(double xOffset, double yOffset)
 	yOffset *= mouse_sensitivity;
 
 	mPhi += (float)xOffset;
-	mAlpha += (float)yOffset;
+	mAlpha -= (float)yOffset;
 
-	if (mAlpha > radians(89.0f))
-		mAlpha = radians(89.0f);
-	if (mAlpha < radians(-89.0f))
-		mAlpha = radians(-89.0f);
+	float alphaMin = radians(1.0f);
+	float alphaMax = radians(179.0f);
+
+	if (mAlpha < alphaMin) mAlpha = alphaMin;
+	if (mAlpha > alphaMax) mAlpha = alphaMax;
 }
 
 void Camera::updateWindowSize(const float WINDOW_WIDTH, const float WINDOW_HEIGHT)
 {
-	mWindowWidth = WINDOW_HEIGHT;
+	mWindowWidth = WINDOW_WIDTH;
 	mWindowHeight = WINDOW_HEIGHT;
 }
 
@@ -72,9 +73,9 @@ void Camera::recalculateCameraVectors()
 	float radius = 1.0f; // Distance from the origin -> normalized to unit sphere
 
 	glm::vec3 tmpTarget;
-	tmpTarget.x = radius * cos(mPhi) * sin(mAlpha);
+	tmpTarget.x = radius * sin(mAlpha) * cos(mPhi);
 	tmpTarget.y = radius * cos(mAlpha);
-	tmpTarget.z = radius * sin(mPhi) * sin(mAlpha);
+	tmpTarget.z = radius * sin(mAlpha) * sin(mPhi);
 	mTarget = normalize(tmpTarget);
 
 

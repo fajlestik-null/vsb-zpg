@@ -15,7 +15,7 @@ private:
 	float mPhi = 0.0f; 
 
 	vec3 mEye = vec3(0.0f, 0.0f, 5.0f);
-	vec3 mTarget = vec3(0.0f, 0.0f, -1.0f);
+	vec3 mTarget = vec3(0.0f, 0.0f, 0.0f);
 	vec3 mUp = vec3(0.0f, 1.0f, 0.0f);
 
 	vec3 mWorldUp = vec3(0.0f, 1.0f, 0.0f);

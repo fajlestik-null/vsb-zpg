@@ -22,7 +22,7 @@ private:
 public:
 	Scene(){};
     void addObject(DrawableObject* drawableObject) { mDrawableObjects.push_back(drawableObject); }
-	void addCameraObserver(IObserver* observer) { mCamera->attach(observer); mCamera->notifyObservers(); }
+	void addCameraObserver(IObserver* observer) { mCamera->attach(observer); }
 	void addLightObserver(IObserver* observer) { mLight->attach(observer); mLight->notifyObservers();}
 	void setLight(Light* light, IObserver* observer) 
 	{ 

@@ -54,72 +54,6 @@ Scene* sceneTriangle()
 
 Scene* sceneSpheres()
 {
-    /*const char* vertex_shader =
-        "#version 330\n"
-        "layout(location=0) in vec3 vp;"
-        "layout(location = 1) in vec3 vertexColor;"
-        "out vec3 fragmentColor;"
-        "uniform mat4 modelMatrix;"
-        "void main () {"
-        "     gl_Position = modelMatrix * vec4 (vp, 1.0);"
-        "     fragmentColor = vertexColor;"
-        "}";
-
-     const char* fragment_shader =
-        "#version 330\n"
-        "in vec3 fragmentColor;"
-        "out vec3 fragColor;"
-        "void main () {"
-        "     fragColor = fragmentColor;"
-        "}";*/
-
-     const char* vertex_shader_l =
-         "#version 330\n"
-         "layout(location = 0) in vec3 vp;"
-         "layout(location = 1) in vec3 vn;"
-         "uniform mat4 modelMatrix;"
-         "uniform mat4 viewMatrix;"
-         "uniform mat4 projectionMatrix;"
-         "out vec4 worldPosition;"
-         "out vec3 worldNormal;"
-         "void main () {"
-         "gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(vp, 1.0f);"
-         "worldPosition = modelMatrix * vec4(vp, 1.0f);"
-         "worldNormal = vn;"
-         "}";
-
-     const char* fragment_shader_l =
-         "#version 330\n"
-         "in vec4 worldPosition;"
-         "in vec3 worldNormal;"
-         "out vec4 fragColor;"
-         "void main () {"
-         "   vec3 lightPosition = vec3(10.0, 10.0, 10.0);"
-         "   vec3 lightToVector = lightPosition - worldPosition.xyz;"
-         "   float dotProduct = max(dot(normalize(lightToVector), normalize(worldNormal)), 0.0);"
-         "   vec4 diffuse = dotProduct * vec4( 0.385, 0.647, 0.812, 1.0);"
-         "   vec4 ambient = vec4( 0.1, 0.1, 0.1, 1.0);"
-         "   fragColor = ambient + diffuse;"
-         "}";
-
-     const char* fragment_shader_p =
-         "#version 330\n"
-         "in vec4 worldPosition;"
-         "in vec3 worldNormal;"
-		 "uniform vec3 lightPosition;"
-		 "uniform vec3 lightColor;"
-         "uniform vec3 cameraPosition;"
-         "out vec4 fragColor;"
-         "void main () {"
-         "   vec3 lightToVector = normalize(lightPosition - worldPosition.xyz);"
-		 "   vec3 mirrorVector = reflect(-lightToVector, worldNormal);"
-		 "   float specular = pow(max(dot(normalize(mirrorVector), normalize(cameraPosition)), 0.0), 32);"
-         "   float dotProduct = max(dot(lightToVector, normalize(worldNormal)), 0.0);"
-         "   vec4 diffuse = dotProduct * vec4(lightColor, 1.0);"
-         "   vec4 ambient = vec4( 0.1, 0.1, 0.1, 1.0);"
-         "   fragColor = ambient + diffuse + (specular * vec4(1.0));"
-         "}";
-
     Scene* scene = new Scene();
 
     Model* modelSphere;
@@ -168,8 +102,10 @@ Scene* sceneMess()
         "layout(location = 1) in vec3 vertexColor;"
         "out vec3 fragmentColor;"
         "uniform mat4 modelMatrix;"
+        "uniform mat4 viewMatrix;"
+        "uniform mat4 projectionMatrix;"
         "void main () {"
-        "     gl_Position = modelMatrix * vec4 (vp, 1.0);"
+        "     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4 (vp, 1.0);"
         "     fragmentColor = vertexColor;"
         "}";
 
@@ -185,8 +121,10 @@ Scene* sceneMess()
         "#version 330\n"
         "layout(location=0) in vec3 vp;"
         "uniform mat4 modelMatrix;"
+        "uniform mat4 viewMatrix;"
+        "uniform mat4 projectionMatrix;"
         "void main () {"
-        "     gl_Position = modelMatrix * vec4 (vp, 1.0);"
+        "     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4 (vp, 1.0);"
         "}";
 
     const char* fragment_shader_1 =
@@ -220,7 +158,17 @@ Scene* sceneMess()
     Scene* scene = new Scene();
 
     Model* model;
-    ShaderProgram* shaderProgram;
+    IObserver* observer0 = new ShaderProgram(ShaderLoadType::VARIABLE,vertex_shader, fragment_shader);
+    IObserver* observer1 = new ShaderProgram(ShaderLoadType::VARIABLE, vertex_shader_n, fragment_shader_1);
+    IObserver* observer2 = new ShaderProgram(ShaderLoadType::VARIABLE, vertex_shader_n, fragment_shader_2);
+    IObserver* observer3 = new ShaderProgram(ShaderLoadType::VARIABLE, vertex_shader_n, fragment_shader_3);
+    IObserver* observer4 = new ShaderProgram(ShaderLoadType::VARIABLE, vertex_shader_n, fragment_shader_4);
+	scene->addCameraObserver(observer0);
+	scene->addCameraObserver(observer1);
+	scene->addCameraObserver(observer2);
+    scene->addCameraObserver(observer3);
+	scene->addCameraObserver(observer4);
+
     DrawableObject* drawableObject;
 
 	std::vector<DrawableObject*> objectsCollection;
@@ -234,26 +182,24 @@ Scene* sceneMess()
         switch (rand() % 5)
         {
         case 0:
-            shaderProgram = new ShaderProgram(vertex_shader, fragment_shader);
+            drawableObject = new DrawableObject(model, (ShaderProgram*) observer0);
             break;
         case 1:
-            shaderProgram = new ShaderProgram(vertex_shader_n, fragment_shader_1);
+            drawableObject = new DrawableObject(model, (ShaderProgram*)observer1);
             break;
 		case 2:
-			shaderProgram = new ShaderProgram(vertex_shader_n, fragment_shader_2);
+            drawableObject = new DrawableObject(model, (ShaderProgram*)observer2);
 			break;
         case 3:
-			shaderProgram = new ShaderProgram(vertex_shader_n, fragment_shader_3);
+            drawableObject = new DrawableObject(model, (ShaderProgram*)observer3);
 			break;
 		case 4:
-			shaderProgram = new ShaderProgram(vertex_shader_n, fragment_shader_4);
+            drawableObject = new DrawableObject(model, (ShaderProgram*)observer4);
 			break;
         default:
-            shaderProgram = new ShaderProgram(vertex_shader_n, fragment_shader_1);
+            drawableObject = new DrawableObject(model, (ShaderProgram*) observer0);
 			break;
         }
-
-        drawableObject = new DrawableObject(model, shaderProgram);
 
         drawableObject->staticTransformation(new Translation(glm::vec3((float)(8 - rand() % 16) / 10, (float)(8 - rand() % 16) / 10, (float)(8 - rand() % 16) / 10)));
 
@@ -274,30 +220,7 @@ Scene* sceneMess()
 Scene* sceneTreesAndBushes()
 {
     Scene* scene = new Scene();
-
-
-    const char* vertex_shader =
-        "#version 330\n"
-        "layout(location=0) in vec3 vp;"
-        "layout(location = 1) in vec3 vertexColor;"
-        "out vec3 fragmentColor;"
-        "uniform mat4 modelMatrix;"
-        "uniform mat4 viewMatrix;"
-        "uniform mat4 projectionMatrix;"
-        "void main () {"
-        "     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4 (vp, 1.0);"
-        "     fragmentColor = vertexColor;"
-        "}";
-
-    const char* fragment_shader =
-        "#version 330\n"
-        "in vec3 fragmentColor;"
-        "out vec3 fragColor;"
-        "void main () {"
-        "     fragColor = fragmentColor;"
-        "}";
-
-    IObserver* observer = new ShaderProgram(vertex_shader, fragment_shader);
+    IObserver* observer = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
     scene->addCameraObserver(observer);
 
     Model* model = new Model();
