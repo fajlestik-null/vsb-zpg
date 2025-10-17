@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Includes.h"
-#include <unordered_map>
-using namespace std;
 
 class Controls
 {

@@ -2,8 +2,7 @@
 #include "Includes.h"
 #include "Subject.h"
 #include "Controls.h"
-using namespace std;
-using namespace glm;
+
 
 class Camera:public Subject
 {
@@ -27,12 +26,6 @@ private:
 public:
 	Camera();
 	~Camera() {};
-
-
-	/*void attach(IObserver* observer);
-	void detach(IObserver* observer);
-	void notifyObservers() overrride;*/
-
 
 	void processKeyboard(GLFWwindow* window, float deltaTime, Controls* controls);
 	void processMouse(double xOffset, double yOffset);

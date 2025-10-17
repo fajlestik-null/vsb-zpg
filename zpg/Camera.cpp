@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera() : mPhi(glm::radians(-90.0f)), mAlpha(glm::radians(90.0f))
+Camera::Camera() : mPhi(radians(-90.0f)), mAlpha(radians(90.0f))
 {
 
 }
@@ -72,7 +72,7 @@ void Camera::recalculateCameraVectors()
 	//Maybe will need to move
 	float radius = 1.0f; // Distance from the origin -> normalized to unit sphere
 
-	glm::vec3 tmpTarget;
+	vec3 tmpTarget;
 	tmpTarget.x = radius * sin(mAlpha) * cos(mPhi);
 	tmpTarget.y = radius * cos(mAlpha);
 	tmpTarget.z = radius * sin(mAlpha) * sin(mPhi);

@@ -1,36 +1,40 @@
 #include "Shader.h"
 
-Shader::Shader()
+Shader::Shader() : mShaderID(0)
 {
-	mShaderID = 0;
 }
 
-void Shader::createShader(GLenum shaderType, const char* shaderCode)
+Shader::~Shader()
+{
+	glDeleteShader(mShaderID);
+}
+
+void Shader::createShader(const GLenum SHADER_TYPE, const char* SHADER_CODE)
 {
 	// Creates an empty shader
-	mShaderID = glCreateShader(shaderType);
+	this->mShaderID = glCreateShader(SHADER_TYPE);
 	// Sets the source code of the shader.
-	glShaderSource(mShaderID, 1, &shaderCode, NULL);
+	glShaderSource(mShaderID, 1, &SHADER_CODE, NULL);
 	// Compiles the shader source code
 	glCompileShader(mShaderID);
 }
 
-void Shader::createShaderFromFile(GLenum shaderType, const char* shaderFile)
+void Shader::createShaderFromFile(const GLenum SHADER_TYPE, const char* SHADER_FILE)
 {
 	//Loading the contents of a file into a variable
-	std::ifstream file(shaderFile);
+	ifstream file(SHADER_FILE);
 	if (!file.is_open())
 	{
-		std::cout << "Unable to open file " << shaderFile << std::endl;
+		cout << "Unable to open file " << SHADER_FILE << endl;
 		exit(-1);
 	}
-	std::string shaderCode((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	string shaderCode((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 
-	createShader(shaderType, shaderCode.c_str());
+	this->createShader(SHADER_TYPE, shaderCode.c_str());
 }
 
-void Shader::attachShader(GLuint idShaderProgram)
+void Shader::attachShader(const GLuint SHADER_PROGRAM_ID) const
 {
 	//Attaches the shader to the shaderProgram
-	glAttachShader(idShaderProgram, mShaderID);
+	glAttachShader(SHADER_PROGRAM_ID, mShaderID);
 }

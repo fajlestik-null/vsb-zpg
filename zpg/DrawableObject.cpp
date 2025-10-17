@@ -1,41 +1,38 @@
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram, TransformBase * transformation)
+DrawableObject::DrawableObject() : mModel(nullptr), mMatrix(1.0f), mDynamicMatrix(1.0f)
 {
-	addModel(model);
-	addShaderProgram(shaderProgram);
-	updateMatrix(transformation);
 }
 
-DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram)
+DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram) : mMatrix(1.0f), mDynamicMatrix(1.0f)
 {
-	addModel(model);
-	addShaderProgram(shaderProgram);
+	this->addModel(model);
+	this->addShaderProgram(shaderProgram);
 }
-
 
 void DrawableObject::addModel(Model* model)
 {
+	delete mModel;
 	mModel = model;
 }
 void DrawableObject::addShaderProgram(ShaderProgram* shaderProgram)
 {
 	mShaderPrograms.push_back(shaderProgram);
 }
-void DrawableObject::addTransformation(TransformBase* transformation)
+void DrawableObject::addDynamicTransformation(TransformBase* transformation)
 {
 	mTransformations.push_back(transformation);
-	dynamicTrasformations();
+	executeDynamicTrasformations();
 }
 
-void DrawableObject::staticTransformation(TransformBase * transformation)
+void DrawableObject::addStaticTransformation(TransformBase * transformation)
 {
 	updateMatrix(transformation);
 }
 
-void DrawableObject::dynamicTrasformations()
+void DrawableObject::executeDynamicTrasformations()
 {
-	mDynamicMatrix = glm::mat4(1.0);
+	mDynamicMatrix = mat4(1.0);
 	if (!mTransformations.empty())
 	{
 		for (auto t : mTransformations)

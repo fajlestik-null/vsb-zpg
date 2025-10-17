@@ -2,15 +2,18 @@
 
 in vec4 worldPosition;
 in vec3 worldNormal;
+
+uniform vec3 lightPosition;
+uniform vec3 lightColor;
          
 out vec4 fragColor;
          
 void main () 
 {
-    vec3 lightPosition = vec3(10.0, 10.0, 10.0);
-    vec3 lightToVector = lightPosition - worldPosition.xyz;
-    float dotProduct = max(dot(normalize(lightToVector), normalize(worldNormal)), 0.0);
-    vec4 diffuse = dotProduct * vec4( 0.385, 0.647, 0.812, 1.0);
+    vec3 lightDir = lightPosition - worldPosition.xyz;
+
+    float difference = max(dot(normalize(lightDir), normalize(worldNormal)), 0.0);
+    vec4 objectColor = vec4( lightColor, 1.0);
     vec4 ambient = vec4( 0.1, 0.1, 0.1, 1.0);
-    fragColor = ambient + diffuse;
+    fragColor = ambient + (difference * objectColor); 
 }

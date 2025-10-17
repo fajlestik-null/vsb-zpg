@@ -12,7 +12,7 @@ bool Application::init() {
     glfwSetErrorCallback(Controls::errorCallback);
 
     if (!glfwInit()) {
-        std::cerr << "ERROR: could not start GLFW3\n";
+        cerr << "ERROR: could not start GLFW3\n";
         return false;
     }
 
@@ -25,7 +25,7 @@ bool Application::init() {
 
     mWindow = glfwCreateWindow(mWindowWidth, mWindowHeight, "ZPG", NULL, NULL);
     if (!mWindow) {
-        std::cerr << "ERROR: could not create GLFW window\n";
+        cerr << "ERROR: could not create GLFW window\n";
         glfwTerminate();
         return false;
     }
@@ -36,26 +36,26 @@ bool Application::init() {
     // Initialize GLEW
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        std::cerr << "ERROR: could not initialize GLEW\n";
+        cerr << "ERROR: could not initialize GLEW\n";
         return false;
     }
 
     // Print OpenGL info
-    std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << "\n";
-    std::cout << "Using GLEW " << glewGetString(GLEW_VERSION) << "\n";
-    std::cout << "Vendor: " << glGetString(GL_VENDOR) << "\n";
-    std::cout << "Renderer: " << glGetString(GL_RENDERER) << "\n";
-    std::cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
+    cout << "OpenGL Version: " << glGetString(GL_VERSION) << "\n";
+    cout << "Using GLEW " << glewGetString(GLEW_VERSION) << "\n";
+    cout << "Vendor: " << glGetString(GL_VENDOR) << "\n";
+    cout << "Renderer: " << glGetString(GL_RENDERER) << "\n";
+    cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << "\n";
 
     int major, minor, revision;
     glfwGetVersion(&major, &minor, &revision);
-    std::cout << "Using GLFW " << major << "." << minor << "." << revision << "\n";
+    cout << "Using GLFW " << major << "." << minor << "." << revision << "\n";
 
     // Set initial viewport size
     glfwGetFramebufferSize(mWindow, &mWindowWidth, &mWindowHeight);
     glViewport(0, 0, mWindowWidth, mWindowHeight);
 
-	// Attach controls to window
+	// Attach Control to window
 	mControls->attachToWindow(mWindow);
 
     mGeneralScene = new Scene();
@@ -72,7 +72,6 @@ void Application::run() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
 
-        
         switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes});
         
         mGeneralScene->render();
@@ -82,7 +81,7 @@ void Application::run() {
     }
 }
 
-void Application::switchScene(std::vector<Scene* (*)()> scenes)
+void Application::switchScene(vector<Scene* (*)()> scenes)
 {
     for (int i = 0; i < (int)scenes.size(); i++)
     {

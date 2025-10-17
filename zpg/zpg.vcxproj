@@ -176,6 +176,7 @@
     <ClInclude Include="Transformation.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="blinn-phong.frag" />
     <None Include="constant.frag" />
     <None Include="constant.vert" />
     <None Include="lambert.frag" />

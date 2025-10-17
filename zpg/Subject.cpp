@@ -1,6 +1,14 @@
 #include "Subject.h"
 #include "IObserver.h"
 
+Subject::Subject()
+{
+}
+
+Subject::~Subject()
+{
+}
+
 void Subject::attach(IObserver* observer)
 {
 	mObservers.push_back(observer);

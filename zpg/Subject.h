@@ -1,18 +1,16 @@
 #pragma once
-#include <vector>
-
-using namespace std;
+#include "Includes.h"
 
 class IObserver;
 
 class Subject
 {
+protected:
+	vector<IObserver*> mObservers;
 public:
-	Subject() {};
-	virtual ~Subject() {};
+	Subject();
+	virtual ~Subject();
 	void attach(IObserver* observer);
 	void detach(IObserver* observer);
 	void notifyObservers();
-protected:
-	vector<IObserver*> mObservers;
 };

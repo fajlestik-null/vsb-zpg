@@ -1,6 +1,6 @@
 #include "Model.h"
 
-Model::Model(const std::vector<float> &VERTICES): mVertices(VERTICES)
+Model::Model(const vector<float> &VERTICES): mVertices(VERTICES)
 {
 
 	glGenBuffers(1, &mVBO); // generate the VBO id

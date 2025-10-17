@@ -24,8 +24,8 @@ void main ()
 
     //specular
     vec3 cameraDir = normalize(cameraPosition - worldPosition.xyz);
-	vec3 reflectVector = reflect(-reflectDir, worldNormal);
-	float dotSpecular = pow(max(dot(normalize(reflectVector), cameraDir), 0.0), 32);
+    vec3 halfWayDir = normalize(reflectDir + cameraDir);    //replacing reflectDir with halfWayDir
+	float dotSpecular = pow(max(dot(halfWayDir, normalize(worldNormal)), 0.0), 32);
     vec4 specular = dotSpecular * vec4(lightColor, 1.0); //specular vector * light color
 
     //combination

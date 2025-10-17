@@ -9,14 +9,10 @@
 #include "Camera.h"
 #include "Light.h"
 
-
-
-
-
 class Scene
 {
 private:
-	std::vector<DrawableObject*> mDrawableObjects;
+	vector<DrawableObject*> mDrawableObjects;
 	Camera* mCamera = new Camera();
 	Light* mLight = new Light();
 public:
@@ -36,10 +32,6 @@ public:
 
 Scene* sceneDefault();
 
-Scene* sceneTriangle();
-
 Scene* sceneSpheres();
-
-Scene* sceneMess();
 
 Scene* sceneTreesAndBushes();

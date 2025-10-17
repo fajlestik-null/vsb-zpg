@@ -10,7 +10,7 @@ private:
 	Controls* mControls = new Controls();
     int mWindowWidth;
     int mWindowHeight;
-    std::vector<Scene> mScenes;
+    vector<Scene> mScenes;
 	Scene *mGeneralScene;
 
 
@@ -19,6 +19,6 @@ public:
     ~Application();
     bool init();
     void run();
-    void switchScene(std::vector<Scene* (*)()> scenes);
+    void switchScene(vector<Scene* (*)()> scenes);
     GLFWwindow* GetWindow() const { return mWindow; }
 };

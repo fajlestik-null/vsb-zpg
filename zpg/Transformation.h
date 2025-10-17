@@ -3,107 +3,92 @@
 
 //NEED TO SEPARATE TO .h AND .cpp FILES!!! -> TODO (after I have all the transformations to my dispose)
 
-// Base class for transformations - (use in vectors)
+// Base class for transformations - (use as instance DT)
 class TransformBase {
-protected:
-    glm::vec3 mVector;
-    glm::mat4 mTransMatrix;
-
 public:
-    TransformBase() : mVector(0.0f), mTransMatrix(1.0f) {}
-
-    TransformBase(const glm::vec3& vec) : mVector(vec), mTransMatrix(1.0f) {}
-
-    
-    virtual ~TransformBase() {}
-
-    
-    void setIdentity() {
-        mVector = glm::vec3(0.0f);
-        mTransMatrix = glm::mat4(1.0f);
-    }
-
-
-    virtual void apply(const glm::vec3& delta) = 0;
-
-
-    virtual glm::mat4 getModelMatrix() const = 0;
+    virtual ~TransformBase() = default;
+    virtual void apply(const vec3& delta) = 0;
+    virtual mat4 getModelMatrix() const = 0;
 };
 
 //Child classes for specific transformations - (do not create instances directly!)
 
 class Translation : public TransformBase {
+private:
+	vec3 mVector;
 public:
-    Translation() : TransformBase() {}
-    Translation(const glm::vec3& vec) : TransformBase(vec) {
-        mTransMatrix = glm::translate(glm::mat4(1.0f), mVector);
-    }
+    Translation(const vec3& vec = vec3(0.0f)) : mVector(vec) {}
 
-    void apply(const glm::vec3& delta) override {
+    void apply(const vec3& delta) override {
         mVector += delta;
-        mTransMatrix = glm::translate(glm::mat4(1.0f), mVector);
     }
 
-    glm::mat4 getModelMatrix() const override { return mTransMatrix; }
+    mat4 getModelMatrix() const override {
+        return translate(mat4(1.0f), mVector);
+    }
 };
 
 class Rotation : public TransformBase {
+protected:
+    vec3 mVector; 
 public:
-    Rotation() : TransformBase() {}
-    Rotation(const glm::vec3& angles) : TransformBase(angles) {
-        apply(glm::vec3(0.0f)); 
-    }
+    Rotation(const vec3& angles = vec3(0.0f)) : mVector(angles) {}
 
-    void apply(const glm::vec3& delta) override {
+    void apply(const vec3& delta) override {
         mVector += delta;
-        mTransMatrix = glm::mat4(1.0f);
-        mTransMatrix = glm::rotate(mTransMatrix, glm::radians(mVector.x), glm::vec3(1, 0, 0));
-        mTransMatrix = glm::rotate(mTransMatrix, glm::radians(mVector.y), glm::vec3(0, 1, 0));
-        mTransMatrix = glm::rotate(mTransMatrix, glm::radians(mVector.z), glm::vec3(0, 0, 1));
     }
 
-    glm::mat4 getModelMatrix() const override { return mTransMatrix; }
+    mat4 getModelMatrix() const override {
+        mat4 rot = mat4(1.0f);
+        rot = rotate(rot, radians(mVector.x), vec3(1, 0, 0));
+        rot = rotate(rot, radians(mVector.y), vec3(0, 1, 0));
+        rot = rotate(rot, radians(mVector.z), vec3(0, 0, 1));
+        return rot;
+    }
 };
 
 class Scaling : public TransformBase {
+private:
+    vec3 mVector;
 public:
-    Scaling() : TransformBase(glm::vec3(1.0f)) {
-        mTransMatrix = glm::scale(glm::mat4(1.0f), mVector);
-    }
+    Scaling(const vec3& vec = vec3(0.0f)) : mVector(vec) {}
 
-    Scaling(const glm::vec3& vec) : TransformBase(vec) {
-        mTransMatrix = glm::scale(glm::mat4(1.0f), mVector);
-    }
-
-    void apply(const glm::vec3& delta) override {
+    //x,z,y
+    void apply(const vec3& delta) override {
         mVector += delta;
-        mTransMatrix = glm::scale(glm::mat4(1.0f), mVector);
+        
     }
 
-    glm::mat4 getModelMatrix() const override { return mTransMatrix; }
+    mat4 getModelMatrix() const override 
+    { 
+        return scale(mat4(1.0f), mVector);
+    }
+};
+
+class TransformGroup : public TransformBase {
+private:
+    vector<TransformBase*> mTransforms;
+
+public:
+    void addTransform(TransformBase* transform)
+    {
+        mTransforms.push_back(transform);
+    }
+    void apply(const vec3& delta) override
+    {
+        for (auto transform : mTransforms) {
+            transform->apply(delta);
+        }
+    }
+    mat4 getModelMatrix() const override
+    {
+        mat4 result = mat4(1.0f);
+        for (auto transform : mTransforms) {
+            result = result * transform->getModelMatrix();
+        }
+        return result;
+    }
 };
 
 //TODO
-/*class Transform : public TransformBase {
-    
-private:
-	std::vector<TransformBase*> mTransforms;
-        
-public:
-        Transform() : TransformBase() {}
-        void addTransform(TransformBase* transform) {
-            mTransforms.push_back(transform);
-        }
-        void apply(const glm::vec3& delta) override {
-            for (auto& transform : mTransforms) {
-                transform->apply(delta);
-            }
-        }
-        glm::mat4 getModelMatrix() const override {
-            glm::mat4 result = glm::mat4(1.0f);
-            for (const auto& transform : mTransforms) {
-                result = result * transform->getModelMatrix();
-            }
-            return result;
-		}
-};*/
+//Dynamic 

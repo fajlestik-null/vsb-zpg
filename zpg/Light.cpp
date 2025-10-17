@@ -1,14 +1,19 @@
 #include "Light.h"
 
-Light::Light(vec3 position, vec3 color):mPosition(position), mColor(color)
+Light::Light() :mPosition(vec3(0.0)), mColor(vec3(0.0))
 {
-	notifyObservers();
+	this->notifyObservers();
 }
-vec3 Light::getColor()
+
+Light::Light(const vec3 POSITION, const vec3 COLOR):mPosition(POSITION), mColor(COLOR)
+{
+	this->notifyObservers();
+}
+vec3 Light::getColor() const
 {
 	return this->mColor;
 }
-vec3 Light::getPosition()
+vec3 Light::getPosition() const
 {
 	return this->mPosition;
 }

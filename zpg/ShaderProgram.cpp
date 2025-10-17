@@ -1,57 +1,57 @@
 #include "ShaderProgram.h"
 #include "Subject.h"
 
-ShaderProgram::ShaderProgram(ShaderLoadType type, const char* vertexShader, const char* fragmentShader)
+ShaderProgram::ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_SHADER, const char* FRAGMENT_SHADER)
 {
-	mVertexShader = new Shader();
-	mFragmentShader = new Shader();
+	this->mVertexShader = new Shader();
+	this->mFragmentShader = new Shader();
 
-	if (type == ShaderLoadType::VARIABLE)
+	if (LOAD_TYPE == ShaderLoadType::VARIABLE)
 	{
-		mVertexShader->createShader(GL_VERTEX_SHADER, vertexShader);
-		mFragmentShader->createShader(GL_FRAGMENT_SHADER, fragmentShader);
+		this->mVertexShader->createShader(GL_VERTEX_SHADER, VERTEX_SHADER);
+		this->mFragmentShader->createShader(GL_FRAGMENT_SHADER, FRAGMENT_SHADER);
 	}
-	else if (type == ShaderLoadType::FILE)
+	else if (LOAD_TYPE == ShaderLoadType::FILE)
 	{
-		mVertexShader->createShaderFromFile(GL_VERTEX_SHADER, vertexShader);
-		mFragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, fragmentShader);
+		this->mVertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER);
+		this->mFragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, FRAGMENT_SHADER);
 	}
 
-	mID = glCreateProgram();
-	mVertexShader->attachShader(mID);
-	mFragmentShader->attachShader(mID);
+	this->mID = glCreateProgram();
+	this->mVertexShader->attachShader(mID);
+	this->mFragmentShader->attachShader(mID);
 
 	glLinkProgram(mID);
 	this->checkLinker();
 }
 
-void ShaderProgram::setUniform(const std::string& name, const glm::mat4& matrix)
+void ShaderProgram::setUniform(const string& NAME, const mat4& MATRIX) const
 {
 
-	GLint location = glGetUniformLocation(mID, name.c_str());
+	GLint location = glGetUniformLocation(mID, NAME.c_str());
 	if (location == -1)
 	{
-		std::cerr << "Uniform " << name << " not found in shader!" << std::endl;
+		cerr << "Uniform " << NAME << " not found in shader!" << endl;
 		
 	}
 
-	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+	glUniformMatrix4fv(location, 1, GL_FALSE, value_ptr(MATRIX));
 
 }
 
-void ShaderProgram::setUniform(const std::string& name, const glm::vec3& vector)
+void ShaderProgram::setUniform(const string& NAME, const vec3& VECTOR) const
 {
-	GLint location = glGetUniformLocation(mID, name.c_str());
+	GLint location = glGetUniformLocation(mID, NAME.c_str());
 	if (location == -1)
 	{
-		std::cerr << "Uniform " << name << " not found in shader!" << std::endl;
+		cerr << "Uniform " << NAME << " not found in shader!" << endl;
 		return;
 	}
 
-	glUniform3fv(location, 1, glm::value_ptr(vector));
+	glUniform3fv(location, 1, value_ptr(VECTOR));
 }
 
-void ShaderProgram::checkLinker()
+void ShaderProgram::checkLinker() const
 {
 	GLint status;
 	glGetProgramiv(mID, GL_LINK_STATUS, &status);
@@ -67,15 +67,15 @@ void ShaderProgram::checkLinker()
 	}
 }
 
-void ShaderProgram::useShader()
+void ShaderProgram::useShader() const
 {
 	glUseProgram(mID);
 }
 
-void ShaderProgram::useShader(glm::mat4 M)
+void ShaderProgram::useShader(const mat4 MATRIX) const
 {
 	glUseProgram(mID);
-	this->setUniform("modelMatrix", M);
+	this->setUniform("modelMatrix", MATRIX);
 }
 
 void ShaderProgram::notify(Subject* subject)
@@ -90,7 +90,7 @@ void ShaderProgram::notify(Subject* subject)
 	}
 }
 
-void ShaderProgram::onCameraChanged(Camera* camera)
+void ShaderProgram::onCameraChanged(Camera* camera) const
 {
 	glUseProgram(mID);
 	this->setUniform("viewMatrix", camera->getViewMatrix());
@@ -98,7 +98,7 @@ void ShaderProgram::onCameraChanged(Camera* camera)
 	this->setUniform("cameraPosition", camera->getPosition());
 }
 
-void ShaderProgram::onLightChanged(Light* light)
+void ShaderProgram::onLightChanged(Light* light) const
 {
 	glUseProgram(mID);
 	this->setUniform("lightPosition", light->getPosition());
