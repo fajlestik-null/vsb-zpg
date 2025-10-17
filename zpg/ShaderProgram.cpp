@@ -1,5 +1,5 @@
 #include "ShaderProgram.h"
-#include "ISubject.h"
+#include "Subject.h"
 
 ShaderProgram::ShaderProgram(ShaderLoadType type, const char* vertexShader, const char* fragmentShader)
 {
@@ -78,7 +78,7 @@ void ShaderProgram::useShader(glm::mat4 M)
 	this->setUniform("modelMatrix", M);
 }
 
-void ShaderProgram::notify(ISubject* subject)
+void ShaderProgram::notify(Subject* subject)
 {		
 	if (!subject) return;
 

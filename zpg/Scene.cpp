@@ -25,32 +25,19 @@ void Scene::render()
 
 Scene* sceneDefault()
 {
-        IObserver* observer = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
-        Scene* s = new Scene();
-        DrawableObject* object = new DrawableObject(new Model(tree), (ShaderProgram *) observer, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
-        s->addObject(object);
-		s->addCameraObserver(observer);
-        return s;
-    
-}
-
-Scene* sceneTriangle()
-{
     std::vector<float>triangle = {
     0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f, 0.0f,1.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.0f,1.0f, 0.0f, 0.0f,
     -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f
     };
 
     Scene* s = new Scene();
     IObserver* observer = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
     s->addCameraObserver(observer);
-    DrawableObject* object = new DrawableObject(new Model(triangle), (ShaderProgram *) observer, new Rotation(glm::vec3(10.0f, 0.0f, 0.0f)));
-    object->addTransformation(new Rotation(glm::vec3(0.0f, 100.0f, 0.0f)));
+    DrawableObject* object = new DrawableObject(new Model(triangle), (ShaderProgram*)observer, new Rotation(vec3(0.0f, 0.0f, 0.0f)));
     s->addObject(object);
     return s;
 }
-
 
 Scene* sceneSpheres()
 {
@@ -58,7 +45,7 @@ Scene* sceneSpheres()
 
     Model* modelSphere;
     IObserver* observer = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
-    scene->setLight(new Light(glm::vec3(0.0), glm::vec3(0.385, 0.647, 0.812)), observer);
+    scene->setLight(new Light(vec3(0.0), vec3(0.385, 0.647, 0.812)), observer);
 	scene->addCameraObserver(observer);
     DrawableObject* drawableObject;
 
@@ -73,27 +60,25 @@ Scene* sceneSpheres()
         switch (i)
         {
         default:
-            drawableObject = new DrawableObject(modelSphere, (ShaderProgram *) observer, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
-            drawableObject->staticTransformation(new Translation(glm::vec3(0.0f, 5.0f, 0.0f)));
+            drawableObject = new DrawableObject(modelSphere, (ShaderProgram *) observer, new Translation(vec3(0.0f, 1.0f, 0.0f)));
             break;
         case 1:
-            drawableObject = new DrawableObject(modelSphere, (ShaderProgram*)observer, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
-            drawableObject->staticTransformation(new Translation(glm::vec3(5.0f, 0.0f, 0.0f)));
+            drawableObject = new DrawableObject(modelSphere, (ShaderProgram*)observer, new Translation(vec3(1.0f, 0.0f, 0.0f)));
             break;
         case 2:
-            drawableObject = new DrawableObject(modelSphere, (ShaderProgram*)observer, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
-            drawableObject->staticTransformation(new Translation(glm::vec3(-5.0f, 0.0f, 0.0f)));
+            drawableObject = new DrawableObject(modelSphere, (ShaderProgram*)observer, new Translation(vec3(-1.0f, 0.0f, 0.0f)));
             break;
         case 3:
-            drawableObject = new DrawableObject(modelSphere, (ShaderProgram*)observer, new Scaling(glm::vec3(0.15f, 0.15f, 0.15f)));
-            drawableObject->staticTransformation(new Translation(glm::vec3(0.0f, -5.0f, 0.0f)));
+            drawableObject = new DrawableObject(modelSphere, (ShaderProgram*)observer, new Translation(vec3(0.0f, -1.0f, 0.0f)));
             break;
         }
+		drawableObject->staticTransformation(new Scaling(vec3(0.5f, 0.5f, 0.5f)));
         scene->addObject(drawableObject);
     }
 	return scene;
 }
 
+/*
 Scene* sceneMess()
 {
     const char* vertex_shader =
@@ -201,10 +186,10 @@ Scene* sceneMess()
 			break;
         }
 
-        drawableObject->staticTransformation(new Translation(glm::vec3((float)(8 - rand() % 16) / 10, (float)(8 - rand() % 16) / 10, (float)(8 - rand() % 16) / 10)));
+        drawableObject->staticTransformation(new Translation(vec3((float)(8 - rand() % 16) / 10, (float)(8 - rand() % 16) / 10, (float)(8 - rand() % 16) / 10)));
 
         float modelScale = (float)(rand() % 10) / (float)100 + 0.1f;
-        drawableObject->staticTransformation(new Scaling(glm::vec3(modelScale, modelScale, modelScale)));
+        drawableObject->staticTransformation(new Scaling(vec3(modelScale, modelScale, modelScale)));
         objectsCollection.push_back(drawableObject);
     }
 
@@ -215,18 +200,29 @@ Scene* sceneMess()
 
     return scene;
     
-}
+}*/
 
 Scene* sceneTreesAndBushes()
 {
     Scene* scene = new Scene();
-    IObserver* observer = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
+    IObserver* observer = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
+	scene->setLight(new Light(vec3(10.0f, 10.0f, 10.0f), vec3(1.0f, 1.0f, 0.0f)), observer);
     scene->addCameraObserver(observer);
 
     Model* model = new Model();
 
 
     DrawableObject* obj = new DrawableObject();
+
+	model = new Model(plain);
+
+	obj = new DrawableObject(model, (ShaderProgram*)observer);
+
+	//ask Marko why x and z are swapped
+	obj->staticTransformation(new Scaling(vec3(2.5f, 1.0f, 2.5f))); //x,z,y
+	obj->staticTransformation(new Translation(vec3(1.0f, 0.0f, 1.0f))); //x,z,y
+
+	scene->addObject(obj);
 
     for (int i = 0; i < 100; i++)
     {
@@ -238,7 +234,7 @@ Scene* sceneTreesAndBushes()
         obj->staticTransformation(new Translation(vec3(rand() % 50 / (float)10, 0.0f, rand() % 50 / (float)10)));
 
         float random = (float)(rand() % 20) / (float)100 + 0.1f;
-        obj->staticTransformation(new Scaling(glm::vec3(random, random, random)));
+        obj->staticTransformation(new Scaling(vec3(random, random, random)));
 
         scene->addObject(obj);
     }
@@ -252,7 +248,7 @@ Scene* sceneTreesAndBushes()
         obj->staticTransformation(new Translation(vec3(rand() % 50 / (float)10, 0.0f, rand() % 50 / (float)10)));
 
         float random = (float)(rand() % 10) / (float)100 + 0.15f;
-        obj->staticTransformation(new Scaling(glm::vec3(random, random, random)));
+        obj->staticTransformation(new Scaling(vec3(random, random, random)));
 
         scene->addObject(obj);
     }

@@ -28,7 +28,6 @@ public:
 	{ 
 	mLight = light;
 	addLightObserver(observer);
-	mLight->notifyObservers(); 
 	}
 	void processCamera(GLFWwindow* window, const float WINDOW_WIDTH, const float WINDOW_HEIGHT, Controls* controls);
 	void render();

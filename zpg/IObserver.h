@@ -1,10 +1,10 @@
 #pragma once
 
-class ISubject;
+class Subject;
 
 class IObserver {
 public:
 
     virtual ~IObserver() = default;
-    virtual void notify(ISubject * subject) = 0;
+    virtual void notify(Subject * subject) = 0;
 };

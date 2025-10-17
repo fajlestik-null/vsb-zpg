@@ -5,11 +5,11 @@ using namespace std;
 
 class IObserver;
 
-class ISubject
+class Subject
 {
 public:
-	ISubject() {};
-	virtual ~ISubject() {};
+	Subject() {};
+	virtual ~Subject() {};
 	void attach(IObserver* observer);
 	void detach(IObserver* observer);
 	void notifyObservers();

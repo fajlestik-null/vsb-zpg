@@ -1,11 +1,11 @@
 #pragma once
 #include "Includes.h"
-#include "ISubject.h"
+#include "Subject.h"
 #include "Controls.h"
 using namespace std;
 using namespace glm;
 
-class Camera:public ISubject
+class Camera:public Subject
 {
 private:
 	mat4 mProjectionMatrix = mat4(1.0f);

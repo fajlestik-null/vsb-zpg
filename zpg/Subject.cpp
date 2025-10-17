@@ -1,16 +1,16 @@
-#include "ISubject.h"
+#include "Subject.h"
 #include "IObserver.h"
 
-void ISubject::attach(IObserver* observer)
+void Subject::attach(IObserver* observer)
 {
 	mObservers.push_back(observer);
 }
-void ISubject::detach(IObserver* observer)
+void Subject::detach(IObserver* observer)
 {
 	mObservers.erase(remove(mObservers.begin(), mObservers.end(), observer), mObservers.end());
 }
 
-void ISubject::notifyObservers()
+void Subject::notifyObservers()
 {
 	for (IObserver* observer : mObservers) {
 		observer->notify(this);

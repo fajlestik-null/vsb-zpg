@@ -73,7 +73,7 @@ void Application::run() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
 
         
-        switchScene({ sceneDefault, sceneTriangle, sceneSpheres, sceneMess, sceneTreesAndBushes});
+        switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes});
         
         mGeneralScene->render();
 

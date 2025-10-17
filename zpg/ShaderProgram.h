@@ -17,7 +17,7 @@ public:
     ShaderProgram(ShaderLoadType type, const char* vertexShader, const char* fragmentShader);
     ~ShaderProgram() { glDeleteProgram(mID); }
 
-	void notify(ISubject* subject) override;
+	void notify(Subject* subject) override;
 
     void onCameraChanged(Camera* camera);
 	void onLightChanged(Light* light);
