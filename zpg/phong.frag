@@ -4,6 +4,7 @@ in vec4 worldPosition;
 in vec3 worldNormal;
 		 
 uniform vec3 lightPosition;
+//uniform vec3 objectColor;
 uniform vec3 lightColor;
 uniform vec3 cameraPosition;
 
@@ -16,8 +17,7 @@ void main ()
     float difference = max(dot(reflectDir, normalize(worldNormal)), 0.0);
    /* vec4 objectColor = vec4(worldNormal.x, worldNormal.y, worldNormal.z, 1.0);
     vec4 diffuse = difference * objectColor;*/
-    vec4 objectColor = vec4(lightColor, 1.0);
-    vec4 diffuse = difference * objectColor;
+    vec4 diffuse = difference * vec4(lightColor,1.0);
 
     //ambient
     vec4 ambient = vec4( 0.1, 0.1, 0.1, 1.0);
@@ -26,7 +26,7 @@ void main ()
     vec3 cameraDir = normalize(cameraPosition - worldPosition.xyz);
 	vec3 reflectVector = reflect(-reflectDir, worldNormal);
 	float dotSpecular = pow(max(dot(normalize(reflectVector), cameraDir), 0.0), 32);
-    vec4 specular = dotSpecular * vec4(lightColor, 1.0); //specular vector * light color
+    vec4 specular = dotSpecular * vec4(1.0); //specular vector * reflect color
 
     //combination
     fragColor = ambient + diffuse + specular;

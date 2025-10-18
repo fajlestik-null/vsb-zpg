@@ -1,10 +1,10 @@
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject() : mModel(nullptr), mMatrix(1.0f), mDynamicMatrix(1.0f)
+DrawableObject::DrawableObject() : mModel(nullptr), mTransformManager(make_shared<TransformManager>())
 {
 }
 
-DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram) : mMatrix(1.0f), mDynamicMatrix(1.0f)
+DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram) : mTransformManager(make_shared<TransformManager>())
 {
 	this->addModel(model);
 	this->addShaderProgram(shaderProgram);
@@ -19,40 +19,44 @@ void DrawableObject::addShaderProgram(ShaderProgram* shaderProgram)
 {
 	mShaderPrograms.push_back(shaderProgram);
 }
-void DrawableObject::addDynamicTransformation(TransformBase* transformation)
+
+// Transformations
+void DrawableObject::addLocalTransform(TransformBase* transformation)
 {
-	mTransformations.push_back(transformation);
-	executeDynamicTrasformations();
+	mTransformManager->addLocalTransform(transformation);
 }
 
-void DrawableObject::addStaticTransformation(TransformBase * transformation)
+void DrawableObject::addGlobalTransform(TransformBase* transformation)
 {
-	updateMatrix(transformation);
+	mTransformManager->addGlobalTransform(transformation);
 }
 
-void DrawableObject::executeDynamicTrasformations()
+void DrawableObject::addStaticTransform(TransformBase * transformation)
 {
-	mDynamicMatrix = mat4(1.0);
-	if (!mTransformations.empty())
-	{
-		for (auto t : mTransformations)
-		{
-			mDynamicMatrix = mDynamicMatrix * t->getModelMatrix();
-		}
-	}
+	mTransformManager->addStaticTransform(transformation);
 }
 
-void DrawableObject::updateMatrix(TransformBase * transformation)
+
+shared_ptr<TransformManager> DrawableObject::getTransformManager()
 {
-	mMatrix = mMatrix * transformation->getModelMatrix();
+	return mTransformManager;
 }
+
+
+void DrawableObject::addParent(shared_ptr<TransformManager> parent)
+{
+	mTransformManager->addParent(parent);
+}
+
+
 
 void DrawableObject::draw()
 {
-	mMatrix = mMatrix * mDynamicMatrix;
+	mTransformManager->calculateTransform();
+
 	for (const auto& shader : mShaderPrograms)
 	{
-		shader->useShader(mMatrix);
-		mModel->put();
+		shader->useShader(mTransformManager->getFinalMatrix());
 	}
+	mModel->put();
 }

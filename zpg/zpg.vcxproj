@@ -173,7 +173,8 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
-    <ClInclude Include="Transformation.h" />
+    <ClInclude Include="Transformations.h" />
+    <ClInclude Include="TransformManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="blinn-phong.frag" />

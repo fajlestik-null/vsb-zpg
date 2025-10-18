@@ -26,7 +26,7 @@ void main ()
     vec3 cameraDir = normalize(cameraPosition - worldPosition.xyz);
     vec3 halfWayDir = normalize(reflectDir + cameraDir);    //replacing reflectDir with halfWayDir
 	float dotSpecular = pow(max(dot(halfWayDir, normalize(worldNormal)), 0.0), 32);
-    vec4 specular = dotSpecular * vec4(lightColor, 1.0); //specular vector * light color
+    vec4 specular = dotSpecular * vec4(1.0); //specular vector * reflect color
 
     //combination
     fragColor = ambient + diffuse + specular;

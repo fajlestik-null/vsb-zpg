@@ -14,16 +14,23 @@ class Scene
 private:
 	vector<DrawableObject*> mDrawableObjects;
 	Camera* mCamera = new Camera();
-	Light* mLight = new Light();
+	vector<Light*> mLights = {};
 public:
 	Scene(){};
     void addObject(DrawableObject* drawableObject) { mDrawableObjects.push_back(drawableObject); }
 	void addCameraObserver(IObserver* observer) { mCamera->attach(observer); }
-	void addLightObserver(IObserver* observer) { mLight->attach(observer); mLight->notifyObservers();}
-	void setLight(Light* light, IObserver* observer) 
+	void addLightObserver(IObserver* observer) 
 	{ 
-	mLight = light;
-	addLightObserver(observer);
+		for (auto& light : mLights) 
+		{ 
+			light->attach(observer);
+			light->notifyObservers();
+		} 
+	}
+	void addLight(Light* light, IObserver* observer) 
+	{ 
+		mLights.push_back(light);
+		addLightObserver(observer);
 	}
 	void processCamera(GLFWwindow* window, const float WINDOW_WIDTH, const float WINDOW_HEIGHT, Controls* controls);
 	void render();
@@ -35,3 +42,5 @@ Scene* sceneDefault();
 Scene* sceneSpheres();
 
 Scene* sceneTreesAndBushes();
+
+Scene* sceneSolarSystem();
