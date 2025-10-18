@@ -1,13 +1,11 @@
 #pragma once
 #include "Includes.h"
 
-//NEED TO SEPARATE TO .h AND .cpp FILES!!! -> TODO (after I have all the transformations to my dispose)
 
 // Base class for transformations - (use as instance DT)
 class TransformBase {
 public:
     virtual ~TransformBase() = default;
-    virtual void apply(const vec3& delta) = 0;
     virtual mat4 getModelMatrix() const = 0;
 };
 
@@ -19,10 +17,6 @@ private:
 public:
     Translation(const vec3& vec = vec3(0.0f)) : mVector(vec) {}
 
-    void apply(const vec3& delta) override {
-        mVector += delta;
-    }
-
     mat4 getModelMatrix() const override {
         return translate(mat4(1.0f), mVector);
     }
@@ -33,10 +27,6 @@ protected:
     vec3 mVector; 
 public:
     Rotation(const vec3& angles = vec3(0.0f)) : mVector(angles) {}
-
-    void apply(const vec3& delta) override {
-        mVector += delta;
-    }
 
     mat4 getModelMatrix() const override {
         mat4 rot = mat4(1.0f);
@@ -51,13 +41,9 @@ class Scaling : public TransformBase {
 private:
     vec3 mVector;
 public:
-    Scaling(const vec3& vec = vec3(0.0f)) : mVector(vec) {}
 
     //x,z,y
-    void apply(const vec3& delta) override {
-        mVector += delta;
-        
-    }
+    Scaling(const vec3& vec = vec3(0.0f)) : mVector(vec) {}
 
     mat4 getModelMatrix() const override 
     { 
@@ -70,25 +56,19 @@ private:
     vector<TransformBase*> mTransforms;
 
 public:
+    TransformGroup(vector<TransformBase*> transforms = {}) : mTransforms(transforms) {}
+
     void addTransform(TransformBase* transform)
     {
         mTransforms.push_back(transform);
     }
-    void apply(const vec3& delta) override
-    {
-        for (auto transform : mTransforms) {
-            transform->apply(delta);
-        }
-    }
+
     mat4 getModelMatrix() const override
     {
-        mat4 result = mat4(1.0f);
+        mat4 resultMatrix = mat4(1.0f);
         for (auto transform : mTransforms) {
-            result = result * transform->getModelMatrix();
+            resultMatrix *= transform->getModelMatrix();
         }
-        return result;
+        return resultMatrix;
     }
 };
-
-//TODO
-//Dynamic 
