@@ -96,7 +96,7 @@ Scene* sceneDefault()
  {
      Scene* scene = new Scene();
      ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
- 	 scene->addLight(new Light(vec3(10.0f, 10.0f, 10.0f), vec3(1.0f, 1.0f, 0.0f)), shader);
+ 	 scene->addLight(new Light(vec3(10.0f, 10.0f, 10.0f), vec3(0.385, 0.647, 0.812)), shader);
      scene->addCameraObserver((IObserver*) shader);
 
      Model* model = new Model();

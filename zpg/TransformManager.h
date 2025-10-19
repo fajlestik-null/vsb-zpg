@@ -21,32 +21,28 @@ private:
     // Optional parent (for hierarchical transform)
     vector<weak_ptr<TransformManager>> mParents;
 
+
 public:
 	TransformManager() : mCalculated(false), mFinalMatrix(1.0f), mLocalDynamic(1.0f), mGlobalDynamic(1.0f), mStaticMatricies(4, mat4(1.0f))
     {
     
     }
 
-    // === Hierarchical link ===
-    void addParent(shared_ptr<TransformManager> parentManager)
-    {
-        mParents.push_back(parentManager);
-    }
+    void addParent(shared_ptr<TransformManager> parentManager) {mParents.push_back(parentManager);}
 
-    bool hasParent() const { return !mParents.empty(); }
-
-    // === Calculation ===
     void calculateTransform()
     {
         // Accumulate dynamic transforms
-        for (auto &t : mLocalTransforms)
+        for (auto& t : mLocalTransforms)
             t.second *= t.first->getModelMatrix();
 
-        for (auto &t : mGlobalTransforms)
+        for (auto& t : mGlobalTransforms)
             t.second *= t.first->getModelMatrix();
 
         mCalculated = false;
     }
+
+    //bool hasParent() const { return !mParents.empty(); }
 
     mat4 getFinalMatrix()
     {
