@@ -34,7 +34,8 @@ Scene* sceneDefault()
     Scene* s = new Scene();
     ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
     s->addCameraObserver((IObserver *)shader);
-    DrawableObject* object = new DrawableObject(new Model(triangle), shader);
+    vec3 objectColor = vec3(1.0f, 0.0f, 0.0f);
+    DrawableObject* object = new DrawableObject(new Model(triangle), shader, objectColor);
     s->addObject(object);
     return s;
 }
@@ -58,6 +59,7 @@ Scene* sceneDefault()
      scene->addCameraObserver((IObserver*) shaderPhong);
      scene->addCameraObserver((IObserver*) shaderBlinn);
      DrawableObject* drawableObject;
+     vec3 objectColor = vec3(1.0f, 0.0f, 0.0f);
 
 
      vector<DrawableObject*> setterCollection;
@@ -70,19 +72,19 @@ Scene* sceneDefault()
          switch (i)
          {
          default:
-             drawableObject = new DrawableObject(modelSphere, shaderConstant);
+             drawableObject = new DrawableObject(modelSphere, shaderConstant, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(0.0f, 1.0f, 0.0f)));
              break;
          case 1:
-             drawableObject = new DrawableObject(modelSphere, shaderLambert);
+             drawableObject = new DrawableObject(modelSphere, shaderLambert, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(1.0f, 0.0f, 0.0f)));
              break;
          case 2:
-             drawableObject = new DrawableObject(modelSphere, shaderPhong);
+             drawableObject = new DrawableObject(modelSphere, shaderPhong, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(0.0f, -1.0f, 0.0f)));
              break;
          case 3:
-             drawableObject = new DrawableObject(modelSphere, shaderBlinn);
+             drawableObject = new DrawableObject(modelSphere, shaderBlinn, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(-1.0f, 0.0f, 0.0f)));
              break;
          }
@@ -101,14 +103,14 @@ Scene* sceneDefault()
 
      Model* model = new Model();
 
-
+     vec3 objectColor = vec3(1.0f, 0.0f, 0.0f);
      DrawableObject* obj = new DrawableObject();
 
  	model = new Model(plain);
 
- 	obj = new DrawableObject(model, shader);
+ 	obj = new DrawableObject(model, shader, objectColor);
 
-     obj->addStaticTransform(new TransformGroup({ 
+     obj->addStaticTransform(new TransformComponent({ 
          new Scaling(vec3(2.5f, 1.0f, 2.5f)),
          new Translation(vec3(1.0f, 0.0f, 1.0f))
          }));
@@ -120,7 +122,7 @@ Scene* sceneDefault()
 
          model = new Model(tree);
 
-         obj = new DrawableObject(model, shader);
+         obj = new DrawableObject(model, shader, objectColor);
 
          obj->addStaticTransform(new Translation(vec3(rand() % 50 / (float)10, 0.0f, rand() % 50 / (float)10)));
 
@@ -134,7 +136,7 @@ Scene* sceneDefault()
      {
          model = new Model(bushes);
 
-         obj = new DrawableObject(model, shader);
+         obj = new DrawableObject(model, shader, objectColor);
 
          obj->addStaticTransform(new Translation(vec3(rand() % 50 / (float)10, 0.0f, rand() % 50 / (float)10)));
 
@@ -162,11 +164,12 @@ Scene* sceneSolarSystem()
 	//scene->addLightObserver((IObserver*)sunShader); -- useless -> constant shader
 
 	Model* modelSphere = new Model(sphere);
-	DrawableObject* sun = new DrawableObject(modelSphere, shader);
+    vec3 objectColor = vec3(1.0f, 0.0f, 0.0f);
+	DrawableObject* sun = new DrawableObject(modelSphere, shader, objectColor);
 	scene->addObject(sun);
 
     float earthDistance = 4.0f;
-	DrawableObject* earth = new DrawableObject(modelSphere, shader);
+	DrawableObject* earth = new DrawableObject(modelSphere, shader, objectColor);
     earth->addStaticTransform(new Translation(vec3(earthDistance, 0.0f, 0.0f)));
     earth->addStaticTransform(new Scaling(vec3(0.5f, 0.5f, 0.5f)));
 	earth->addGlobalTransform(new Rotation(vec3(0.0f, 1.0f, 0.0f)));
@@ -174,9 +177,9 @@ Scene* sceneSolarSystem()
 	scene->addObject(earth);
 
 
-    DrawableObject* moon = new DrawableObject(modelSphere, shader);
+    DrawableObject* moon = new DrawableObject(modelSphere, shader, objectColor);
 	moon->addParent(earth->getTransformManager());
-    moon->addLocalTransform(new TransformGroup({
+    moon->addLocalTransform(new TransformComponent({
         new Translation(vec3(-1.0f, 0.0f, 0.0f)),
         new Rotation(vec3(0.0f, 1.0f, 0.0f)),
         new Translation(vec3(1.0f, 0.0f, 0.0f))

@@ -1,13 +1,14 @@
 #include "DrawableObject.h"
 
-DrawableObject::DrawableObject() : mModel(nullptr), mTransformManager(make_shared<TransformManager>())
+DrawableObject::DrawableObject() : mModel(nullptr), mTransformManager(make_shared<TransformManager>()), mColor(vec3(1.0f, 1.0f, 1.0f))
 {
 }
 
-DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram) : mTransformManager(make_shared<TransformManager>())
+DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram, vec3 objectColor) : mTransformManager(make_shared<TransformManager>())
 {
 	this->addModel(model);
 	this->addShaderProgram(shaderProgram);
+	this->mColor = objectColor;
 }
 
 void DrawableObject::addModel(Model* model)

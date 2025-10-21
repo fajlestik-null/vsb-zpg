@@ -25,6 +25,13 @@ ShaderProgram::ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_
 	this->checkLinker();
 }
 
+ShaderProgram::~ShaderProgram()
+{
+	delete mVertexShader;
+	delete mFragmentShader;
+	glDeleteProgram(mID);
+}
+
 void ShaderProgram::setUniform(const string& NAME, const mat4& MATRIX) const
 {
 

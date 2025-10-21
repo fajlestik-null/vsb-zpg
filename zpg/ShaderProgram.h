@@ -13,22 +13,21 @@ private:
     Shader* mVertexShader;
     Shader* mFragmentShader;
 
+	// try to redo as setUniform
+    void onCameraChanged(Camera* camera) const;
+    void onLightChanged(Light* light) const;
+
+    void checkLinker() const;
+
+    void setUniform(const string& NAME, const mat4& MATRIX) const;
+    void setUniform(const string& NAME, const vec3& VECTOR) const;
+
 public:
     ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_SHADER, const char* FRAGMENT_SHADER);
-    ~ShaderProgram() 
-    { 
-		delete mVertexShader;
-		delete mFragmentShader;
-        glDeleteProgram(mID);
-    }
+    ~ShaderProgram();
 
 	void notify(Subject* subject) override;
 
-    void onCameraChanged(Camera* camera) const;
-	void onLightChanged(Light* light) const;
-    void setUniform(const string& NAME, const mat4& MATRIX) const;
-    void setUniform(const string& NAME, const vec3& VECTOR) const;
-    void checkLinker() const;
     void useShader() const;
     void useShader(const mat4 MATRIX) const;
 };

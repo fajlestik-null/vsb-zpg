@@ -19,6 +19,9 @@
     <Filter Include="Source Files\Transformations">
       <UniqueIdentifier>{de73aebd-2a46-48ba-8635-cbadba053156}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GroupIncludes">
+      <UniqueIdentifier>{087da365-66d8-4240-ad99-88d1491477b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ShaderProgram.cpp">
@@ -57,6 +60,18 @@
     <ClCompile Include="ShaderLoadType.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scaling.cpp">
+      <Filter>Source Files\Transformations</Filter>
+    </ClCompile>
+    <ClCompile Include="Rotation.cpp">
+      <Filter>Source Files\Transformations</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformComponent.cpp">
+      <Filter>Source Files\Transformations</Filter>
+    </ClCompile>
+    <ClCompile Include="Translation.cpp">
+      <Filter>Source Files\Transformations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -66,9 +81,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ShaderProgram.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Includes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DrawableObject.h">
@@ -86,9 +98,6 @@
     <ClInclude Include="Controls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ArraysOfVertices.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -98,11 +107,32 @@
     <ClInclude Include="Subject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Transformations.h">
+    <ClInclude Include="TransformBase.h">
       <Filter>Header Files\Transformations</Filter>
     </ClInclude>
     <ClInclude Include="TransformManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Translation.h">
+      <Filter>Header Files\Transformations</Filter>
+    </ClInclude>
+    <ClInclude Include="Rotation.h">
+      <Filter>Header Files\Transformations</Filter>
+    </ClInclude>
+    <ClInclude Include="Scaling.h">
+      <Filter>Header Files\Transformations</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Header Files\Transformations</Filter>
+    </ClInclude>
+    <ClInclude Include="ArraysOfVertices.h">
+      <Filter>Header Files\GroupIncludes</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes.h">
+      <Filter>Header Files\GroupIncludes</Filter>
+    </ClInclude>
+    <ClInclude Include="IncludeTransformations.h">
+      <Filter>Header Files\GroupIncludes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

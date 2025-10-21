@@ -9,10 +9,11 @@ private:
 	Model* mModel;
 	vector<ShaderProgram*> mShaderPrograms;
 	shared_ptr<TransformManager> mTransformManager;
+	vec3 mColor;
 
 public:
 	DrawableObject();
-	DrawableObject(Model* model, ShaderProgram* shaderProgram);
+	DrawableObject(Model* model, ShaderProgram* shaderProgram, vec3 objectColor);
 
 	void addModel(Model* model);
 	void addShaderProgram(ShaderProgram* shaderProgram);

@@ -1,8 +1,16 @@
 #include "Camera.h"
 
-Camera::Camera() : mPhi(radians(-90.0f)), mAlpha(radians(90.0f))
+Camera::Camera() : mProjectionMatrix(mat4(1.0f)), mViewMatrix(mat4(1.0f)),
+mPhi(radians(-90.0f)), mAlpha(radians(90.0f)),
+mEye(vec3(0.0f, 0.0f, 5.0f)), mTarget(vec3(0.0f, 0.0f, 0.0f)), mUp(vec3(0.0f, 1.0f, 0.0f)),
+mWorldUp(vec3(0.0f, 1.0f, 0.0f)), mRight(vec3(0.0f)),
+mWindowWidth(800.0f), mWindowHeight(600.0f)
 {
 
+}
+
+Camera::~Camera()
+{
 }
 
 void Camera::processKeyboard(GLFWwindow* window, float deltaTime, Controls* controls)
@@ -84,5 +92,6 @@ void Camera::recalculateCameraVectors()
 
 	mViewMatrix = lookAt(mEye, mEye + mTarget, mUp);
 	//60° Field of View, window ratio (default -> 4:3 ratio), display range : 0.1 unit <-> 100 units
-	mProjectionMatrix = perspective(radians(60.0f), mWindowWidth / mWindowHeight, 0.1f, 100.0f);
+	float ratio = mWindowWidth / mWindowHeight;
+	mProjectionMatrix = perspective(radians(60.0f), ratio, 0.1f, 100.0f);
 	}
