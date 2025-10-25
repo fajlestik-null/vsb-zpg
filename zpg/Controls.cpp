@@ -78,35 +78,7 @@ void Controls::cursorPositionCallback(GLFWwindow* window, double xPos, double yP
 // Ratio keeper
 void Controls::framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    float ratio = 4.0f / 3.0f;
-
-	float fWidth = (float)width;
-	float fHeight = (float)height;
-
-    int viewportWidth = width;
-    int viewportHeight = height;
-
-    float heightOfViewport = fWidth / ratio;
-
-    if (heightOfViewport > fHeight)
-    {
-        float widthOfViewport = fHeight * ratio;
-
-        viewportWidth = static_cast<int>(widthOfViewport);
-        viewportHeight = height;
-
-    }
-    else
-    {
-        // If the required height is smaller or equal, the limiting factor is the width.
-        viewportWidth = width;
-        viewportHeight = static_cast<int>(heightOfViewport);
-    }
-
-    int xOffset = (width - viewportWidth) / 2;
-    int yOffset = (height - viewportHeight) / 2;
-
-    glViewport(xOffset, yOffset, viewportWidth, viewportHeight);
+    glViewport(0, 0, width, height);
 }
 
 void Controls::resetMouseDelta()

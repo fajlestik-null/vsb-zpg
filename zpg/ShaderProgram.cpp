@@ -61,7 +61,8 @@ void ShaderProgram::setUniform(const string& NAME, const vec3& VECTOR) const
 
 void ShaderProgram::setUniform(Light *light) const
 {
-		//this->setUniform("lightPosition", light->getPosition());
+		
+		this->setUniform("lightPosition", light->getTransformManager()->getFinalMatrix()[3]);
 		this->setUniform("lightColor", light->getColor());
 
 }
@@ -94,16 +95,11 @@ void ShaderProgram::useShader() const
 	glUseProgram(mID);
 }
 
-void ShaderProgram::useShader(const mat4 MATRIX) const
-{
-	glUseProgram(mID);
-	this->setUniform("modelMatrix", MATRIX);
-}
-
 void ShaderProgram::useShader(const mat4 MATRIX, const vec3 COLOR) const
 {
 	glUseProgram(mID);
 	this->setUniform("modelMatrix", MATRIX);
+	this->setUniform("objectColor", COLOR);
 }
 
 void ShaderProgram::notify(Subject* subject)

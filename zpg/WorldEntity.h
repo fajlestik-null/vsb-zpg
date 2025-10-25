@@ -35,9 +35,8 @@ public:
             mModel->put();
     }
 
-    // === Observers ===
     virtual void update(GLFWwindow* window, float deltaTime, Controls* controls) {
-        // Default: do nothing
+        // Default
     };
 
     Model* getModel() const { return mModel; }

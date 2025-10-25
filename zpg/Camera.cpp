@@ -52,12 +52,6 @@ void Camera::processMouse(double xOffset, double yOffset)
 	if (mAlpha > alphaMax) mAlpha = alphaMax;
 }
 
-void Camera::updateWindowSize(const float WINDOW_WIDTH, const float WINDOW_HEIGHT)
-{
-	mWindowWidth = WINDOW_WIDTH;
-	mWindowHeight = WINDOW_HEIGHT;
-}
-
 mat4 Camera::getViewMatrix(void)
 {
 		return mViewMatrix;
@@ -103,6 +97,7 @@ void Camera::recalculateCameraVectors()
 
 void Camera::update(GLFWwindow* window, float deltaTime, Controls* controls)
 {
+
 	//this->updateWindowSize(glfwGetWindowSize(window). WINDOW_HEIGHT);
 	this->processKeyboard(window, deltaTime, controls);
 	if (controls->isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
@@ -111,6 +106,7 @@ void Camera::update(GLFWwindow* window, float deltaTime, Controls* controls)
 	}
 	controls->resetMouseDelta();
 
+	glfwGetWindowSize(window, (int*)&mWindowWidth, (int*)&mWindowHeight);
 	this->recalculateCameraVectors();
 
 	this->notifyObservers();

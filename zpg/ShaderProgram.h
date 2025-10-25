@@ -21,6 +21,7 @@ private:
     void setUniform(Light* light) const;
     void setUniform( Camera* camera) const;
 
+
 public:
     ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_SHADER, const char* FRAGMENT_SHADER);
     ~ShaderProgram();
@@ -28,6 +29,5 @@ public:
 	void notify(Subject* subject) override;
 
     void useShader() const;
-    void useShader(const mat4 MATRIX) const;
     void useShader(const mat4 MATRIX, const vec3 COLOR) const;
 };

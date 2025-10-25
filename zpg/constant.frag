@@ -4,7 +4,11 @@ in vec3 fragmentColor;
 
 out vec3 fragColor;
 
-void main () 
-{
-    fragColor = fragmentColor;
+uniform vec3 objectColor;
+uniform vec3 lightColor;
+uniform vec3 viewPosition;
+
+void main () {
+        fragColor = objectColor;
 }
+

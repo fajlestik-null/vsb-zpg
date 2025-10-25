@@ -60,12 +60,13 @@ bool Application::init() {
 
     mGeneralScene = new Scene();
 
+	//enable z-buffering
+    glEnable(GL_DEPTH_TEST);
+
     return true;
 }
 
 void Application::run() {
-
-    glEnable(GL_DEPTH_TEST);
 
     float lastTick = (float)glfwGetTime();
     float currentTick = 0;
@@ -74,8 +75,7 @@ void Application::run() {
     while (!glfwWindowShouldClose(mWindow)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
 
-        //switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes, sceneSolarSystem});
-        switchScene({ sceneDefault});
+        switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes, sceneSolarSystem});
         currentTick = (float)glfwGetTime();
         deltaTime = currentTick - lastTick;
         lastTick = currentTick;
