@@ -3,8 +3,9 @@
 #include "Shader.h"
 #include "IObserver.h"
 #include "ShaderLoadType.h"
-#include "Camera.h"
-#include "Light.h"
+
+class Camera;
+class Light;
 
 class ShaderProgram : public IObserver
 {
@@ -17,8 +18,8 @@ private:
 
     void setUniform(const string& NAME, const mat4& MATRIX) const;
     void setUniform(const string& NAME, const vec3& VECTOR) const;
-    void setUniform(const string& NAME, Light* light) const;
-    void setUniform(const string& NAME, Camera* camera) const;
+    void setUniform(Light* light) const;
+    void setUniform( Camera* camera) const;
 
 public:
     ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_SHADER, const char* FRAGMENT_SHADER);
@@ -28,4 +29,5 @@ public:
 
     void useShader() const;
     void useShader(const mat4 MATRIX) const;
+    void useShader(const mat4 MATRIX, const vec3 COLOR) const;
 };

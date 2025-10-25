@@ -27,6 +27,10 @@ public:
     
     }
 
+	bool isCalculated() const {
+        return mCalculated;
+    }
+
     void addParent(shared_ptr<TransformManager> parentManager) {mParents.push_back(parentManager);}
 
     void calculateTransform()

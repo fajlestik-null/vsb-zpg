@@ -68,6 +68,11 @@ vec3 Camera::getPosition()
 	return mEye;
 }
 
+SubjectType Camera::getType() const
+{ 
+	return SubjectType::CAMERA;
+};
+
 mat4 Camera::getProjectionMatrix(void)
 {
 	return mProjectionMatrix;
@@ -95,3 +100,18 @@ void Camera::recalculateCameraVectors()
 	float ratio = mWindowWidth / mWindowHeight;
 	mProjectionMatrix = perspective(radians(60.0f), ratio, 0.1f, 100.0f);
 	}
+
+void Camera::update(GLFWwindow* window, float deltaTime, Controls* controls)
+{
+	//this->updateWindowSize(glfwGetWindowSize(window). WINDOW_HEIGHT);
+	this->processKeyboard(window, deltaTime, controls);
+	if (controls->isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
+	{
+		this->processMouse(controls->getMouseDeltaX(), controls->getMouseDeltaY());
+	}
+	controls->resetMouseDelta();
+
+	this->recalculateCameraVectors();
+
+	this->notifyObservers();
+}

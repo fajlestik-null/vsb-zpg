@@ -1,27 +1,21 @@
 #include "Scene.h"
 
-void Scene::processCamera(GLFWwindow* window ,const float WINDOW_WIDTH, const float WINDOW_HEIGHT, Controls* controls)
-{
-	mCamera->updateWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-	mCamera->processKeyboard(window, 0.016f, controls);
-    if (controls->isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
-    {
-        mCamera->processMouse(controls->getMouseDeltaX(), controls->getMouseDeltaY());
-    }
-    controls->resetMouseDelta();
-
-   mCamera->recalculateCameraVectors();
-
-	mCamera->notifyObservers();
-}
-
 void Scene::render()
 {
-    for (auto& obj : mDrawableObjects)
+    for (auto entity : mWorldEntities)
     {
-        obj->draw();
+        entity->draw();
     }
 }
+
+void Scene::update(GLFWwindow* window, float deltaTime, Controls* controls)
+{
+    for (auto entity : mWorldEntities)
+    {
+        entity->update(window, deltaTime, controls);
+    }
+}
+
 
 Scene* sceneDefault()
 {
@@ -31,15 +25,41 @@ Scene* sceneDefault()
         -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f
     };
 
-    Scene* s = new Scene();
-    ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
-    s->addCameraObserver((IObserver *)shader);
-    vec3 objectColor = vec3(1.0f, 0.0f, 0.0f);
-    DrawableObject* object = new DrawableObject(new Model(triangle), shader, objectColor);
-    s->addObject(object);
-    return s;
+    Scene* scene = new Scene();
+
+    Model* modelTriangle = new Model(triangle);
+    Model* modelSphere = new Model(sphere);
+
+	ShaderProgram* shaderProgram = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
+
+    DrawableObject* entity = new DrawableObject(modelSphere, shaderProgram);
+
+    entity->getTransformManager()->addStaticTransform(new Scaling(vec3(0.5f, 0.5f, 0.5f)));
+
+    scene->addEntity(entity);
+
+	Camera* camera = new Camera();
+    camera->attach(shaderProgram);
+
+    scene->addEntity(camera);
+
+    Light* light = new Light(vec3(1.0f, 1.0f, 1.0f), 1.0f);
+
+    light->setModel(modelSphere);
+    light->addShaderProgram(shaderProgram);
+
+    light->addStaticTransform(new Scaling(vec3(0.2f, 0.2f, 0.2f)));
+    light->addStaticTransform(new Translation(vec3(1.5f, 1.5f, 1.5f)));
+
+    light->addGlobalTransform(new Rotation(vec3(0.0f, 2.0f, 0.0f)));
+
+    light->attach(shaderProgram);
+    scene->addEntity(light);
+
+    return scene;
 }
 
+/*
  Scene* sceneSpheres()
  {
      Scene* scene = new Scene();
@@ -49,7 +69,7 @@ Scene* sceneDefault()
      ShaderProgram* shaderLambert = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "lambert.frag");
      ShaderProgram* shaderPhong = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
      ShaderProgram* shaderBlinn = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "blinn-phong.frag");
-     scene->addLight(new Light(vec3(0.0), vec3(0.385, 0.647, 0.812)), (IObserver*) shaderConstant);
+     scene->addLight(new Light(vec3(0.385, 0.647, 0.812), 1), (IObserver*) shaderConstant);
      scene->addLightObserver((IObserver*) shaderLambert);
      scene->addLightObserver((IObserver*) shaderPhong);
      scene->addLightObserver((IObserver*) shaderBlinn);
@@ -98,7 +118,7 @@ Scene* sceneDefault()
  {
      Scene* scene = new Scene();
      ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
- 	 scene->addLight(new Light(vec3(10.0f, 10.0f, 10.0f), vec3(0.385, 0.647, 0.812)), shader);
+ 	 scene->addLight(new Light(vec3(0.385, 0.647, 0.812), 1), shader);
      scene->addCameraObserver((IObserver*) shader);
 
      Model* model = new Model();
@@ -160,7 +180,7 @@ Scene* sceneSolarSystem()
 	scene->addCameraObserver((IObserver*)shader);
 
 
-	scene->addLight(new Light(vec3(20.0f), vec3(1.0f, 1.0f, 1.0f)), (IObserver*)shader);
+	scene->addLight(new Light(vec3(0.385, 0.647, 0.812), 1), (IObserver*)shader);
 	//scene->addLightObserver((IObserver*)sunShader); -- useless -> constant shader
 
 	Model* modelSphere = new Model(sphere);
@@ -190,6 +210,6 @@ Scene* sceneSolarSystem()
 	scene->addObject(moon);
 
 	return scene;
-}
+}*/
 
 

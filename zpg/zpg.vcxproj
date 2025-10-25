@@ -180,10 +180,12 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SubjectType.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TransformBase.h" />
     <ClInclude Include="TransformManager.h" />
     <ClInclude Include="Translation.h" />
+    <ClInclude Include="WorldEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="blinn-phong.frag" />

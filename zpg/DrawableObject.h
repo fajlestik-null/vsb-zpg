@@ -1,29 +1,14 @@
 #pragma once
-#include "ShaderProgram.h"
-#include "Model.h"
-#include "TransformManager.h"
+#include "WorldEntity.h"
 
-class DrawableObject
+class DrawableObject : public WorldEntity
 {
-private:
-	Model* mModel;
-	vector<ShaderProgram*> mShaderPrograms;
-	shared_ptr<TransformManager> mTransformManager;
-	vec3 mColor;
-
 public:
 	DrawableObject();
-	DrawableObject(Model* model, ShaderProgram* shaderProgram, vec3 objectColor);
+	DrawableObject(Model* model, ShaderProgram* shaderProgram, const vec3 OBJECT_COLOR = vec3(0.0f, 0.5f, 0.0f));
 
-	void addModel(Model* model);
-	void addShaderProgram(ShaderProgram* shaderProgram);
+	~DrawableObject();
 
-	void addLocalTransform(TransformBase* transformation);
-	void addGlobalTransform(TransformBase* transformation);
-	void addStaticTransform(TransformBase* transformation);
+	void update(GLFWwindow* window, float deltaTime, Controls* controls) override; 	
 
-	shared_ptr<TransformManager> getTransformManager();
-	void addParent(shared_ptr<TransformManager> parent);
-
-	void draw();
 };

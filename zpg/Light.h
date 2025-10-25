@@ -1,16 +1,23 @@
 #pragma once
-#include "Includes.h"
-#include "Subject.h"
+#include "WorldEntity.h"
 
 
-class Light : public Subject
+class Light : public WorldEntity
 {
 private:
-	vec3 mPosition;
-	vec3 mColor;
+	int mID;
+	float mIntensity;
+	vec3 mLightColor;
 public:
-	Light();
-	Light(const vec3 POSITION, const vec3 COLOR);
-	vec3 getColor() const;
-	vec3 getPosition() const;
+	static int LIGHT_COUNT;
+	SubjectType getType() const override;
+
+	~Light();
+	Light(const vec3 LIGHT_COLOR, const float INTENSITY);
+	Light(Model* model,ShaderProgram* shader,vec3 color);
+
+	void update(GLFWwindow* window, float delta_time, Controls* controls);
+
+	vec3 getLightColor() const;
+	int getID() const;
 };

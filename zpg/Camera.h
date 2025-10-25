@@ -1,10 +1,8 @@
 #pragma once
-#include "Includes.h"
-#include "Subject.h"
-#include "Controls.h"
+#include "WorldEntity.h"
 
 
-class Camera:public Subject
+class Camera: public WorldEntity
 {
 private:
 	mat4 mProjectionMatrix;
@@ -31,7 +29,10 @@ public:
 	void processMouse(double xOffset, double yOffset);
 	void updateWindowSize(const float WINDOW_WIDTH, const float WINDOW_HEIGHT);
 	void recalculateCameraVectors();
+	void update(GLFWwindow* window, float deltaTime, Controls* controls) override;
 	mat4 getProjectionMatrix();
 	mat4 getViewMatrix();
 	vec3 getPosition();
+
+	SubjectType getType() const override;
 };

@@ -66,14 +66,20 @@ bool Application::init() {
 void Application::run() {
 
     glEnable(GL_DEPTH_TEST);
+
+    float lastTick = (float)glfwGetTime();
+    float currentTick = 0;
+    float deltaTime = 0;
+
     while (!glfwWindowShouldClose(mWindow)) {
-
-		mGeneralScene->processCamera(mWindow, (float) mWindowWidth, (float) mWindowHeight, mControls);
-
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
 
-        switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes, sceneSolarSystem});
-        
+        //switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes, sceneSolarSystem});
+        switchScene({ sceneDefault});
+        currentTick = (float)glfwGetTime();
+        deltaTime = currentTick - lastTick;
+        lastTick = currentTick;
+        mGeneralScene->update(mWindow,deltaTime, mControls);
         mGeneralScene->render();
 
         glfwSwapBuffers(mWindow);  // Swap buffers

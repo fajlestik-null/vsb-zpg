@@ -134,6 +134,12 @@
     <ClInclude Include="IncludeTransformations.h">
       <Filter>Header Files\GroupIncludes</Filter>
     </ClInclude>
+    <ClInclude Include="WorldEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubjectType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="constant.vert">

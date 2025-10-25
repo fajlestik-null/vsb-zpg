@@ -1,5 +1,6 @@
 #include "ShaderProgram.h"
-#include "Subject.h"
+#include "Camera.h"
+#include "Light.h"
 
 ShaderProgram::ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_SHADER, const char* FRAGMENT_SHADER)
 {
@@ -58,32 +59,18 @@ void ShaderProgram::setUniform(const string& NAME, const vec3& VECTOR) const
 	glUniform3fv(location, 1, value_ptr(VECTOR));
 }
 
-void ShaderProgram::setUniform(const string& NAME, Light *light) const
+void ShaderProgram::setUniform(Light *light) const
 {
-	if (NAME == "lightPosition")
-	{
-		this->setUniform("lightPosition", light->getPosition());
-	}
-	else if (NAME == "lightColor")
-	{
+		//this->setUniform("lightPosition", light->getPosition());
 		this->setUniform("lightColor", light->getColor());
-	}
+
 }
 
-void ShaderProgram::setUniform(const string& NAME, Camera* camera) const
+void ShaderProgram::setUniform(Camera* camera) const
 {
-	if (NAME == "cameraPosition")
-	{
 		this->setUniform("cameraPosition", camera->getPosition());
-	}
-	else if (NAME == "projectionMatrix")
-	{
 		this->setUniform("projectionMatrix", camera->getProjectionMatrix());
-	}
-	else if (NAME == "viewMatrix")
-	{
 		this->setUniform("viewMatrix", camera->getViewMatrix());
-	}
 }
 
 void ShaderProgram::checkLinker() const
@@ -113,18 +100,21 @@ void ShaderProgram::useShader(const mat4 MATRIX) const
 	this->setUniform("modelMatrix", MATRIX);
 }
 
+void ShaderProgram::useShader(const mat4 MATRIX, const vec3 COLOR) const
+{
+	glUseProgram(mID);
+	this->setUniform("modelMatrix", MATRIX);
+}
+
 void ShaderProgram::notify(Subject* subject)
 {
 	if (!subject) return;
 
 	glUseProgram(mID);
 	if (Camera* camera = dynamic_cast<Camera*>(subject)) {
-		this->setUniform("projectionMatrix", camera);
-		this->setUniform("viewMatrix", camera);
-		this->setUniform("cameraPosition", camera);
+		this->setUniform(camera);
 	}
 	else if (Light* light = dynamic_cast<Light*>(subject)) {
-		this->setUniform("lightPosition", light);
-		this->setUniform("lightColor", light);
+		this->setUniform(light);
 	}
 }

@@ -1,20 +1,46 @@
 #include "Light.h"
 
-Light::Light() :mPosition(vec3(0.0)), mColor(vec3(0.0))
+int Light::LIGHT_COUNT = 0;
+
+SubjectType Light::getType() const
 {
-	this->notifyObservers();
+	return SubjectType::LIGHT;
 }
 
-Light::Light(const vec3 POSITION, const vec3 COLOR):mPosition(POSITION), mColor(COLOR)
+Light::~Light()
 {
-	this->notifyObservers();
-}
-vec3 Light::getColor() const
-{
-	return this->mColor;
-}
-vec3 Light::getPosition() const
-{
-	return this->mPosition;
+
 }
 
+Light::Light(const vec3 LIGHT_COLOR, const float INTENSITY)
+{
+	this->mID = LIGHT_COUNT++;
+	this->mLightColor = LIGHT_COLOR;
+	this->mIntensity = INTENSITY;
+}
+
+Light::Light(Model* model, ShaderProgram* shader,const vec3 COLOR)
+{
+	this->setModel(model);
+	this->addShaderProgram(shader);
+	this->setColor(COLOR);
+}
+
+vec3 Light::getLightColor() const
+{
+	return this->mLightColor;
+}
+
+int Light::getID() const
+{
+	return this->mID;
+}
+
+void Light::update(GLFWwindow* window, float deltaTime, Controls* controls)
+{
+	this->getTransformManager().get()->calculateTransform();
+	if (!this->getTransformManager().get()->isCalculated())
+	{
+		this->notifyObservers();
+	}
+}
