@@ -58,6 +58,34 @@ void ShaderProgram::setUniform(const string& NAME, const vec3& VECTOR) const
 	glUniform3fv(location, 1, value_ptr(VECTOR));
 }
 
+void ShaderProgram::setUniform(const string& NAME, Light *light) const
+{
+	if (NAME == "lightPosition")
+	{
+		this->setUniform("lightPosition", light->getPosition());
+	}
+	else if (NAME == "lightColor")
+	{
+		this->setUniform("lightColor", light->getColor());
+	}
+}
+
+void ShaderProgram::setUniform(const string& NAME, Camera* camera) const
+{
+	if (NAME == "cameraPosition")
+	{
+		this->setUniform("cameraPosition", camera->getPosition());
+	}
+	else if (NAME == "projectionMatrix")
+	{
+		this->setUniform("projectionMatrix", camera->getProjectionMatrix());
+	}
+	else if (NAME == "viewMatrix")
+	{
+		this->setUniform("viewMatrix", camera->getViewMatrix());
+	}
+}
+
 void ShaderProgram::checkLinker() const
 {
 	GLint status;
@@ -86,28 +114,17 @@ void ShaderProgram::useShader(const mat4 MATRIX) const
 }
 
 void ShaderProgram::notify(Subject* subject)
-{		
+{
 	if (!subject) return;
 
+	glUseProgram(mID);
 	if (Camera* camera = dynamic_cast<Camera*>(subject)) {
-		this->onCameraChanged(camera);
+		this->setUniform("projectionMatrix", camera);
+		this->setUniform("viewMatrix", camera);
+		this->setUniform("cameraPosition", camera);
 	}
 	else if (Light* light = dynamic_cast<Light*>(subject)) {
-		this->onLightChanged(light);
+		this->setUniform("lightPosition", light);
+		this->setUniform("lightColor", light);
 	}
-}
-
-void ShaderProgram::onCameraChanged(Camera* camera) const
-{
-	glUseProgram(mID);
-	this->setUniform("viewMatrix", camera->getViewMatrix());
-	this->setUniform("projectionMatrix", camera->getProjectionMatrix());
-	this->setUniform("cameraPosition", camera->getPosition());
-}
-
-void ShaderProgram::onLightChanged(Light* light) const
-{
-	glUseProgram(mID);
-	this->setUniform("lightPosition", light->getPosition());
-	this->setUniform("lightColor", light->getColor());
 }
