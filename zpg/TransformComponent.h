@@ -13,5 +13,5 @@ public:
 
     void addTransform(TransformBase* transform);
 
-    mat4 getModelMatrix() const override;
+    mat4 getModelMatrix() override;
 };

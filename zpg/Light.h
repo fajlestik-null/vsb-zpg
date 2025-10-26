@@ -19,5 +19,6 @@ public:
 	void update(GLFWwindow* window, float delta_time, Controls* controls);
 
 	vec3 getLightColor() const;
+	float getIntensity() const;
 	int getID() const;
 };

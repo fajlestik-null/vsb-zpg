@@ -6,5 +6,5 @@
 class TransformBase {
 public:
     virtual ~TransformBase() = default;
-    virtual mat4 getModelMatrix() const = 0;
+    virtual mat4 getModelMatrix() = 0;
 };

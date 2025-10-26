@@ -47,6 +47,32 @@ void ShaderProgram::setUniform(const string& NAME, const mat4& MATRIX) const
 
 }
 
+void ShaderProgram::setUniform(const string& NAME, const float& FLOAT) const
+{
+
+	GLint location = glGetUniformLocation(mID, NAME.c_str());
+	if (location == -1)
+	{
+		cerr << "Uniform " << NAME << " not found in shader!" << endl;
+
+	}
+
+	glUniform1f(location, FLOAT);
+}
+
+void ShaderProgram::setUniform(const string& NAME, const int& INT) const
+{
+
+	GLint location = glGetUniformLocation(mID, NAME.c_str());
+	if (location == -1)
+	{
+		cerr << "Uniform " << NAME << " not found in shader!" << endl;
+
+	}
+
+	glUniform1i(location, INT);
+}
+
 void ShaderProgram::setUniform(const string& NAME, const vec3& VECTOR) const
 {
 	GLint location = glGetUniformLocation(mID, NAME.c_str());
@@ -61,10 +87,14 @@ void ShaderProgram::setUniform(const string& NAME, const vec3& VECTOR) const
 
 void ShaderProgram::setUniform(Light *light) const
 {
-		
-		this->setUniform("lightPosition", light->getTransformManager()->getFinalMatrix()[3]);
-		this->setUniform("lightColor", light->getColor());
+	glm::mat4 lightModelMatrix = light->getTransformManager()->getFinalMatrix();
 
+    glm::vec3 lightPosition = glm::vec3(lightModelMatrix[3]);
+		
+	this->setUniform("lights[" + to_string(light->getID()) + "].position", lightPosition);
+	this->setUniform("lights[" + to_string(light->getID()) + "].color", light->getLightColor());
+	this->setUniform("lights[" + to_string(light->getID()) + "].intensity", light->getIntensity());
+	this->setUniform("numLights", Light::LIGHT_COUNT);
 }
 
 void ShaderProgram::setUniform(Camera* camera) const

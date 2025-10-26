@@ -76,7 +76,6 @@ mat4 Camera::getProjectionMatrix(void)
 
 void Camera::recalculateCameraVectors()
 {
-	//Maybe will need to move
 	float radius = 1.0f; // Distance from the origin -> normalized to unit sphere
 
 	vec3 tmpTarget;
@@ -97,8 +96,6 @@ void Camera::recalculateCameraVectors()
 
 void Camera::update(GLFWwindow* window, float deltaTime, Controls* controls)
 {
-
-	//this->updateWindowSize(glfwGetWindowSize(window). WINDOW_HEIGHT);
 	this->processKeyboard(window, deltaTime, controls);
 	if (controls->isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
 	{

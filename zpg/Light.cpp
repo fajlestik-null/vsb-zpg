@@ -9,7 +9,7 @@ SubjectType Light::getType() const
 
 Light::~Light()
 {
-
+	Light::LIGHT_COUNT--;
 }
 
 Light::Light(const vec3 LIGHT_COLOR, const float INTENSITY)
@@ -31,6 +31,11 @@ vec3 Light::getLightColor() const
 	return this->mLightColor;
 }
 
+float Light::getIntensity() const
+{
+	return this->mIntensity;
+}
+
 int Light::getID() const
 {
 	return this->mID;
@@ -41,6 +46,6 @@ void Light::update(GLFWwindow* window, float deltaTime, Controls* controls)
 	this->getTransformManager().get()->calculateTransform();
 	if (!this->getTransformManager().get()->isCalculated())
 	{
-		this->notifyObservers();
 	}
+	this->notifyObservers();
 }

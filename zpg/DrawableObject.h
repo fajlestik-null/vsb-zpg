@@ -11,4 +11,5 @@ public:
 
 	void update(GLFWwindow* window, float deltaTime, Controls* controls) override; 	
 
+	SubjectType getType() const override;
 };

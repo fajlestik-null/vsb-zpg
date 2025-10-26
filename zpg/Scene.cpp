@@ -32,7 +32,7 @@ Scene* sceneDefault()
 
 	ShaderProgram* shaderProgram = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
 
-    DrawableObject* entity = new DrawableObject(modelSphere, shaderProgram, vec3(1,0,0));
+    DrawableObject* entity = new DrawableObject(modelTriangle, shaderProgram, vec3(1,0,0));
 
     entity->getTransformManager()->addStaticTransform(new Scaling(vec3(0.5f, 0.5f, 0.5f)));
 
@@ -45,8 +45,8 @@ Scene* sceneDefault()
 
     Light* light = new Light(vec3(1.0f, 1.0f, 1.0f), 1.0f);
 
-    //light->setModel(modelTriangle);
-    //light->addShaderProgram(shaderProgram);
+    light->setModel(modelSphere);
+    light->addShaderProgram(shaderProgram);
 
     light->addStaticTransform(new Scaling(vec3(0.2f, 0.2f, 0.2f)));
     light->addStaticTransform(new Translation(vec3(1.5f, 1.5f, 1.5f)));
@@ -65,10 +65,10 @@ Scene* sceneDefault()
      Scene* scene = new Scene();
 
      Model* modelSphere;
-     ShaderProgram* shaderConstant = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
-     ShaderProgram* shaderLambert = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "lambert.frag");
+     //ShaderProgram* shaderConstant = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
+     //ShaderProgram* shaderLambert = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "lambert.frag");
      ShaderProgram* shaderPhong = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
-     ShaderProgram* shaderBlinn = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "blinn-phong.frag");
+     //ShaderProgram* shaderBlinn = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "blinn-phong.frag");
      
      DrawableObject* drawableObject;
      vec3 objectColor = vec3(1.0f, 0.0f, 0.0f);
@@ -81,11 +81,11 @@ Scene* sceneDefault()
          switch (i)
          {
          default:
-             drawableObject = new DrawableObject(modelSphere, shaderConstant, vec3(1,0,0));
+             drawableObject = new DrawableObject(modelSphere, shaderPhong, vec3(1,0,0));
              drawableObject->addStaticTransform(new Translation(vec3(0.0f, 1.0f, 0.0f)));
              break;
          case 1:
-             drawableObject = new DrawableObject(modelSphere, shaderLambert, objectColor);
+             drawableObject = new DrawableObject(modelSphere, shaderPhong, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(1.0f, 0.0f, 0.0f)));
              break;
          case 2:
@@ -93,7 +93,7 @@ Scene* sceneDefault()
              drawableObject->addStaticTransform(new Translation(vec3(0.0f, -1.0f, 0.0f)));
              break;
          case 3:
-             drawableObject = new DrawableObject(modelSphere, shaderBlinn, objectColor);
+             drawableObject = new DrawableObject(modelSphere, shaderPhong, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(-1.0f, 0.0f, 0.0f)));
              break;
          }
@@ -103,17 +103,17 @@ Scene* sceneDefault()
 
      
 	 Light* light = new Light(vec3(0.385, 0.647, 0.812), 1);
-     light->attach(shaderConstant);
-     light->attach(shaderLambert);
+     //light->attach(shaderConstant);
+     //light->attach(shaderLambert);
      light->attach(shaderPhong);
-     light->attach(shaderBlinn);
+     //light->attach(shaderBlinn);
 	 scene->addEntity(light);
 
      Camera* camera = new Camera();
-     camera->attach(shaderConstant);
-     camera->attach(shaderLambert);
+     //camera->attach(shaderConstant);
+     //camera->attach(shaderLambert);
      camera->attach(shaderPhong);
-     camera->attach(shaderBlinn);
+     //camera->attach(shaderBlinn);
 	 scene->addEntity(camera);
 
 
@@ -140,10 +140,10 @@ Scene* sceneDefault()
 
  	scene->addEntity(entity);
 
-     for (int i = 0; i < 100; i++)
+     model = new Model(tree);
+     for (int i = 0; i < 50; i++)
      {
 
-         model = new Model(tree);
          entity = new DrawableObject(model, shader, vec3(0.42f, 0.126f, 0.25f));
 
          entity->addStaticTransform(new Translation(vec3(rand() % 50 / (float)10, 0.0f, rand() % 50 / (float)10)));
@@ -151,12 +151,12 @@ Scene* sceneDefault()
          float random = (float)(rand() % 20) / (float)100 + 0.1f;
          entity->addStaticTransform(new Scaling(vec3(random, random, random)));
 
-         scene->addEntity(entity);
+        scene->addEntity(entity);
      }
 
+     model = new Model(bushes);
      for (int i = 0; i < 100; i++)
      {
-         model = new Model(bushes);
 
          entity = new DrawableObject(model, shader, vec3(0.124f, 0.252f, 0.0f));
 
@@ -168,12 +168,27 @@ Scene* sceneDefault()
          scene->addEntity(entity);
      }
 
-     Light* light = new Light(vec3(0.385, 0.647, 0.812), 1);
-     light->addStaticTransform(new Translation(vec3(10.0f, 10.0f, 10.0f)));
-     //light->setModel(new Model(sphere));
-     //light->addShaderProgram(shader);
-     light->attach(shader);
-     scene->addEntity(light);
+     
+
+     
+     model = new Model(sphere);
+     
+    Light* light;
+    for (int i = 0; i < 10; i++)
+    {
+        light = new Light(vec3(1.0f, 1.0f, 1.0f), 1.0f);
+        light->setModel(model);
+        light->addShaderProgram(shader);
+        light->addStaticTransform(new Scaling(vec3(0.02f, 0.02f, 0.02f)));
+
+        light->addStaticTransform(new Translation(vec3(2.0f, 0.5f, 4.0f)));
+
+        light->addLocalTransform(new TransformTimer({{0.5, new Rotation(vec3(-(10.0f), -(40.0f), -(10.0f)), vec3((10.0f), (40.0f), (10.0f)))}, {0, new Translation(vec3(0.005f, 0.0f, 0.0f))}}));
+        light->attach(shader);
+        scene->addEntity(light);
+    }
+
+
 
      Camera* camera = new Camera();
      camera->attach(shader);

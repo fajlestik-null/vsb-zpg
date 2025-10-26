@@ -25,3 +25,8 @@ void DrawableObject::update(GLFWwindow* window, float deltaTime, Controls* contr
 		this->notifyObservers();
 	}
 }
+
+SubjectType DrawableObject::getType() const
+{
+	return SubjectType::DRAWABLE_OBJECT;
+}

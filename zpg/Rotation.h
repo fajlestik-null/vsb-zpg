@@ -6,8 +6,16 @@
 class Rotation : public TransformBase {
 protected:
     vec3 mVector;
+    vec3 mRandomMin;
+    vec3 mRandomMax;
+    bool mIsRandom = false;
+    
 public:
     Rotation(const vec3& angles);
 
-    mat4 getModelMatrix() const override;
+    Rotation(vec3 min_range, vec3 max_range);
+    
+    void randomize();
+
+    mat4 getModelMatrix() override;
 };

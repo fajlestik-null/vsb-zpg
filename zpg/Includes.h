@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <string>
 //Namespaces
 using namespace std;
 using namespace glm;

@@ -7,7 +7,7 @@ void TransformComponent::addTransform(TransformBase* transform)
     mTransforms.push_back(transform);
 }
 
-mat4 TransformComponent::getModelMatrix() const
+mat4 TransformComponent::getModelMatrix()
 
 {
     mat4 resultMatrix = mat4(1.0f);

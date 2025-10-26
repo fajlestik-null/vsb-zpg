@@ -17,6 +17,8 @@ private:
     void checkLinker() const;
 
     void setUniform(const string& NAME, const mat4& MATRIX) const;
+    void setUniform(const string& NAME, const float& FLOAT) const;
+    void setUniform(const string& NAME, const int& INT) const;
     void setUniform(const string& NAME, const vec3& VECTOR) const;
     void setUniform(Light* light) const;
     void setUniform( Camera* camera) const;
