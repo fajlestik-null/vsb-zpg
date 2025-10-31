@@ -57,7 +57,7 @@ public:
             for (auto &parent : mParents)
             {
                 if (auto p = parent.lock())
-                    mParentGlobal *= p->getGlobalDynamic(); // inherit motion only
+					mParentGlobal *= p->getFinalMatrix(); // inherit all of paret's transforms
             }
 
             mFinalMatrix = mParentGlobal* getGlobalDynamic() * mStaticMatricies[0] * getLocalDynamic() * mStaticMatricies[1] * mStaticMatricies[2] * mStaticMatricies[3]; // PG * G * Ts * L * R * S
@@ -65,6 +65,12 @@ public:
 
         return mFinalMatrix ;
     }
+
+    void setFinalMatrix(const mat4& matrix)
+    {
+        mFinalMatrix = matrix;
+        mCalculated = true;
+	}
 
     void addStaticTransform(TransformBase *t)
     {

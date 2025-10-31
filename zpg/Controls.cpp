@@ -1,7 +1,9 @@
 #include "Controls.h"
 
-std::unordered_map<int, bool> Controls::keys;
-std::unordered_map<int, bool> Controls::mouseButtons;
+unordered_map<int, bool> Controls::keys;
+unordered_map<int, bool> Controls::mouseButtons;
+unordered_map<int, bool> Controls::notedKeys;
+
 
 double Controls::mouseX = 0.0;
 double Controls::mouseY = 0.0;
@@ -34,10 +36,21 @@ bool Controls::isKeyReleased(int key) const
     return it == keys.end() || !it->second;
 }
 
+bool Controls::isKeyTriggered(int key) const
+{
+    return isKeyPressed(key) && !(notedKeys.find(key) != notedKeys.end() && notedKeys.at(key));
+}
+
 bool Controls::isMouseButtonPressed(int button) const
 {
     auto it = mouseButtons.find(button);
     return it != mouseButtons.end() && it->second;
+}
+
+void Controls::nextFrame()
+{
+	notedKeys = keys;
+	resetMouseDelta();
 }
 
 void Controls::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)

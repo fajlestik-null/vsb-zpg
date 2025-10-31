@@ -81,6 +81,7 @@ void Application::run() {
         lastTick = currentTick;
         mGeneralScene->update(mWindow,deltaTime, mControls);
         mGeneralScene->render();
+        mControls->nextFrame();
 
         glfwSwapBuffers(mWindow);  // Swap buffers
         glfwPollEvents();

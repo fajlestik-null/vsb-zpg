@@ -13,6 +13,7 @@ private:
 	vector<WorldEntity*> mWorldEntities;
 public:
 	Scene(){};
+	~Scene();
 	void addEntity(WorldEntity* entity) { mWorldEntities.push_back(entity); }
 
 	void update(GLFWwindow* window, float deltaTime, Controls* controls);

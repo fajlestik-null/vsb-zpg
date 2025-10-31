@@ -146,6 +146,12 @@
     <ClInclude Include="TransformTimer.h">
       <Filter>Header Files\Transformations</Filter>
     </ClInclude>
+    <ClInclude Include="LightType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="generalLight.frag">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="constant.vert">
@@ -164,6 +170,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="blinn-phong.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="firefly.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="reflector.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

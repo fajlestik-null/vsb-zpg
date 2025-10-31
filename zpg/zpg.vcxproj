@@ -170,9 +170,11 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Controls.h" />
     <ClInclude Include="DrawableObject.h" />
+    <ClInclude Include="generalLight.frag" />
     <ClInclude Include="IncludeTransformations.h" />
     <ClInclude Include="IObserver.h" />
     <ClInclude Include="Includes.h" />
+    <ClInclude Include="LightType.h" />
     <ClInclude Include="Rotation.h" />
     <ClInclude Include="Scaling.h" />
     <ClInclude Include="Subject.h" />
@@ -193,9 +195,11 @@
     <None Include="blinn-phong.frag" />
     <None Include="constant.frag" />
     <None Include="constant.vert" />
+    <None Include="firefly.frag" />
     <None Include="lambert.frag" />
     <None Include="lambert.vert" />
     <None Include="phong.frag" />
+    <None Include="reflector.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

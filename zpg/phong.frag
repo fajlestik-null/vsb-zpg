@@ -50,7 +50,7 @@ void main ()
         float dotSpecular = pow(max(dot(normalize(reflectVector), cameraDir), 0.0), 32);
 
         //attenuation
-        float attenuationFactor = attenuation(length(lights[i].position - worldPosition.xyz), 0.0, 0.9, 0.8, lights[i].intensity); //normally constants are 0.0, 0.09, 0.032
+        float attenuationFactor = attenuation(length(lights[i].position - worldPosition.xyz), 0.0, 0.09, 0.032, lights[i].intensity); //normally constants are 0.0, 0.09, 0.032
 
         //combination
         colorComponent += (diffuse + (dotSpecular * vec4(lights[i].color, 1.0))) * attenuationFactor;

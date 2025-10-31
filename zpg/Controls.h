@@ -12,6 +12,8 @@ private:
 
     static unordered_map<int, bool> keys;
     static unordered_map<int, bool> mouseButtons;
+    static unordered_map<int, bool> notedKeys;
+
 
     static double mouseX;
     static double mouseY;
@@ -28,7 +30,9 @@ public:
 
     bool isKeyPressed(int key) const;
     bool isKeyReleased(int key) const;
+	bool isKeyTriggered(int key) const;
     bool isMouseButtonPressed(int button) const;
+	void nextFrame();
 
     double getMouseX() const { return mouseX; }
     double getMouseY() const { return mouseY; }

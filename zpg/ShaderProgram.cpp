@@ -87,13 +87,19 @@ void ShaderProgram::setUniform(const string& NAME, const vec3& VECTOR) const
 
 void ShaderProgram::setUniform(Light *light) const
 {
-	glm::mat4 lightModelMatrix = light->getTransformManager()->getFinalMatrix();
+	mat4 lightModelMatrix = light->getTransformManager()->getFinalMatrix();
 
-    glm::vec3 lightPosition = glm::vec3(lightModelMatrix[3]);
+    vec3 lightPosition = vec3(lightModelMatrix[3]);
+
+	vec4 localDirection = vec4(0.0f, 0.0f, -1.0f, 0.0f); // Assuming the light points down the negative Z-axis in its local space
+	vec3 lightDirection = normalize(vec3(lightModelMatrix*localDirection));
 		
 	this->setUniform("lights[" + to_string(light->getID()) + "].position", lightPosition);
 	this->setUniform("lights[" + to_string(light->getID()) + "].color", light->getLightColor());
 	this->setUniform("lights[" + to_string(light->getID()) + "].intensity", light->getIntensity());
+	this->setUniform("lights[" + to_string(light->getID()) + "].direction", lightDirection);
+	this->setUniform("lights[" + to_string(light->getID()) + "].type", light->getLightType());
+	this->setUniform("lights[" + to_string(light->getID()) + "].distance", light->getDistance());
 	this->setUniform("numLights", Light::LIGHT_COUNT);
 }
 

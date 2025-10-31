@@ -101,10 +101,12 @@ void Camera::update(GLFWwindow* window, float deltaTime, Controls* controls)
 	{
 		this->processMouse(controls->getMouseDeltaX(), controls->getMouseDeltaY());
 	}
-	controls->resetMouseDelta();
 
 	glfwGetWindowSize(window, (int*)&mWindowWidth, (int*)&mWindowHeight);
 	this->recalculateCameraVectors();
+
+	mat4 cameraFollowMatrix = inverse(mViewMatrix);
+	this->getTransformManager()->setFinalMatrix(cameraFollowMatrix);
 
 	this->notifyObservers();
 }

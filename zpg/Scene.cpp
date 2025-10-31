@@ -8,6 +8,14 @@ void Scene::render()
     }
 }
 
+Scene::~Scene()
+{
+    for(auto we : mWorldEntities)
+    {
+        delete we;
+    }
+}
+
 void Scene::update(GLFWwindow* window, float deltaTime, Controls* controls)
 {
     for (auto entity : mWorldEntities)
@@ -43,10 +51,10 @@ Scene* sceneDefault()
 
     scene->addEntity(camera);
 
-    Light* light = new Light(vec3(1.0f, 1.0f, 1.0f), 1.0f);
+    Light* light = new Light(LightType::POINT,vec3(0.0f, 1.0f, 0.0f), 1.0f, 1.0f);
 
     light->setModel(modelSphere);
-    light->addShaderProgram(shaderProgram);
+    //light->addShaderProgram(shaderProgram);
 
     light->addStaticTransform(new Scaling(vec3(0.2f, 0.2f, 0.2f)));
     light->addStaticTransform(new Translation(vec3(1.5f, 1.5f, 1.5f)));
@@ -64,36 +72,51 @@ Scene* sceneDefault()
  {
      Scene* scene = new Scene();
 
-     Model* modelSphere;
+     Model* model;
      //ShaderProgram* shaderConstant = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
      //ShaderProgram* shaderLambert = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "lambert.frag");
      ShaderProgram* shaderPhong = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
-     //ShaderProgram* shaderBlinn = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "blinn-phong.frag");
+     ShaderProgram* reflector = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "reflector.frag");
      
      DrawableObject* drawableObject;
      vec3 objectColor = vec3(1.0f, 0.0f, 0.0f);
 
+     model = new Model(plain);
+
+     drawableObject = new DrawableObject(model, reflector, vec3(1, 0, 0));
+
+     drawableObject->addStaticTransform(new Translation(vec3(0, 0, -1)));
+     drawableObject->addStaticTransform(new Rotation(vec3(0, 90, 90)));
+     drawableObject->addStaticTransform(new Scaling(vec3(2.5f, 1.0f, 2.5f)));
+
+     scene->addEntity(drawableObject);
+
+
      for (int i = 0; i < 4; i++)
      {
-         modelSphere = new Model(sphere);
+         model = new Model(sphere);
 
 
          switch (i)
          {
          default:
-             drawableObject = new DrawableObject(modelSphere, shaderPhong, vec3(1,0,0));
+             //drawableObject = new DrawableObject(model, shaderPhong, objectColor);
+             drawableObject = new DrawableObject(model, reflector, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(0.0f, 1.0f, 0.0f)));
              break;
          case 1:
-             drawableObject = new DrawableObject(modelSphere, shaderPhong, objectColor);
+             //drawableObject = new DrawableObject(model, shaderPhong, objectColor);
+             drawableObject = new DrawableObject(model, reflector, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(1.0f, 0.0f, 0.0f)));
              break;
          case 2:
-             drawableObject = new DrawableObject(modelSphere, shaderPhong, objectColor);
+             //drawableObject = new DrawableObject(model, shaderPhong, objectColor);
+             drawableObject = new DrawableObject(model, reflector, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(0.0f, -1.0f, 0.0f)));
              break;
          case 3:
-             drawableObject = new DrawableObject(modelSphere, shaderPhong, objectColor);
+             //drawableObject = new DrawableObject(model, shaderPhong, objectColor);
+             drawableObject = new DrawableObject(model, reflector, objectColor);
              drawableObject->addStaticTransform(new Translation(vec3(-1.0f, 0.0f, 0.0f)));
              break;
          }
@@ -102,17 +125,17 @@ Scene* sceneDefault()
      }
 
      
-	 Light* light = new Light(vec3(0.385, 0.647, 0.812), 1);
+	 Light* light = new Light(LightType::POINT,vec3(0.385, 0.647, 0.812), 1.0f, 1.0f);
      //light->attach(shaderConstant);
      //light->attach(shaderLambert);
-     light->attach(shaderPhong);
+     light->attach(reflector);
      //light->attach(shaderBlinn);
 	 scene->addEntity(light);
 
      Camera* camera = new Camera();
      //camera->attach(shaderConstant);
      //camera->attach(shaderLambert);
-     camera->attach(shaderPhong);
+     camera->attach(reflector);
      //camera->attach(shaderBlinn);
 	 scene->addEntity(camera);
 
@@ -123,7 +146,8 @@ Scene* sceneDefault()
  Scene* sceneTreesAndBushes()
  {
      Scene* scene = new Scene();
-     ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
+     ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "generalLight.frag");
+
 
      Model* model = new Model();
 
@@ -167,32 +191,32 @@ Scene* sceneDefault()
 
          scene->addEntity(entity);
      }
-
-     
-
      
      model = new Model(sphere);
-     
-    Light* light;
-    for (int i = 0; i < 10; i++)
-    {
-        light = new Light(vec3(1.0f, 1.0f, 1.0f), 1.0f);
-        light->setModel(model);
-        light->addShaderProgram(shader);
-        light->addStaticTransform(new Scaling(vec3(0.02f, 0.02f, 0.02f)));
-
-        light->addStaticTransform(new Translation(vec3(2.0f, 0.5f, 4.0f)));
-
-        light->addLocalTransform(new TransformTimer({{0.5, new Rotation(vec3(-(10.0f), -(40.0f), -(10.0f)), vec3((10.0f), (40.0f), (10.0f)))}, {0, new Translation(vec3(0.005f, 0.0f, 0.0f))}}));
-        light->attach(shader);
-        scene->addEntity(light);
-    }
-
-
 
      Camera* camera = new Camera();
      camera->attach(shader);
      scene->addEntity(camera);
+     
+    Light* light;
+    for (int i = 0; i < 1; i++)
+    {
+        light = new Light(LightType::REFLECTOR, vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.5f);
+        light->setModel(model);
+        light->addShaderProgram(shader);
+		light->addParent(camera->getTransformManager());
+		light->setActive(true);
+        light->addStaticTransform(new Scaling(vec3(0.02f, 0.02f, 0.02f)));
+
+        //light->addStaticTransform(new Translation(vec3(2.0f, 0.5f, 4.0f)));
+
+		//light->addStaticTransform(new Rotation(vec3(0.0f, 45.0f, 0.0f)));
+
+        //light->addLocalTransform(new TransformTimer({{0.5, new Rotation(vec3(0.0f, -(40.0f), 0.0f), vec3(0.0f, (40.0f), 0.0f))}, {0, new Translation(vec3(0.005f, 0.0f, 0.0f))}})); //{min},{max}
+        light->attach(shader);
+        scene->addEntity(light);
+    }
+
 
  	return scene;
  }
@@ -233,8 +257,10 @@ Scene* sceneSolarSystem()
     scene->addEntity(camera);
 
 
-    Light* light = new Light(vec3(0.385, 0.647, 0.812), 1);
-    light->addStaticTransform(new Translation(vec3(10.0f, 5.0f, 5.0f)));
+    Light* light = new Light(LightType::POINT,vec3(0.385, 0.647, 0.812), 1.0f, 1.0f);
+    light->addStaticTransform(new Translation(vec3(0.0f, 0.0f, 0.0f)));
+    light->setModel(modelSphere);
+    light->addShaderProgram(shader);
     light->attach(shader);
     scene->addEntity(light);
 
