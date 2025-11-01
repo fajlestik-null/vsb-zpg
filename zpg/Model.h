@@ -4,11 +4,13 @@
 class Model
 {
 private:
-	GLuint mVBO, mVAO;
+	GLuint mVBO, mVAO, mEBO;
 	vector<float> mVertices;
+	vector<unsigned int> mIndices;
 public:
 	Model();
 	Model(const vector<float> &VERTICES);
 	~Model();
 	void put() const;
+	bool loadModelFromFile(const string& PATH);
 };

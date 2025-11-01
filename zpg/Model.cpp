@@ -13,20 +13,91 @@ Model::Model(const vector<float> &VERTICES): mVertices(VERTICES)
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // position
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); // color
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); // normal
 
 }
 
-Model::Model() :mVAO(0), mVBO(0) {}
+Model::Model() :mVAO(0), mVBO(0), mEBO(0) {}
 
 Model::~Model()
 {
 	glDeleteVertexArrays(1, &mVAO);
 	glDeleteBuffers(1, &mVBO);
+	//glDeleteBuffers(1, &mEBO);
 }
 
 void Model::put() const
 {
 	glBindVertexArray(mVAO);
-	glDrawArrays(GL_TRIANGLES, 0, (GLsizei) mVertices.size()/6);
+    if (!(mIndices.empty()))
+        glDrawElements(GL_TRIANGLES, (GLsizei)mIndices.size(), GL_UNSIGNED_INT, 0);
+    else
+	    glDrawArrays(GL_TRIANGLES, 0, (GLsizei) mVertices.size()/6);
+}
+
+bool Model::loadModelFromFile(const string& PATH)
+{
+    Assimp::Importer importer;
+ 
+    const aiScene* scene = importer.ReadFile(PATH,
+        aiProcess_Triangulate |
+        aiProcess_GenNormals |
+        aiProcess_JoinIdenticalVertices |
+        aiProcess_PreTransformVertices);
+
+    if (!scene || !scene->mRootNode || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE)
+    {
+        std::cerr << "Failed to load model at: " << PATH << "\n"
+            << importer.GetErrorString() << std::endl;
+        return false;
+    }
+
+    const aiMesh* mesh = scene->mMeshes[0];
+    std::vector<float> data;
+    std::vector<unsigned int> inds;
+
+    data.reserve(mesh->mNumVertices * 6);
+
+    for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
+    {
+        aiVector3D pos = mesh->mVertices[i];
+        aiVector3D normal = mesh->HasNormals() ? mesh->mNormals[i] : aiVector3D(0, 0, 0);
+
+        data.push_back(pos.x);
+        data.push_back(pos.y);
+        data.push_back(pos.z);
+
+        data.push_back(normal.x);
+        data.push_back(normal.y);
+        data.push_back(normal.z);
+    }
+
+    for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
+    {
+        const aiFace& face = mesh->mFaces[i];
+        for (unsigned int j = 0; j < face.mNumIndices; ++j)
+            inds.push_back(face.mIndices[j]);
+    }
+
+	mVertices = move(data);
+	mIndices = move(inds);
+
+    // Generate VAO/VBO/EBO
+    glGenVertexArrays(1, &mVAO);
+    glBindVertexArray(mVAO);
+
+    glGenBuffers(1, &mVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+    glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), mVertices.data(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, &mEBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(unsigned int), mIndices.data(), GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+
+    return true;
 }

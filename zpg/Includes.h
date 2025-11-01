@@ -9,6 +9,10 @@
 #include <glm/mat4x4.hpp>               // mat4
 #include <glm/gtc/matrix_transform.hpp> // translate, rotate, scale, perspective
 #include <glm/gtc/type_ptr.hpp>         // value_ptr
+// Include Assimp
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 //Include c++
 #include <iostream>
 #include <fstream>

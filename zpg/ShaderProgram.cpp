@@ -1,6 +1,10 @@
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Light.h"
+ShaderProgram::ShaderProgram()
+{
+
+}
 
 ShaderProgram::ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_SHADER, const char* FRAGMENT_SHADER)
 {
@@ -31,6 +35,32 @@ ShaderProgram::~ShaderProgram()
 	delete mVertexShader;
 	delete mFragmentShader;
 	glDeleteProgram(mID);
+}
+
+bool ShaderProgram::loadShaderProgramFromFile(const string& VERTEX_SHADER, const string& FRAGMENT_SHADER)
+{
+		this->mVertexShader = new Shader();
+		this->mFragmentShader = new Shader();
+		if (!(this->mVertexShader->createShaderFromFile(GL_VERTEX_SHADER, VERTEX_SHADER) && this->mFragmentShader->createShaderFromFile(GL_FRAGMENT_SHADER, FRAGMENT_SHADER)))
+		{
+			return false;
+		}
+
+
+		this->mID = glCreateProgram();
+		this->mVertexShader->attachShader(mID);
+		this->mFragmentShader->attachShader(mID);
+		glLinkProgram(mID);
+
+
+		this->checkLinker();
+
+		// cleanup
+		//glDeleteShader(vertex_shader);
+		//glDeleteShader(fragment_shader);
+
+
+		return true;
 }
 
 void ShaderProgram::setUniform(const string& NAME, const mat4& MATRIX) const

@@ -73,9 +73,15 @@ void Light::processKeyboard(GLFWwindow* window, float delta_time, Controls* cont
 	{
 		// Toggle flashlight (reflector) on/off
 		if (mDistance > 0.0f)
+		{
+			mDistanceToRemember = mDistance;
 			mDistance = 0.0f;
+		}
 		else
-			mDistance = 1.0f;
+		{
+			mDistance = mDistanceToRemember;
+			mDistanceToRemember = 0.0f;
+		}
 
 		this->notifyObservers();
 	}

@@ -25,8 +25,11 @@ private:
 
 
 public:
+	ShaderProgram();
     ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_SHADER, const char* FRAGMENT_SHADER);
     ~ShaderProgram();
+
+    bool loadShaderProgramFromFile(const string& VERTEX_SHADER, const string& FRAGMENT_SHADER);
 
 	void notify(Subject* subject) override;
 

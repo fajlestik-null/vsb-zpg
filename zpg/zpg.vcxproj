@@ -116,17 +116,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Lib\glew-2.1.0\include;..\Lib\glm-master;..\Lib\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Lib\Assimp\include;..\Lib\glew-2.1.0\include;..\Lib\glm-master;..\Lib\glfw-3.4.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>true</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;opengl32.lib;glu32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Lib\glew-2.1.0\lib\Release\x64;..\Lib\glfw-3.4.bin.WIN64\lib-vc2019;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mt.lib;glew32.lib;opengl32.lib;glu32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Lib\glew-2.1.0\lib\Release\x64;..\Lib\glfw-3.4.bin.WIN64\lib-vc2019;..\Lib\Assimp\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <StackReserveSize>16777216</StackReserveSize>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y /D "..\Lib\glew-2.1.0\bin\Release\x64\glew32.dll" "$(OutDir)"</Command>
+      <Command>xcopy /Y /D "..\Lib\glew-2.1.0\bin\Release\x64\glew32.dll" "$(OutDir)"
+xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -175,6 +178,7 @@
     <ClInclude Include="IObserver.h" />
     <ClInclude Include="Includes.h" />
     <ClInclude Include="LightType.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Rotation.h" />
     <ClInclude Include="Scaling.h" />
     <ClInclude Include="Subject.h" />

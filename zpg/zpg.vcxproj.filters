@@ -152,6 +152,9 @@
     <ClInclude Include="generalLight.frag">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="constant.vert">

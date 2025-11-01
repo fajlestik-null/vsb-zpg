@@ -18,6 +18,13 @@ float distance;
 
 };
 
+/*struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+}; */
+
 uniform lightSource lights [MAX_LIGHTS];
 
 uniform int numLights;
@@ -36,7 +43,7 @@ if ( distance == 0.0 )
 if(distance == 1.0f)
     return 1.0f;
 
-distance = (1.0 - distance) * 0.5f;
+distance = (1.0 - distance);
 
 float att = (1.0 / ( c + l * d + q * d * d ) ) - distance;
 
@@ -65,7 +72,7 @@ void main () {
         }
         else if(lights[i].type == 2) {
             lightDirection = normalize(lights[i].position - worldPosition.xyz);
-            att = attenuation( length(lights[i].position - worldPosition.xyz), 1.0, 0.9, 0.32, lights[i].distance );
+            att = attenuation( length(lights[i].position - worldPosition.xyz), 1.0, 0.14, 0.7, lights[i].distance ); //1.0, 0.14, 0.7
         }
         else if(lights[i].type == 3) {
             lightDirection = normalize(lights[i].position - worldPosition.xyz);

@@ -84,6 +84,7 @@ Scene* sceneDefault()
      model = new Model(plain);
 
      drawableObject = new DrawableObject(model, reflector, vec3(1, 0, 0));
+     //
 
      drawableObject->addStaticTransform(new Translation(vec3(0, 0, -1)));
      drawableObject->addStaticTransform(new Rotation(vec3(0, 90, 90)));
@@ -147,6 +148,8 @@ Scene* sceneDefault()
  {
      Scene* scene = new Scene();
      ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "generalLight.frag");
+     ShaderProgram* shaderFirefly = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
+
 
 
      Model* model = new Model();
@@ -165,7 +168,7 @@ Scene* sceneDefault()
  	scene->addEntity(entity);
 
      model = new Model(tree);
-     for (int i = 0; i < 50; i++)
+     for (int i = 0; i < 50; i++) //
      {
 
          entity = new DrawableObject(model, shader, vec3(0.42f, 0.126f, 0.25f));
@@ -194,28 +197,37 @@ Scene* sceneDefault()
      
      model = new Model(sphere);
 
-     Camera* camera = new Camera();
-     camera->attach(shader);
-     scene->addEntity(camera);
-     
-    Light* light;
-    for (int i = 0; i < 1; i++)
+     Light* light;
+
+
+    for (int i = 0; i < 5; i++)
     {
-        light = new Light(LightType::REFLECTOR, vec3(1.0f, 1.0f, 1.0f), 1.0f, 0.5f);
+        light = new Light(LightType::POINT, vec3(0.886f, 1.0f, 0.6f), 1.0f, 0.2f);
         light->setModel(model);
-        light->addShaderProgram(shader);
-		light->addParent(camera->getTransformManager());
-		light->setActive(true);
-        light->addStaticTransform(new Scaling(vec3(0.02f, 0.02f, 0.02f)));
+        light->addShaderProgram(shaderFirefly);
+        light->addStaticTransform(new Scaling(vec3(0.002f, 0.002f, 0.002f)));
 
-        //light->addStaticTransform(new Translation(vec3(2.0f, 0.5f, 4.0f)));
+        light->addStaticTransform(new Translation(vec3(2.0f, 0.5f, 4.0f)));
 
-		//light->addStaticTransform(new Rotation(vec3(0.0f, 45.0f, 0.0f)));
-
-        //light->addLocalTransform(new TransformTimer({{0.5, new Rotation(vec3(0.0f, -(40.0f), 0.0f), vec3(0.0f, (40.0f), 0.0f))}, {0, new Translation(vec3(0.005f, 0.0f, 0.0f))}})); //{min},{max}
+        light->addLocalTransform(new TransformTimer({{0.5, new Rotation(vec3(0.0f, -(40.0f), 0.0f), vec3(0.0f, (40.0f), 0.0f))}, {0, new Translation(vec3(0.005f, 0.0f, 0.0f))}})); //{min},{max}
         light->attach(shader);
+		light->attach(shaderFirefly);
         scene->addEntity(light);
     }
+
+    Camera* camera = new Camera();
+    camera->attach(shader);
+    camera->attach(shaderFirefly);
+    scene->addEntity(camera);
+
+    light = new Light(LightType::REFLECTOR, vec3(0.90f, 0.95f, 1.0f), 2.0f, 0.75f);
+    //light->setModel(model);
+    //light->addShaderProgram(shader);
+    light->addParent(camera->getTransformManager());
+    light->setActive(true);
+
+    light->attach(shader);
+    scene->addEntity(light);
 
 
  	return scene;
@@ -266,5 +278,40 @@ Scene* sceneSolarSystem()
 
 	return scene;
 }
+
+Scene* sceneResourceLoadingTest()
+{
+	Scene* scene = new Scene();
+
+	ResourceManager& resourceManager = ResourceManager::getInstance();
+
+	Model* model = resourceManager.loadModel("./Res/cube.obj");
+	ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
+
+	DrawableObject* entity = new DrawableObject(model, shader, vec3(1.0f, 0.5f, 0.0f));
+
+	scene->addEntity(entity);
+
+	model = resourceManager.loadModel("./Res/square.obj");
+
+    entity = new DrawableObject(model, shader, vec3(1.0f, 0.0f, 0.5f));
+
+	entity->addStaticTransform(new Translation(vec3(2.0f, 0.0f, 0.0f)));
+
+    scene->addEntity(entity);
+
+	Camera* camera = new Camera();
+	camera->attach(shader);
+	scene->addEntity(camera);
+
+	Light* light = new Light(LightType::POINT, vec3(1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
+	light->addStaticTransform(new Translation(vec3(2.0f, 2.0f, 2.0f)));
+	light->attach(shader);
+	scene->addEntity(light);
+
+	return scene;
+}
+
+
 
 

@@ -18,8 +18,7 @@ void Camera::processKeyboard(GLFWwindow* window, float deltaTime, Controls* cont
     float movementSpeed = 2.5f;
     float velocity = movementSpeed * deltaTime;
 
-	//Maybe will need to move
-	mRight = normalize(cross(mTarget, mWorldUp));  //problem -> walking diagonally
+	mRight = normalize(cross(mTarget, mWorldUp));  
 	mUp = normalize(cross(mRight, mTarget));
 
     if (controls->isKeyPressed(GLFW_KEY_W))

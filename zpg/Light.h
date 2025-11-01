@@ -9,6 +9,7 @@ private:
 	int mID;
 	float mIntensity;
 	float mDistance;
+	float mDistanceToRemember;
 	vec3 mLightColor;
 	bool mActive;
 	LightType mLightType;

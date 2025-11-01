@@ -6,6 +6,7 @@
 #include "DrawableObject.h"
 #include "Camera.h"
 #include "Light.h"
+#include "ResourceManager.h"
 
 class Scene
 {
@@ -28,3 +29,5 @@ Scene* sceneSpheres();
 Scene* sceneTreesAndBushes();
 
 Scene* sceneSolarSystem();
+
+Scene* sceneResourceLoadingTest();
