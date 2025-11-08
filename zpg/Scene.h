@@ -30,4 +30,4 @@ Scene* sceneTreesAndBushes();
 
 Scene* sceneSolarSystem();
 
-Scene* sceneResourceLoadingTest();
+Scene* sceneTesting();

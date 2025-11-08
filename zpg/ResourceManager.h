@@ -4,6 +4,8 @@
 
 #include "Model.h"
 #include "ShaderProgram.h"
+#include "Texture.h"
+
 
 
 class ResourceManager
@@ -11,6 +13,7 @@ class ResourceManager
 private:
     unordered_map<string, Model*> mModels;
     unordered_map<string, ShaderProgram*> mShaderPrograms;
+    unordered_map<string, Texture*> mTextures;
 
     ResourceManager() = default;
 
@@ -66,6 +69,34 @@ public:
         mShaderPrograms[key] = shaderProgram;
         return shaderProgram;
     }
+
+    Texture* loadTexture(const std::string& PATH)
+    {
+        // Check if texture is already loaded
+        auto it = mTextures.find(PATH);
+        if (it != mTextures.end())
+            return it->second;
+
+        // Load the texture; Texture class handles units automatically
+        Texture* texture = new Texture(PATH);
+        if (texture->getID() == 0)
+        {
+            std::cerr << "Failed to load texture: " << PATH << std::endl;
+            delete texture;
+            return nullptr;
+        }
+
+        // Store it for reuse
+        mTextures[PATH] = texture;
+        return texture;
+    }
+
+    Texture* getTexture(const std::string& PATH)
+    {
+        auto it = mTextures.find(PATH);
+        return it != mTextures.end() ? it->second : nullptr;
+    }
+
 
     void clear()
     {

@@ -7,3 +7,4 @@
 #include "./Res/suzi_flat.h"
 #include "./Res/suzi_smooth.h"
 #include "./Res/tree.h"
+#include "./Res/plain_uv.h"

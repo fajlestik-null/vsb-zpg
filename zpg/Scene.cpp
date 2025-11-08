@@ -1,5 +1,6 @@
 #include "Scene.h"
 
+
 void Scene::render()
 {
     for (auto entity : mWorldEntities)
@@ -147,19 +148,24 @@ Scene* sceneDefault()
  Scene* sceneTreesAndBushes()
  {
      Scene* scene = new Scene();
+     ResourceManager& resourceManager = ResourceManager::getInstance();
+
      ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "generalLight.frag");
      ShaderProgram* shaderFirefly = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
 
+	 Texture * grass = resourceManager.loadTexture("./Res/grass.png");
+	 Model* ground = resourceManager.loadModel("./Res/square.obj");
 
+     ground->setTexture(grass);
 
-     Model* model = new Model();
 
      DrawableObject* entity = new DrawableObject();
 
- 	model = new Model(plain);
+ 	entity = new DrawableObject(ground, shader, vec3(0.5f, 0.2f, 0.2f));
 
- 	entity = new DrawableObject(model, shader, vec3(0.5f, 0.2f, 0.2f));
 
+    //modelPlain->setTexture(resourceManager.loadTexture("./Res/grass.png"));
+    
      entity->addStaticTransform(new TransformComponent({ 
          new Scaling(vec3(2.5f, 1.0f, 2.5f)),
          new Translation(vec3(1.0f, 0.0f, 1.0f))
@@ -167,8 +173,10 @@ Scene* sceneDefault()
 
  	scene->addEntity(entity);
 
+    Model* model = new Model();
+
      model = new Model(tree);
-     for (int i = 0; i < 50; i++) //
+     for (int i = 0; i < 50; i++)
      {
 
          entity = new DrawableObject(model, shader, vec3(0.42f, 0.126f, 0.25f));
@@ -237,6 +245,9 @@ Scene* sceneSolarSystem()
 {
 	Scene* scene = new Scene();
 
+    ResourceManager& resourceManager = ResourceManager::getInstance();
+
+
 	ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
 
 	Model* modelSphere = new Model(sphere);
@@ -279,32 +290,57 @@ Scene* sceneSolarSystem()
 	return scene;
 }
 
-Scene* sceneResourceLoadingTest()
+Scene* sceneTesting()
 {
 	Scene* scene = new Scene();
 
 	ResourceManager& resourceManager = ResourceManager::getInstance();
 
-	Model* model = resourceManager.loadModel("./Res/cube.obj");
-	ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
+    Model* model = resourceManager.loadModel("./Res/cube.obj");
+    ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
+    Texture* wood = resourceManager.loadTexture("./Res/wooden_fence.png");
 
-	DrawableObject* entity = new DrawableObject(model, shader, vec3(1.0f, 0.5f, 0.0f));
+	DrawableObject* cube = new DrawableObject(model, shader, vec3(0.8f, 0.7f, 0.6f));
 
-	scene->addEntity(entity);
+	model->setTexture(wood);
 
-	model = resourceManager.loadModel("./Res/square.obj");
+	scene->addEntity(cube);
 
-    entity = new DrawableObject(model, shader, vec3(1.0f, 0.0f, 0.5f));
+    Model* cubeM = resourceManager.loadModel("./Res/cube.obj");
 
-	entity->addStaticTransform(new Translation(vec3(2.0f, 0.0f, 0.0f)));
+	DrawableObject* cube_en = new DrawableObject(cubeM, shader, vec3(0.8f, 0.7f, 0.6f));
 
-    scene->addEntity(entity);
+	cube_en->addStaticTransform(new Translation(vec3(1.5f, 0.0f, 0.0f)));
+
+	scene->addEntity(cube_en);
+
+
+    /*Model* shrek = resourceManager.loadModel("./Res/shrek.obj");
+	Model* fiona = resourceManager.loadModel("./Res/fiona.obj");
+    ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
+	Texture* shrek_tx = resourceManager.loadTexture("./Res/shrek.png");
+
+
+    DrawableObject* shrek_en = new DrawableObject(shrek, shader, vec3(0.0f, 0.1f, 0.0f));
+    shrek->setTexture(shrek_tx);
+
+    scene->addEntity(shrek_en);
+    
+
+    DrawableObject* fiona_en = new DrawableObject(fiona, shader, vec3(0.0f, 0.1f, 0.0f));
+
+    Texture* fiona_tx = resourceManager.loadTexture("./Res/fiona.png");
+    fiona->setTexture(fiona_tx);
+
+	fiona_en->addStaticTransform(new Translation(vec3(1.0f, 0.1f, 0.1f)));
+
+    scene->addEntity(fiona_en);*/
 
 	Camera* camera = new Camera();
 	camera->attach(shader);
 	scene->addEntity(camera);
 
-	Light* light = new Light(LightType::POINT, vec3(1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
+	Light* light = new Light(LightType::POINT, vec3(1.0f, 1.0f, 1.0f), 0.5f, 1.0f);
 	light->addStaticTransform(new Translation(vec3(2.0f, 2.0f, 2.0f)));
 	light->attach(shader);
 	scene->addEntity(light);

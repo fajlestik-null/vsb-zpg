@@ -163,6 +163,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderLoadType.h" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="TransformTimer.cpp" />
     <ClCompile Include="Translation.cpp" />
@@ -188,6 +189,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SubjectType.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TransformBase.h" />
     <ClInclude Include="TransformManager.h" />
@@ -204,6 +206,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <None Include="lambert.vert" />
     <None Include="phong.frag" />
     <None Include="reflector.frag" />
+    <None Include="uv_test.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,9 @@
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Light.h"
+#include "WorldEntity.h"
+
+
 ShaderProgram::ShaderProgram()
 {
 

@@ -31,12 +31,18 @@ public:
         for (auto& shaderProgram : mShaderPrograms)
         {
             shaderProgram->useShader(mTransformManager->getFinalMatrix(), mObjectColor);
+
+            if (mModel->getTexture())
+            {
+                shaderProgram->setUniform("textureUnitID", mModel->getTexture()->getUnitIndex());
+                mModel->getTexture()->bind(); // make sure the correct texture is active
+            }
         }
             mModel->put();
     }
 
     virtual void update(GLFWwindow* window, float deltaTime, Controls* controls) {
-        // Default
+		notifyObservers();
     };
 
     Model* getModel() const { return mModel; }

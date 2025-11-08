@@ -6,6 +6,7 @@
 
 class Camera;
 class Light;
+class WorldEntity;
 
 class ShaderProgram : public IObserver
 {
@@ -18,7 +19,6 @@ private:
 
     void setUniform(const string& NAME, const mat4& MATRIX) const;
     void setUniform(const string& NAME, const float& FLOAT) const;
-    void setUniform(const string& NAME, const int& INT) const;
     void setUniform(const string& NAME, const vec3& VECTOR) const;
     void setUniform(Light* light) const;
     void setUniform( Camera* camera) const;
@@ -28,6 +28,8 @@ public:
 	ShaderProgram();
     ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_SHADER, const char* FRAGMENT_SHADER);
     ~ShaderProgram();
+
+    void setUniform(const string& NAME, const int& INT) const;
 
     bool loadShaderProgramFromFile(const string& VERTEX_SHADER, const string& FRAGMENT_SHADER);
 

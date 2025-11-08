@@ -2,7 +2,9 @@
 #define MAX_LIGHTS 8
 in vec4 worldPosition;
 in vec3 worldNormal;
+in vec2 uv;
 uniform vec3 cameraPosition;
+uniform sampler2D textureUnitID;
 uniform vec3 objectColor;
 out vec4 fragColor;
 
@@ -17,13 +19,6 @@ vec3 direction;
 float distance;
 
 };
-
-/*struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    float shininess;
-}; */
 
 uniform lightSource lights [MAX_LIGHTS];
 
@@ -99,7 +94,7 @@ void main () {
                 spot=(spot-0.93)/(1-0.93);
             }
             
-            finalColor += (diffuse + (specular * vec4(lights[i].color, 1.0))) * spot * att * lights[i].intensity;
+            finalColor += (diffuse + texture(textureUnitID,uv) + (specular * vec4(lights[i].color, 1.0))) * spot * att * lights[i].intensity; // texture(textureUnitID,uv) -> in case of missing texture returns 0
         }
     
     }
