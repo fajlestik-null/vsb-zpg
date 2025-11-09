@@ -17,6 +17,7 @@ Light::Light(Model* model, ShaderProgram* shader,const vec3 COLOR)
 	this->setModel(model);
 	this->addShaderProgram(shader);
 	this->setColor(COLOR);
+	this->setTexture(nullptr);
 }
 
 Light::Light(const LightType LIGHT_TYPE, const vec3 LIGHT_COLOR, const float INTENSITY, const float DISTANCE = 1.0f)
@@ -27,6 +28,7 @@ Light::Light(const LightType LIGHT_TYPE, const vec3 LIGHT_COLOR, const float INT
 	this->mIntensity = INTENSITY;
 	this->mDistance = DISTANCE;
 	this->mActive = false;
+	this->setTexture(nullptr);
 }
 
 vec3 Light::getLightColor() const

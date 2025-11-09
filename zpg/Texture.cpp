@@ -7,6 +7,8 @@ GLuint Texture::sNextUnit = 0;
 
 Texture::Texture(const std::string& PATH)
 {
+    mTextureUnit = GL_TEXTURE0;
+
     int width, height, channels;
     stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load(PATH.c_str(), &width, &height, &channels, 4);
@@ -40,11 +42,12 @@ Texture::Texture(const std::string& PATH)
 Texture::~Texture()
 {
     glDeleteTextures(1, &mTextureID);
+	sNextUnit--;
 }
 
 void Texture::bind() const
 {
-    glActiveTexture(mTextureUnit);
+    glActiveTexture(0 + GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTextureID);
 }
 
@@ -61,5 +64,5 @@ GLuint Texture::getID() const
 
 int Texture::getUnitIndex() const
 {
-    return (int)(mTextureUnit - GL_TEXTURE0);
+    return (int)(mTextureUnit + GL_TEXTURE0);
 }

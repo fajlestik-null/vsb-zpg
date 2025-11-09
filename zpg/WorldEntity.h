@@ -4,6 +4,7 @@
 #include "ShaderProgram.h"
 #include "TransformManager.h"
 #include "Controls.h"
+#include "Texture.h"
 
 #include "Includes.h"
 
@@ -17,9 +18,11 @@ protected:
 	Model* mModel;
 	vector<ShaderProgram*> mShaderPrograms;
     shared_ptr<TransformManager> mTransformManager;
+    Texture* mTexture;
+
 
 public:
-    WorldEntity(): mModel(nullptr), mTransformManager(make_shared<TransformManager>()), mObjectColor(vec3(1.0f, 1.0f, 1.0f)) {}
+    WorldEntity(): mModel(nullptr), mTransformManager(make_shared<TransformManager>()), mObjectColor(vec3(1.0f, 1.0f, 1.0f)), mTexture(nullptr){}
 
     virtual ~WorldEntity() = default;
 
@@ -32,13 +35,26 @@ public:
         {
             shaderProgram->useShader(mTransformManager->getFinalMatrix(), mObjectColor);
 
-            if (mModel->getTexture())
+            if (mTexture != nullptr)
             {
-                shaderProgram->setUniform("textureUnitID", mModel->getTexture()->getUnitIndex());
-                mModel->getTexture()->bind(); // make sure the correct texture is active
+                shaderProgram->setUniform("textureUnitID", mTexture->getUnitIndex());
+				shaderProgram->setUniform("hasTexture", 1);
+                mTexture->bind();
+            }
+            else
+            {
+                shaderProgram->setUniform("hasTexture", 0);
+
             }
         }
-            mModel->put();
+
+        mModel->put();
+
+            // Optional: Unbind the texture after drawing
+            if (mTexture != nullptr)
+            {
+                mTexture->unbind();
+            }
     }
 
     virtual void update(GLFWwindow* window, float deltaTime, Controls* controls) {
@@ -50,7 +66,9 @@ public:
     shared_ptr<TransformManager> getTransformManager() const { return mTransformManager; }
     bool isVisible() const { return mVisible; }
     vec3 getColor() const { return mObjectColor; }
+    Texture* getTexture() const { return mTexture; }
     
+    void setTexture(Texture* texture) { mTexture = texture; }
     void setModel(Model* model) { mModel = model; }
     void addShaderProgram(ShaderProgram* shaderProgram) { mShaderPrograms.push_back(shaderProgram); }
     void setTransformManager(shared_ptr<TransformManager> transformManager) { mTransformManager = move(transformManager); }

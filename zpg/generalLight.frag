@@ -3,9 +3,11 @@
 in vec4 worldPosition;
 in vec3 worldNormal;
 in vec2 uv;
+
 uniform vec3 cameraPosition;
 uniform sampler2D textureUnitID;
-uniform vec3 objectColor;
+uniform vec3 sourceObjectColor;
+uniform int hasTexture;
 out vec4 fragColor;
 
 uniform vec3 lightPosition;
@@ -47,6 +49,12 @@ return clamp( att , 0.0 , 1.0);
 
 void main () {
 
+    vec3 objectColor = sourceObjectColor;
+
+    if(hasTexture == 1)
+    {
+            objectColor = texture(textureUnitID,uv).xyz;
+    }
 
 
     vec4 finalColor = vec4(0.0);
@@ -94,10 +102,10 @@ void main () {
                 spot=(spot-0.93)/(1-0.93);
             }
             
-            finalColor += (diffuse + texture(textureUnitID,uv) + (specular * vec4(lights[i].color, 1.0))) * spot * att * lights[i].intensity; // texture(textureUnitID,uv) -> in case of missing texture returns 0
+            finalColor += (diffuse  + (specular * vec4(lights[i].color, 1.0))) * spot * att * lights[i].intensity; // texture(textureUnitID,uv) -> in case of missing texture returns 0
         }
     
     }
 
-    fragColor = ambient + finalColor;
+    fragColor = ambient + finalColor + texture(textureUnitID,uv) * 0.01;
 }

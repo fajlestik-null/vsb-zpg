@@ -39,7 +39,7 @@ Scene* sceneDefault()
     Model* modelTriangle = new Model(triangle);
     Model* modelSphere = new Model(sphere);
 
-	ShaderProgram* shaderProgram = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
+	ShaderProgram* shaderProgram = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "generalLight.frag");
 
     DrawableObject* entity = new DrawableObject(modelTriangle, shaderProgram, vec3(1,0,0));
 
@@ -150,30 +150,32 @@ Scene* sceneDefault()
      Scene* scene = new Scene();
      ResourceManager& resourceManager = ResourceManager::getInstance();
 
+     Model* model = new Model();
+
      ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "generalLight.frag");
+     ShaderProgram* shaderTexture = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "generalLight.frag");
      ShaderProgram* shaderFirefly = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
 
 	 Texture * grass = resourceManager.loadTexture("./Res/grass.png");
-	 Model* ground = resourceManager.loadModel("./Res/square.obj");
-
-     ground->setTexture(grass);
+	 model = resourceManager.loadModel("./Res/square.obj");
 
 
-     DrawableObject* entity = new DrawableObject();
+     DrawableObject* ground = new DrawableObject();
 
- 	entity = new DrawableObject(ground, shader, vec3(0.5f, 0.2f, 0.2f));
+     ground = new DrawableObject(model, shaderTexture, vec3(0.5f, 0.2f, 0.2f));
 
+	 ground->setTexture(grass);
 
     //modelPlain->setTexture(resourceManager.loadTexture("./Res/grass.png"));
     
-     entity->addStaticTransform(new TransformComponent({ 
+     ground->addStaticTransform(new TransformComponent({ 
          new Scaling(vec3(2.5f, 1.0f, 2.5f)),
          new Translation(vec3(1.0f, 0.0f, 1.0f))
          }));
 
- 	scene->addEntity(entity);
+ 	scene->addEntity(ground);
 
-    Model* model = new Model();
+    DrawableObject* entity = new DrawableObject();
 
      model = new Model(tree);
      for (int i = 0; i < 50; i++)
@@ -202,6 +204,42 @@ Scene* sceneDefault()
 
          scene->addEntity(entity);
      }
+
+     model = resourceManager.loadModel("./Res/shrek.obj");
+     Texture* shrek_tx = resourceManager.loadTexture("./Res/shrek.png");
+
+
+     entity = new DrawableObject(model, shaderTexture, vec3(0.0f, 0.1f, 0.0f));
+     entity->setTexture(shrek_tx);
+
+     entity->addStaticTransform(new Translation(vec3(2.0f, 0.0f, 1.9f)));
+     entity->addStaticTransform(new Scaling(vec3(0.1f, 0.1f, 0.1f)));
+
+     scene->addEntity(entity);
+
+
+     model = resourceManager.loadModel("./Res/fiona.obj");
+     entity = new DrawableObject(model, shaderTexture, vec3(0.0f, 0.1f, 0.0f));
+
+     Texture* fiona_tx = resourceManager.loadTexture("./Res/fiona.png");
+     entity->setTexture(fiona_tx);
+
+     entity->addStaticTransform(new Translation(vec3(2.0f, 0.0f, 2.1f)));
+     entity->addStaticTransform(new Scaling(vec3(0.1f, 0.1f, 0.1f)));
+
+     scene->addEntity(entity);
+
+
+     model = resourceManager.loadModel("./Res/toiled.obj");
+     entity = new DrawableObject(model, shaderTexture, vec3(0.0f, 0.1f, 0.0f));
+
+     Texture* toilet_tx = resourceManager.loadTexture("./Res/toiled.jpg");
+     entity->setTexture(toilet_tx);
+
+	 entity->addStaticTransform(new Translation(vec3(2.0f, 0.0f, 2.0f)));
+	 entity->addStaticTransform(new Scaling(vec3(0.1f, 0.1f, 0.1f)));
+
+     scene->addEntity(entity);
      
      model = new Model(sphere);
 
@@ -219,6 +257,7 @@ Scene* sceneDefault()
 
         light->addLocalTransform(new TransformTimer({{0.5, new Rotation(vec3(0.0f, -(40.0f), 0.0f), vec3(0.0f, (40.0f), 0.0f))}, {0, new Translation(vec3(0.005f, 0.0f, 0.0f))}})); //{min},{max}
         light->attach(shader);
+		light->attach(shaderTexture);
 		light->attach(shaderFirefly);
         scene->addEntity(light);
     }
@@ -226,6 +265,7 @@ Scene* sceneDefault()
     Camera* camera = new Camera();
     camera->attach(shader);
     camera->attach(shaderFirefly);
+	camera->attach(shaderTexture);
     scene->addEntity(camera);
 
     light = new Light(LightType::REFLECTOR, vec3(0.90f, 0.95f, 1.0f), 2.0f, 0.75f);
@@ -233,10 +273,16 @@ Scene* sceneDefault()
     //light->addShaderProgram(shader);
     light->addParent(camera->getTransformManager());
     light->setActive(true);
-
     light->attach(shader);
+	light->attach(shaderTexture);
     scene->addEntity(light);
 
+    light = new Light(LightType::AMBIENT, vec3(0.90f, 0.95f, 1.0f),0.01f, 0.75f);
+    //light->setModel(model);
+    //light->addShaderProgram(shader);
+    light->attach(shader);
+    light->attach(shaderTexture);
+    scene->addEntity(light);
 
  	return scene;
  }
@@ -244,9 +290,6 @@ Scene* sceneDefault()
 Scene* sceneSolarSystem()
 {
 	Scene* scene = new Scene();
-
-    ResourceManager& resourceManager = ResourceManager::getInstance();
-
 
 	ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
 
@@ -298,11 +341,11 @@ Scene* sceneTesting()
 
     Model* model = resourceManager.loadModel("./Res/cube.obj");
     ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
-    Texture* wood = resourceManager.loadTexture("./Res/wooden_fence.png");
+    Texture* wood = resourceManager.loadTexture("./Res/fiona.png");
 
 	DrawableObject* cube = new DrawableObject(model, shader, vec3(0.8f, 0.7f, 0.6f));
 
-	model->setTexture(wood);
+	cube->setTexture(wood);
 
 	scene->addEntity(cube);
 
@@ -315,14 +358,13 @@ Scene* sceneTesting()
 	scene->addEntity(cube_en);
 
 
-    /*Model* shrek = resourceManager.loadModel("./Res/shrek.obj");
+    Model* shrek = resourceManager.loadModel("./Res/shrek.obj");
 	Model* fiona = resourceManager.loadModel("./Res/fiona.obj");
-    ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
 	Texture* shrek_tx = resourceManager.loadTexture("./Res/shrek.png");
 
 
     DrawableObject* shrek_en = new DrawableObject(shrek, shader, vec3(0.0f, 0.1f, 0.0f));
-    shrek->setTexture(shrek_tx);
+    shrek_en->setTexture(shrek_tx);
 
     scene->addEntity(shrek_en);
     
@@ -330,11 +372,11 @@ Scene* sceneTesting()
     DrawableObject* fiona_en = new DrawableObject(fiona, shader, vec3(0.0f, 0.1f, 0.0f));
 
     Texture* fiona_tx = resourceManager.loadTexture("./Res/fiona.png");
-    fiona->setTexture(fiona_tx);
+    fiona_en->setTexture(wood);
 
 	fiona_en->addStaticTransform(new Translation(vec3(1.0f, 0.1f, 0.1f)));
 
-    scene->addEntity(fiona_en);*/
+    scene->addEntity(fiona_en);
 
 	Camera* camera = new Camera();
 	camera->attach(shader);

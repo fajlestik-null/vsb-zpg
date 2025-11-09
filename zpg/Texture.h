@@ -4,8 +4,8 @@
 class Texture
 {
 private:
-	GLuint mTextureID;
-	GLenum mTextureUnit;
+	GLuint mTextureID = 0;
+	GLenum mTextureUnit = 0;
 
 	static GLuint sNextUnit;
 public:

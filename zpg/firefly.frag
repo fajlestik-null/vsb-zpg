@@ -3,7 +3,7 @@
 in vec4 worldPosition;
 in vec3 worldNormal;
 uniform vec3 viewPosition;
-uniform vec3 objectColor;
+uniform vec3 sourceObjectColor;
 out vec4 fragColor;
 
 void main () {

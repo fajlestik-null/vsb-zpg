@@ -71,20 +71,11 @@ Model::~Model()
 
 void Model::put() const
 {
-    if (mTexture!=nullptr)
-        mTexture->bind();
-
 	glBindVertexArray(mVAO);
     if (!(mIndices.empty()))
         glDrawElements(GL_TRIANGLES, (GLsizei)mIndices.size(), GL_UNSIGNED_INT, 0);
     else
 	    glDrawArrays(GL_TRIANGLES, 0, (GLsizei) mVertices.size()/6);
-}
-
-void Model::setTexture(Texture* texture)
-{
-    mTexture = texture;
-    texture->bind();
 }
 
 bool Model::loadModelFromFile(const string& PATH)
@@ -179,9 +170,4 @@ bool Model::loadModelFromFile(const string& PATH)
 
 
     return true;
-}
-
-Texture* Model::getTexture() const
-{
-    return mTexture;
 }

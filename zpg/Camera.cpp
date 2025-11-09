@@ -6,7 +6,7 @@ mEye(vec3(0.0f, 0.0f, 5.0f)), mTarget(vec3(0.0f, 0.0f, 0.0f)), mUp(vec3(0.0f, 1.
 mWorldUp(vec3(0.0f, 1.0f, 0.0f)), mRight(vec3(0.0f)),
 mWindowWidth(800.0f), mWindowHeight(600.0f)
 {
-
+	this->setTexture(nullptr);
 }
 
 Camera::~Camera()

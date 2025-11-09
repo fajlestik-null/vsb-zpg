@@ -3,7 +3,7 @@
 in vec4 worldPosition;
 in vec3 worldNormal;
 uniform vec3 cameraPosition;
-uniform vec3 objectColor;
+uniform vec3 sourceObjectColor;
 out vec4 fragColor;
 
 
@@ -42,7 +42,7 @@ void main () {
         vec3 reflectDir = reflect(-lightDirection, normalize(worldNormal));
         float specular = pow(max(dot(normalize(cameraPosition), normalize(reflectDir)), 0.0), 32);
         float dotProduct = max(dot(lightDirection, normalize(worldNormal)), 0.0);
-        vec4 diffuse = dotProduct * vec4( objectColor, 1.0);
+        vec4 diffuse = dotProduct * vec4( sourceObjectColor, 1.0);
         float att = attenuation( length(lights[i].position - worldPosition.xyz), 0.0, 0.9, 0.32, 0.2);
 
         float spot = dot(normalize(lights[i].direction), -lightDirection);
@@ -57,6 +57,6 @@ void main () {
         finalColor += (diffuse + (specular * vec4(lights[i].color, 1.0))) * lights[i].intensity * spot * (att);
     }
 
-    vec4 ambient =  vec4( objectColor / 5.0f, 1.0);
+    vec4 ambient =  vec4( sourceObjectColor / 5.0f, 1.0);
     fragColor = ambient + finalColor;
 }
