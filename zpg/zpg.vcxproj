@@ -202,10 +202,13 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <None Include="constant.frag" />
     <None Include="constant.vert" />
     <None Include="firefly.frag" />
+    <None Include="grass.vert" />
     <None Include="lambert.frag" />
     <None Include="lambert.vert" />
     <None Include="phong.frag" />
     <None Include="reflector.frag" />
+    <None Include="skyBox.frag" />
+    <None Include="skyBox.vert" />
     <None Include="uv_test.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

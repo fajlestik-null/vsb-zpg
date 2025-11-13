@@ -190,5 +190,14 @@
     <None Include="uv_test.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="skyBox.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skyBox.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="grass.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

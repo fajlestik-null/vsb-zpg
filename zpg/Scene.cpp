@@ -1,14 +1,5 @@
 #include "Scene.h"
 
-
-void Scene::render()
-{
-    for (auto entity : mWorldEntities)
-    {
-        entity->draw();
-    }
-}
-
 Scene::~Scene()
 {
     for(auto we : mWorldEntities)
@@ -17,12 +8,29 @@ Scene::~Scene()
     }
 }
 
-void Scene::update(GLFWwindow* window, float deltaTime, Controls* controls)
+void Scene::render(GLFWwindow* window, float deltaTime, Controls* controls)
 {
+    if (mSkyBox != nullptr)
+    {
+        mSkyBox->update(window, deltaTime, controls);
+        mSkyBox->draw();
+        glClear(GL_DEPTH_BUFFER_BIT);
+    }
+    if (controls->isMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT) and mEntitityToInsert != nullptr)
+    {
+        WorldEntity* childEntity = mEntitityToInsert->getCopy() ;
+        childEntity->addStaticTransform(new Translation(controls->getStencilPosition()));
+        this->addEntity(childEntity);
+    }
     for (auto entity : mWorldEntities)
     {
+        glStencilFunc(GL_ALWAYS, entity->getStencilIndex(), 0xFF);
         entity->update(window, deltaTime, controls);
+        entity->draw();
     }
+
+    if (mActiveCamera)
+		mActiveCamera->notifyObservers();
 }
 
 
@@ -339,9 +347,30 @@ Scene* sceneTesting()
 
 	ResourceManager& resourceManager = ResourceManager::getInstance();
 
+    auto textureSkyBox = resourceManager.loadCubeMap("mySkyBox",{ "./Res/posx.jpg",
+                                        "./Res/negx.jpg",
+                                        "./Res/posy.jpg",
+                                        "./Res/negy.jpg",
+                                        "./Res/posz.jpg",
+                                        "./Res/negz.jpg" });
+
+
+	Model* skybox = resourceManager.loadModel("./Res/skybox.obj");
+    ShaderProgram * shaderSky = resourceManager.loadShaderProgram("skyBox.vert", "skyBox.frag");
+
+    DrawableObject* sky = new DrawableObject(skybox, shaderSky, vec3(0.8f, 0.7f, 0.6f));
+
+
+    //  texture_skybox->load_from_files(paths);
+    sky->setTexture(textureSkyBox);
+
+    //obj_2->add_static_transform(new Scale(vec3(20.0f, 20.0f, 20.0f)));
+    //obj_2->add_static_transform(new Transfer(vec3(10.0f, 1.0f, 10.0f)));
+    scene->setSkyBox(sky);
+
     Model* model = resourceManager.loadModel("./Res/cube.obj");
     ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
-    Texture* wood = resourceManager.loadTexture("./Res/fiona.png");
+    Texture* wood = resourceManager.loadTexture("./Res/wooden_fence.png");
 
 	DrawableObject* cube = new DrawableObject(model, shader, vec3(0.8f, 0.7f, 0.6f));
 
@@ -365,27 +394,43 @@ Scene* sceneTesting()
 
     DrawableObject* shrek_en = new DrawableObject(shrek, shader, vec3(0.0f, 0.1f, 0.0f));
     shrek_en->setTexture(shrek_tx);
-
+    shrek_en->setStencilIndex(22);
     scene->addEntity(shrek_en);
     
 
     DrawableObject* fiona_en = new DrawableObject(fiona, shader, vec3(0.0f, 0.1f, 0.0f));
 
     Texture* fiona_tx = resourceManager.loadTexture("./Res/fiona.png");
-    fiona_en->setTexture(wood);
+    fiona_en->setTexture(fiona_tx);
 
 	fiona_en->addStaticTransform(new Translation(vec3(1.0f, 0.1f, 0.1f)));
 
     scene->addEntity(fiona_en);
 
+	ShaderProgram *shaderGrass = resourceManager.loadShaderProgram("grass.vert", "generalLight.frag");
+
+	DrawableObject* terain = new DrawableObject(resourceManager.loadModel("./Res/teren.obj"), shaderGrass, vec3(0.0f, 0.1f, 0.0f));
+
+	terain->setTexture(resourceManager.loadTexture("./Res/grass.png"));
+    
+	scene->addEntity(terain);
 	Camera* camera = new Camera();
 	camera->attach(shader);
+    camera->attach(shaderSky);
+	camera->attach(shaderGrass);
 	scene->addEntity(camera);
+
+	sky->addParent(camera->getTransformManager());
+	sky->getTransformManager()->setInheritOnlyTranslation(InheritTransformation::TRANSLATION);
 
 	Light* light = new Light(LightType::POINT, vec3(1.0f, 1.0f, 1.0f), 0.5f, 1.0f);
 	light->addStaticTransform(new Translation(vec3(2.0f, 2.0f, 2.0f)));
 	light->attach(shader);
+	light->attach(shaderSky);
+	light->attach(shaderGrass);
 	scene->addEntity(light);
+
+    scene->setEntityToInsert(cube);
 
 	return scene;
 }

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ArraysOfVertices.h"
-
-
 #include "DrawableObject.h"
 #include "Camera.h"
 #include "Light.h"
@@ -11,15 +9,28 @@
 class Scene
 {
 private:
+	WorldEntity* mSkyBox;
+	WorldEntity* mActiveCamera;
+	WorldEntity* mEntitityToInsert;
 	vector<WorldEntity*> mWorldEntities;
 public:
-	Scene(){};
+	Scene():mSkyBox(nullptr){};
 	~Scene();
-	void addEntity(WorldEntity* entity) { mWorldEntities.push_back(entity); }
+	void addEntity(WorldEntity* entity) { 
+		mWorldEntities.push_back(entity);
 
-	void update(GLFWwindow* window, float deltaTime, Controls* controls);
-	void render();
+		if (Camera* camera = dynamic_cast<Camera*>(entity)) {
+			mActiveCamera = camera;
+		}
+	}
 
+	void render(GLFWwindow* window, float deltaTime, Controls* controls);
+	WorldEntity* getSkyBox() const { return mSkyBox; } // useless
+	WorldEntity* getActiveCamera() const { return mActiveCamera; } // useless
+	
+	void setSkyBox(WorldEntity* skyBox) { mSkyBox = skyBox; }
+	void setActiveCamera(WorldEntity* camera) { mActiveCamera = camera; }
+	void setEntityToInsert(WorldEntity* entity) { mEntitityToInsert = entity; }
 };
 
 Scene* sceneDefault();

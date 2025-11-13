@@ -5,7 +5,7 @@
 GLuint Texture::sNextUnit = 0;
 
 
-Texture::Texture(const std::string& PATH)
+Texture::Texture(const string& PATH)
 {
     mTextureUnit = GL_TEXTURE0;
 
@@ -21,6 +21,7 @@ Texture::Texture(const std::string& PATH)
 
     glGenTextures(1, &mTextureID);
 
+	mTarget = GL_TEXTURE_2D;
     mTextureUnit = GL_TEXTURE0 + sNextUnit;   // assign next free unit
     sNextUnit++;                               // increment for next texture
 
@@ -39,15 +40,56 @@ Texture::Texture(const std::string& PATH)
     stbi_image_free(data);
 }
 
+Texture::Texture(const vector<string>& PATHS)
+{
+    if (PATHS.size() != 6)
+    {
+        std::cerr << "Error: Skybox requires 6 images." << std::endl;
+        return;
+    }
+
+    mTarget = GL_TEXTURE_CUBE_MAP;
+    mTextureUnit = GL_TEXTURE0 + sNextUnit++;
+
+    glGenTextures(1, &mTextureID);
+    glActiveTexture(mTextureUnit);
+    glBindTexture(mTarget, mTextureID);
+
+    int width, height, channels;
+    stbi_set_flip_vertically_on_load(false);
+
+    for (unsigned int i = 0; i < 6; i++)
+    {
+        unsigned char* data = stbi_load(PATHS[i].c_str(), &width, &height, &channels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0,
+                GL_RGB, GL_UNSIGNED_BYTE, data);
+            stbi_image_free(data);
+        }
+        else
+        {
+            std::cerr << "Failed to load cubemap face: " << PATHS[i] << std::endl;
+            stbi_image_free(data);
+        }
+    }
+
+    glTexParameteri(mTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(mTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(mTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(mTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(mTarget, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+}
+
+
 Texture::~Texture()
 {
     glDeleteTextures(1, &mTextureID);
-	sNextUnit--;
 }
 
 void Texture::bind() const
 {
-    glActiveTexture(0 + GL_TEXTURE0);
+    glActiveTexture(mTextureUnit);
     glBindTexture(GL_TEXTURE_2D, mTextureID);
 }
 
@@ -64,5 +106,5 @@ GLuint Texture::getID() const
 
 int Texture::getUnitIndex() const
 {
-    return (int)(mTextureUnit + GL_TEXTURE0);
+    return (int)(mTextureUnit - GL_TEXTURE0);
 }

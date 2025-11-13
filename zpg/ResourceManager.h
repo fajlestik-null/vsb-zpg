@@ -91,6 +91,26 @@ public:
         return texture;
     }
 
+    Texture* loadCubeMap(const std::string& NAME, const std::vector<std::string>& FACES)
+    {
+        // Check if already loaded
+        auto it = mTextures.find(NAME);
+        if (it != mTextures.end())
+            return it->second;
+
+        // Create cubemap texture
+        Texture* cubeMap = new Texture(FACES);
+        if (cubeMap->getID() == 0)
+        {
+            std::cerr << "Failed to load cubemap: " << NAME << std::endl;
+            delete cubeMap;
+            return nullptr;
+        }
+
+        mTextures[NAME] = cubeMap;
+        return cubeMap;
+    }
+
     Texture* getTexture(const std::string& PATH)
     {
         auto it = mTextures.find(PATH);

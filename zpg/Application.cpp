@@ -63,6 +63,10 @@ bool Application::init() {
 	//enable z-buffering
     glEnable(GL_DEPTH_TEST);
 
+	// Enable stencil testing
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
     return true;
 }
 
@@ -72,19 +76,20 @@ void Application::run() {
     float currentTick = 0;
     float deltaTime = 0;
 
+
     while (!glfwWindowShouldClose(mWindow)) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame  | GL_STENCIL_BUFFER_BIT
 
         switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes, sceneSolarSystem, sceneTesting });
         currentTick = (float)glfwGetTime();
         deltaTime = currentTick - lastTick;
         lastTick = currentTick;
-        mGeneralScene->update(mWindow,deltaTime, mControls);
-        mGeneralScene->render();
-        mControls->nextFrame();
+        mGeneralScene->render(mWindow,deltaTime, mControls);
 
+        mControls->nextFrame();
+        glfwPollEvents();         // Poll for events
         glfwSwapBuffers(mWindow);  // Swap buffers
-        glfwPollEvents();
     }
 }
 

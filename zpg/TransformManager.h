@@ -3,11 +3,21 @@
 #include "Includes.h"
 #include "IncludeTransformations.h"
 
+enum class InheritTransformation
+{
+    TRANSLATION,
+	ROTATION,
+	SCALE,
+	ALL
+};
+
 class TransformManager : public enable_shared_from_this<TransformManager>
 {
 private:
     bool mCalculated;
     mat4 mFinalMatrix;
+
+	InheritTransformation mInheritanceType = InheritTransformation::ALL;
 
     mat4 mLocalDynamic;  // e.g. self-rotation
     mat4 mGlobalDynamic; // e.g. orbit motion
@@ -57,7 +67,35 @@ public:
             for (auto &parent : mParents)
             {
                 if (auto p = parent.lock())
-					mParentGlobal *= p->getFinalMatrix(); // inherit all of paret's transforms
+                {
+                    if(mInheritanceType == InheritTransformation::TRANSLATION)
+                    {
+                        mat4 parentFinal = p->getFinalMatrix();
+                        vec3 parentTranslation = vec3(parentFinal[3]);
+                        mParentGlobal *= translate(mat4(1.0f), parentTranslation);
+                    }
+                    else if (mInheritanceType == InheritTransformation::ROTATION)
+                    {
+                        // Extract rotation matrix (upper-left 3x3)
+                        mat4 parentFinal = p->getFinalMatrix();
+                        mat3 rotationOnly = mat3(parentFinal);
+                        rotationOnly[0] = normalize(rotationOnly[0]);
+                        rotationOnly[1] = normalize(rotationOnly[1]);
+                        rotationOnly[2] = normalize(rotationOnly[2]);
+                        mParentGlobal *= mat4(rotationOnly);
+                    }
+                    else if (mInheritanceType == InheritTransformation::SCALE)
+                    {
+                        mat4 parentFinal = p->getFinalMatrix();
+                        // Extract scale factors
+                        vec3 scaleFactors = vec3(length(vec3(parentFinal[0])), length(vec3(parentFinal[1])), length(vec3(parentFinal[2])));
+                        mParentGlobal *= glm::scale(mat4(1.0f), scaleFactors);
+                    }
+					else
+                    {
+                        mParentGlobal *= p->getFinalMatrix(); // inherit all of paret's transforms
+                    }
+                }
             }
 
             mFinalMatrix = mParentGlobal* getGlobalDynamic() * mStaticMatricies[0] * getLocalDynamic() * mStaticMatricies[1] * mStaticMatricies[2] * mStaticMatricies[3]; // PG * G * Ts * L * R * S
@@ -115,4 +153,6 @@ public:
         }
         return mGlobalDynamic;
     }
+
+	void setInheritOnlyTranslation(const InheritTransformation VALUE) { mInheritanceType = VALUE; }
 };

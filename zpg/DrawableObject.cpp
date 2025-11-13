@@ -10,6 +10,7 @@ DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram, vec3 
 	this->addShaderProgram(shaderProgram);
 	this->mObjectColor = objectColor;
 	this->setTexture(nullptr);
+	this->setStencilIndex(0);
 }
 
 DrawableObject::~DrawableObject()

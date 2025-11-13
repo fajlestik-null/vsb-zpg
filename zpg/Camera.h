@@ -18,14 +18,15 @@ private:
 	vec3 mWorldUp;
 	vec3 mRight;
 
-	float mWindowWidth;
-	float mWindowHeight;
+	int mWindowWidth;
+	int mWindowHeight;
 
 public:
 	Camera();
 	~Camera();
 
 	void processKeyboard(GLFWwindow* window, float deltaTime, Controls* controls);
+	void getStencilPosition(GLFWwindow* window, Controls* constrols);
 	void processMouse(double xOffset, double yOffset);
 	void recalculateCameraVectors();
 	void update(GLFWwindow* window, float deltaTime, Controls* controls) override;

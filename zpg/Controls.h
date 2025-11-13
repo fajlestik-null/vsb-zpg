@@ -13,6 +13,7 @@ private:
     static unordered_map<int, bool> keys;
     static unordered_map<int, bool> mouseButtons;
     static unordered_map<int, bool> notedKeys;
+    static unordered_map<int, bool> notedButtons;
 
 
     static double mouseX;
@@ -22,6 +23,8 @@ private:
     static double mouseDeltaX;
     static double mouseDeltaY;
     static bool firstMouse;
+    static vec3 sStencilPosition;
+
 
 public:
     Controls();
@@ -32,12 +35,19 @@ public:
     bool isKeyReleased(int key) const;
 	bool isKeyTriggered(int key) const;
     bool isMouseButtonPressed(int button) const;
+	bool isMouseButtonTriggered(int button) const;
 	void nextFrame();
 
-    double getMouseX() const { return mouseX; }
-    double getMouseY() const { return mouseY; }
+    double getMouseX() const {
+        return mouseX;
+    }
+    double getMouseY() const {
+            return mouseY;
+    }
     double getMouseDeltaX() const { return mouseDeltaX; }
     double getMouseDeltaY() const { return mouseDeltaY; }
+	vec3 getStencilPosition() const { return sStencilPosition; }
+	void setStencilPosition(const vec3& position) { sStencilPosition = position; }
 
     static void errorCallback(int error, const char* description);
 

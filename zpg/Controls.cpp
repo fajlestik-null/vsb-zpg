@@ -3,6 +3,7 @@
 unordered_map<int, bool> Controls::keys;
 unordered_map<int, bool> Controls::mouseButtons;
 unordered_map<int, bool> Controls::notedKeys;
+unordered_map<int, bool> Controls::notedButtons;
 
 
 double Controls::mouseX = 0.0;
@@ -12,6 +13,8 @@ double Controls::lastMouseY = 0.0;
 double Controls::mouseDeltaX = 0.0;
 double Controls::mouseDeltaY = 0.0;
 bool Controls::firstMouse = true;
+vec3 Controls::sStencilPosition = vec3(0.0f, 0.0f, 0.0f);
+
 
 Controls::Controls() {}
 
@@ -47,9 +50,15 @@ bool Controls::isMouseButtonPressed(int button) const
     return it != mouseButtons.end() && it->second;
 }
 
+bool Controls::isMouseButtonTriggered(int button) const
+{
+    return isMouseButtonPressed(button) && !(notedButtons.find(button) != notedButtons.end() && notedButtons.at(button));
+}
+
 void Controls::nextFrame()
 {
 	notedKeys = keys;
+	notedButtons = mouseButtons;
 	resetMouseDelta();
 }
 

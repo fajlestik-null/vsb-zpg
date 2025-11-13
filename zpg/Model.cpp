@@ -78,6 +78,8 @@ void Model::put() const
 	    glDrawArrays(GL_TRIANGLES, 0, (GLsizei) mVertices.size()/6);
 }
 
+
+
 bool Model::loadModelFromFile(const string& PATH)
 {
     Assimp::Importer importer;

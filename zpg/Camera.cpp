@@ -35,6 +35,34 @@ void Camera::processKeyboard(GLFWwindow* window, float deltaTime, Controls* cont
         mEye -= mWorldUp * velocity;
 }
 
+void Camera::getStencilPosition(GLFWwindow* window, Controls * constrols)
+{
+	GLbyte color[4];
+	GLfloat depth;
+	GLuint index;
+
+	GLint x = (GLint)constrols->getMouseX();
+	GLint y = (GLint)constrols->getMouseY();
+
+	int newy = mWindowHeight - y;
+
+	glReadPixels(x, newy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+	glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+
+	cout << "Clicked on pixel " << x << ", " << y << ", color " << std::hex << (int)color[0] << (int)color[1] << (int)color[2] << (int)color[3] << std::dec << ", depth " << depth << ", stencil index " << index << std::endl;
+
+	glm::vec3 screenX = glm::vec3(x, newy, depth);
+	
+	glm::vec4 viewPort = glm::vec4(0, 0, mWindowWidth, mWindowHeight);
+	glm::vec3 pos = glm::unProject(screenX, mViewMatrix, mProjectionMatrix, viewPort);
+
+	cout << "unProject "<< pos.x << " " << pos.y << " " << pos.z;
+
+	constrols->setStencilPosition(pos);
+		//Mùžeme nastavit vybrané tìleso scena->setSelect(index-1);
+}
+
 void Camera::processMouse(double xOffset, double yOffset)
 {
 	float mouse_sensitivity = 0.05f;
@@ -89,7 +117,13 @@ void Camera::recalculateCameraVectors()
 
 	mViewMatrix = lookAt(mEye, mEye + mTarget, mUp);
 	//60° Field of View, window ratio (default -> 4:3 ratio), display range : 0.1 unit <-> 100 units
-	float ratio = mWindowWidth / mWindowHeight;
+
+	//Zero division protection
+	if (mWindowWidth == 0 || mWindowHeight == 0)
+		return;
+
+	float ratio = (float)mWindowWidth / (float)mWindowHeight;
+
 	mProjectionMatrix = perspective(radians(60.0f), ratio, 0.1f, 100.0f);
 	}
 
@@ -101,11 +135,13 @@ void Camera::update(GLFWwindow* window, float deltaTime, Controls* controls)
 		this->processMouse(controls->getMouseDeltaX(), controls->getMouseDeltaY());
 	}
 
-	glfwGetWindowSize(window, (int*)&mWindowWidth, (int*)&mWindowHeight);
+	glfwGetWindowSize(window, &mWindowWidth, &mWindowHeight);
+
 	this->recalculateCameraVectors();
 
 	mat4 cameraFollowMatrix = inverse(mViewMatrix);
+
 	this->getTransformManager()->setFinalMatrix(cameraFollowMatrix);
 
-	this->notifyObservers();
+	this->getStencilPosition(window, controls);
 }
