@@ -12,7 +12,7 @@ class WorldEntity : public Subject
 {
 protected:
 	//in progress
-	int mStencilIndex = 0;
+    GLuint mStencilIndex = 0;
 	bool mVisible = true;
 	vec3 mObjectColor = vec3(1.0f, 1.0f, 1.0f);
 
@@ -86,7 +86,7 @@ public:
     bool isVisible() const { return mVisible; }
     vec3 getColor() const { return mObjectColor; }
     Texture* getTexture() const { return mTexture; }
-	int getStencilIndex() const { return mStencilIndex; }
+    GLuint getStencilIndex() const { return mStencilIndex; }
     
     void setTexture(Texture* texture) { mTexture = texture; }
     void setModel(Model* model) { mModel = model; }

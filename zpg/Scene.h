@@ -11,7 +11,7 @@ class Scene
 private:
 	WorldEntity* mSkyBox;
 	WorldEntity* mActiveCamera;
-	WorldEntity* mEntitityToInsert;
+	WorldEntity* mEntitityToHandle;
 	vector<WorldEntity*> mWorldEntities;
 public:
 	Scene():mSkyBox(nullptr){};
@@ -30,7 +30,11 @@ public:
 	
 	void setSkyBox(WorldEntity* skyBox) { mSkyBox = skyBox; }
 	void setActiveCamera(WorldEntity* camera) { mActiveCamera = camera; }
-	void setEntityToInsert(WorldEntity* entity) { mEntitityToInsert = entity; }
+	void setEntityToHandle(WorldEntity* entity) { mEntitityToHandle = entity; }
+	void setSelectedEntity(Controls* controls);
+	void removeEntity(Controls* controls);
+	void insertEntity(Controls* controls);
+	void transformEntity(Controls* controls);
 };
 
 Scene* sceneDefault();

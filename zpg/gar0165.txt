@@ -1,6 +1,0 @@
-Z našeho pohledu jej využíváme kvůli jeho výhodám při počítání s transformacemi.
-Výhodou je, že když rozšíříme náš Kartézký souřadný systém o dimenzi výše (právě Projektivní prostor), 
-jsme schopni se zbavit sčítání matic, provádíme tedy pouze jednu operaci, násobení.
-Zde jsme pak schopni aplikovat asociativitu této operace a jednotlivé matice si předpočítat.
-Projektivní prostor je výhodnější, když provádíme více transformací na více bodech,
- v opačných případech vyhrává Kartézský souřadný systém.

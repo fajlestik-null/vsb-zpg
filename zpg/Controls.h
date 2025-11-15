@@ -23,7 +23,8 @@ private:
     static double mouseDeltaX;
     static double mouseDeltaY;
     static bool firstMouse;
-    static vec3 sStencilPosition;
+    static vec3 sPosition;
+	static GLuint sStencilIndex;
 
 
 public:
@@ -46,8 +47,10 @@ public:
     }
     double getMouseDeltaX() const { return mouseDeltaX; }
     double getMouseDeltaY() const { return mouseDeltaY; }
-	vec3 getStencilPosition() const { return sStencilPosition; }
-	void setStencilPosition(const vec3& position) { sStencilPosition = position; }
+	vec3 getPosition() const { return sPosition; }
+	void setPosition(const vec3& position) { sPosition = position; }
+	GLuint getStencilIndex() const { return sStencilIndex; }
+	void setStencilIndex(const GLuint index) { sStencilIndex = index; }
 
     static void errorCallback(int error, const char* description);
 

@@ -13,8 +13,8 @@ double Controls::lastMouseY = 0.0;
 double Controls::mouseDeltaX = 0.0;
 double Controls::mouseDeltaY = 0.0;
 bool Controls::firstMouse = true;
-vec3 Controls::sStencilPosition = vec3(0.0f, 0.0f, 0.0f);
-
+vec3 Controls::sPosition = vec3(0.0f, 0.0f, 0.0f);
+GLuint Controls::sStencilIndex = 0;
 
 Controls::Controls() {}
 

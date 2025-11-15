@@ -59,7 +59,8 @@ void Camera::getStencilPosition(GLFWwindow* window, Controls * constrols)
 
 	cout << "unProject "<< pos.x << " " << pos.y << " " << pos.z;
 
-	constrols->setStencilPosition(pos);
+	constrols->setPosition(pos);
+	constrols->setStencilIndex(index);
 		//Mùžeme nastavit vybrané tìleso scena->setSelect(index-1);
 }
 

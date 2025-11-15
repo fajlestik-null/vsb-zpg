@@ -16,21 +16,97 @@ void Scene::render(GLFWwindow* window, float deltaTime, Controls* controls)
         mSkyBox->draw();
         glClear(GL_DEPTH_BUFFER_BIT);
     }
-    if (controls->isMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT) and mEntitityToInsert != nullptr)
-    {
-        WorldEntity* childEntity = mEntitityToInsert->getCopy() ;
-        childEntity->addStaticTransform(new Translation(controls->getStencilPosition()));
-        this->addEntity(childEntity);
-    }
+
+	setSelectedEntity(controls);
+	insertEntity(controls);
+	removeEntity(controls);
+
     for (auto entity : mWorldEntities)
     {
         glStencilFunc(GL_ALWAYS, entity->getStencilIndex(), 0xFF);
         entity->update(window, deltaTime, controls);
+		transformEntity(controls); //needs to be after update to get correct position from controls
         entity->draw();
     }
 
     if (mActiveCamera)
 		mActiveCamera->notifyObservers();
+}
+
+void Scene::setSelectedEntity(Controls* controls)
+{
+    if (controls->isMouseButtonTriggered(GLFW_MOUSE_BUTTON_LEFT))
+    {
+        for (auto entity : mWorldEntities)
+        {
+            if (entity->getStencilIndex() == controls->getStencilIndex() && controls->getStencilIndex() != 0)
+            {
+                mEntitityToHandle = entity;
+				cout << "Selected entity with stencil index: " << controls->getStencilIndex() << endl;
+                break;
+            }
+		}
+    }
+
+}
+
+void Scene::removeEntity(Controls* controls)
+{
+    if (controls->isKeyTriggered(GLFW_KEY_DELETE) && mEntitityToHandle != nullptr)
+    {
+        auto it = find(mWorldEntities.begin(), mWorldEntities.end(), mEntitityToHandle);
+        if (it != mWorldEntities.end())
+        {
+            delete *it;
+            mWorldEntities.erase(it);
+            mEntitityToHandle = nullptr;
+        }
+	}
+}
+
+void Scene::insertEntity(Controls* controls)
+{
+    if (controls->isKeyTriggered(GLFW_KEY_I) && mEntitityToHandle != nullptr)
+    {
+        WorldEntity* duplicate = mEntitityToHandle->getCopy();
+        duplicate->addStaticTransform(new Translation(controls->getPosition()));
+        this->addEntity(duplicate);
+    }
+}
+
+void Scene::transformEntity(Controls* controls)
+{
+    if (mEntitityToHandle != nullptr)
+    {
+        if (controls->isKeyTriggered(GLFW_KEY_T))
+        {
+            vec3 mousePosition = controls->getPosition();
+            vec3 currentPosition = vec3(mEntitityToHandle->getTransformManager()->getFinalMatrix()[3]);
+            vec3 direction = mousePosition - currentPosition;
+            mEntitityToHandle->addStaticTransform(new Translation(direction));
+        }
+        if (controls->isKeyPressed(GLFW_KEY_R))
+        {
+            if (controls->isKeyPressed(GLFW_KEY_X))
+            {
+                mEntitityToHandle->addStaticTransform(new Rotation(vec3(1.0f, 0.0f, 0.0f)));
+            }
+            if (controls->isKeyPressed(GLFW_KEY_Y))
+            {
+                mEntitityToHandle->addStaticTransform(new Rotation(vec3(0.0f, 0.0f, 1.0f)));
+            }
+            if (controls->isKeyPressed(GLFW_KEY_Z))
+            {
+                mEntitityToHandle->addStaticTransform(new Rotation(vec3(0.0f, 1.0f, 0.0f)));
+            }
+        }
+        //scalling
+        if(controls->isKeyPressed(GLFW_KEY_UP))
+        mEntitityToHandle->addStaticTransform(new Scaling(vec3(1.01f, 1.01f, 1.01f)));
+        if (controls->isKeyPressed(GLFW_KEY_DOWN))
+        mEntitityToHandle->addStaticTransform(new Scaling(vec3(0.99f, 0.99f, 0.99f)));
+
+    }
 }
 
 
@@ -414,6 +490,7 @@ Scene* sceneTesting()
 	terain->setTexture(resourceManager.loadTexture("./Res/grass.png"));
     
 	scene->addEntity(terain);
+
 	Camera* camera = new Camera();
 	camera->attach(shader);
     camera->attach(shaderSky);
@@ -429,8 +506,6 @@ Scene* sceneTesting()
 	light->attach(shaderSky);
 	light->attach(shaderGrass);
 	scene->addEntity(light);
-
-    scene->setEntityToInsert(cube);
 
 	return scene;
 }
