@@ -3,5 +3,6 @@
 #include "Translation.h"
 #include "Rotation.h"
 #include "Scaling.h"
+#include "Custom.h"
 #include "TransformComponent.h"
 #include "TransformTimer.h"

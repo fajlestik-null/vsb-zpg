@@ -2,7 +2,7 @@
 
 #define MAX_LIGHTS 20
 
-in vec4 worldPosition;
+in vec3 worldPosition;
 in vec3 worldNormal;
 		 
 uniform vec3 sourceObjectColor;
@@ -34,23 +34,23 @@ void main ()
 {
     vec4 colorComponent = vec4(0.0f);
     for(int i = 0; i < numLights; i++){
-        vec3 lightDir = normalize(lights[i].position - worldPosition.xyz);
+        vec3 lightDir = normalize(lights[i].position - worldPosition);
         //handling negative oposite
         if(dot(lightDir, normalize(worldNormal)) <= 0.0)
                 continue;
 
         //diffuse
-        vec3 reflectDir = normalize(lightDir - worldPosition.xyz);
+        vec3 reflectDir = normalize(lightDir - worldPosition);
         float difference = max(dot(lightDir, normalize(worldNormal)), 0.0);
         vec4 diffuse = difference * vec4(sourceObjectColor,1.0);
 
         //specular
-        vec3 cameraDir = normalize(cameraPosition - worldPosition.xyz);
+        vec3 cameraDir = normalize(cameraPosition - worldPosition);
         vec3 reflectVector = reflect(-reflectDir, worldNormal);
         float dotSpecular = pow(max(dot(normalize(reflectVector), cameraDir), 0.0), 32);
 
         //attenuation
-        float attenuationFactor = attenuation(length(lights[i].position - worldPosition.xyz), 0.0, 0.09, 0.032, lights[i].intensity); //normally constants are 0.0, 0.09, 0.032
+        float attenuationFactor = attenuation(length(lights[i].position - worldPosition), 0.0, 0.09, 0.032, lights[i].intensity); //normally constants are 0.0, 0.09, 0.032
 
         //combination
         colorComponent += (diffuse + (dotSpecular * vec4(lights[i].color, 1.0))) * attenuationFactor;

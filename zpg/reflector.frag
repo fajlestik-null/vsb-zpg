@@ -1,6 +1,6 @@
 #version 330
 #define MAX_LIGHTS 8
-in vec4 worldPosition;
+in vec3 worldPosition;
 in vec3 worldNormal;
 uniform vec3 cameraPosition;
 uniform vec3 sourceObjectColor;

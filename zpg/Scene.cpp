@@ -276,7 +276,7 @@ Scene* sceneDefault()
      }
 
      model = new Model(bushes);
-     for (int i = 0; i < 100; i++)
+     for (int i = 0; i < 50; i++)
      {
 
          entity = new DrawableObject(model, shader, vec3(0.124f, 0.252f, 0.0f));
@@ -375,43 +375,122 @@ Scene* sceneSolarSystem()
 {
 	Scene* scene = new Scene();
 
-	ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
+    ResourceManager& resourceManager = ResourceManager::getInstance();
 
-	Model* modelSphere = new Model(sphere);
-	DrawableObject* sun = new DrawableObject(modelSphere, shader, vec3(1.0f,0.65f,0.0f));
+    auto textureSkyBox = resourceManager.loadCubeMap("mySkyBox", { "./Res/starfield1.jpg",
+                                         "./Res/starfield1.jpg",
+                                         "./Res/starfield1.jpg",
+                                         "./Res/starfield1.jpg",
+                                         "./Res/starfield1.jpg",
+                                         "./Res/starfield1.jpg" });
+
+
+    Model* skybox = resourceManager.loadModel("./Res/skybox.obj");
+    ShaderProgram* shaderSky = resourceManager.loadShaderProgram("skyBox.vert", "skyBox.frag");
+
+    DrawableObject* sky = new DrawableObject(skybox, shaderSky, vec3(1.0f, 1.0f, 1.0f));
+
+    sky->setTexture(textureSkyBox);
+
+	scene->setSkyBox(sky);
+
+
+    ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
+   //ShaderProgram* shaderT = resourceManager.loadShaderProgram("constant.vert", "constant.frag");
+
+
+    Model* model = resourceManager.loadModel("./Res/planet.obj");
+
+	Texture* texture = resourceManager.loadTexture("./Res/sun.jpg");
+
+	float offset = -20.0f;
+	float slowCoefficient = 10.0f;
+    float earthGlobalRotation = 1.0f/slowCoefficient;
+    float earthSelftRotation = 366.256f/slowCoefficient;
+
+	DrawableObject* sun = new DrawableObject(model, shader);
+	float sunSize = 15.0f;
+	sun->addStaticTransform(new Translation(vec3(0.0f, offset, 0.0f)));
+	sun->addStaticTransform(new Scaling(vec3(sunSize, sunSize, sunSize)));
+    sun->setTexture(texture);
 	scene->addEntity(sun);
 
-    float earthDistance = 4.0f;
-	DrawableObject* earth = new DrawableObject(modelSphere, shader, vec3(0.5f,0.38f,0.26f));
-    earth->addStaticTransform(new Translation(vec3(earthDistance, 0.0f, 0.0f)));
-    earth->addStaticTransform(new Scaling(vec3(0.5f, 0.5f, 0.5f)));
-	earth->addGlobalTransform(new Rotation(vec3(0.0f, 1.0f, 0.0f)));
-	earth->addLocalTransform(new Rotation(vec3(0.0f, 3.0f, 0.0f)));
+    DrawableObject* mercury = new DrawableObject(model, shader);
+	mercury->addStaticTransform(new Translation(vec3(sunSize + 17.96, offset, 0.0f)));
+	mercury->addStaticTransform(new Scaling(vec3(0.38f, 0.38f, 0.38f)));
+	mercury->addGlobalTransform(new Rotation(vec3(0.0f, 4.15f*earthGlobalRotation, 0.0f)));
+    //tilt
+	//mercury->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 0.0034f)));
+	mercury->addLocalTransform(new Rotation(vec3(0.0f, 0.016f*earthSelftRotation, 0.0f)));
+	texture = resourceManager.loadTexture("./Res/mercury.jpg");
+	mercury->setTexture(texture);
+    scene->addEntity(mercury);
+
+    DrawableObject* venus = new DrawableObject(model, shader);
+	venus->addStaticTransform(new Translation(vec3(sunSize + 33.16f, offset, 0.0f)));
+	venus->addStaticTransform(new Scaling(vec3(0.95f, 0.95f, 0.95f)));
+	venus->addGlobalTransform(new Rotation(vec3(0.0f, 3.07f*earthGlobalRotation, 0.0f)));
+	//tilt
+	//venus->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 177.4f)));
+	venus->addLocalTransform(new Rotation(vec3(0.0f, 0.004*earthSelftRotation, 0.0f)));
+	texture = resourceManager.loadTexture("./Res/venus.jpg");
+	venus->setTexture(texture);
+	scene->addEntity(venus);
+
+	DrawableObject* earth = new DrawableObject(model, shader);
+    earth->addStaticTransform(new Translation(vec3(sunSize + 46.05f, offset, 0.0f)));
+	earth->addGlobalTransform(new Rotation(vec3(0.0f, earthGlobalRotation, 0.0f)));
+	//tilt
+	//earth->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 23.44f)));
+	earth->addStaticTransform(new Scaling(vec3(0.95f, 0.95f * 0.996f, 0.95f))); //a bit elliptical - in testing phase
+	earth->addLocalTransform(new Rotation(vec3(0.0f, earthSelftRotation, 0.0f)));
+	texture = resourceManager.loadTexture("./Res/earth.jpg");
+	earth->setTexture(texture);
 	scene->addEntity(earth);
 
 
-    DrawableObject* moon = new DrawableObject(modelSphere, shader, vec3(0.96f,0.95f, 0.84f));
+    DrawableObject* moon = new DrawableObject(model, shader);
 	moon->addParent(earth->getTransformManager());
-    moon->addLocalTransform(new TransformComponent({
-        new Translation(vec3(-1.0f, 0.0f, 0.0f)),
-        new Rotation(vec3(0.0f, 1.0f, 0.0f)),
-        new Translation(vec3(1.0f, 0.0f, 0.0f))
-    }));
-    
-    moon->addStaticTransform(new Translation(vec3(earthDistance + 1, 0.0f, 0.0f)));
-    moon->addStaticTransform(new Scaling(vec3(0.2f, 0.2f, 0.2f)));
+    //tilt
+	//moon->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 6.68f)));
+	// moon orbit
+    moon->addLocalTransform(new Rotation(vec3(0.0f, (earthSelftRotation / 27.3f) / slowCoefficient, 0.0f)));
+    // orbit radius
+    moon->addStaticTransform(new Translation(vec3(2.8f, 0.0f, 0.0f)));
+    // moon size
+    moon->addStaticTransform(new Scaling(vec3(0.27f)));
+
+	texture = resourceManager.loadTexture("./Res/moon.jpg");
+	moon->setTexture(texture);
 	scene->addEntity(moon);
+
+    DrawableObject* mars = new DrawableObject(model, shader);
+	mars->addStaticTransform(new Translation(vec3(sunSize + 70.0f, offset, 0.0f)));
+	mars->addStaticTransform(new Scaling(vec3(0.53f, 0.53f * 0.994f, 0.53f))); //a bit elliptical - in testing phase
+	mars->addGlobalTransform(new Rotation(vec3(0.0f, 0.81f*earthGlobalRotation, 0.0f)));
+	//tilt
+	//mars->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 25.19f)));
+	mars->addLocalTransform(new Rotation(vec3(0.0f, 0.97*earthSelftRotation, 0.0f)));
+	texture = resourceManager.loadTexture("./Res/mars.jpg");
+	mars->setTexture(texture);
+	scene->addEntity(mars);
+
 
     Camera* camera = new Camera();
     camera->attach(shader);
+    camera->attach(shaderSky);
+	//camera->attach(shaderT);
     scene->addEntity(camera);
+
+	sky->addParent(camera->getTransformManager());
+	sky->getTransformManager()->setInheritOnlyTranslation(InheritTransformation::TRANSLATION);
 
 
     Light* light = new Light(LightType::POINT,vec3(0.385, 0.647, 0.812), 1.0f, 1.0f);
-    light->addStaticTransform(new Translation(vec3(0.0f, 0.0f, 0.0f)));
-    light->setModel(modelSphere);
-    light->addShaderProgram(shader);
+	light->addParent(sun->getTransformManager());
+    light->attach(shaderSky);
     light->attach(shader);
+	//light->attach(shaderT);
     scene->addEntity(light);
 
 	return scene;
@@ -423,12 +502,12 @@ Scene* sceneTesting()
 
 	ResourceManager& resourceManager = ResourceManager::getInstance();
 
-    auto textureSkyBox = resourceManager.loadCubeMap("mySkyBox",{ "./Res/posx.jpg",
-                                        "./Res/negx.jpg",
-                                        "./Res/posy.jpg",
-                                        "./Res/negy.jpg",
-                                        "./Res/posz.jpg",
-                                        "./Res/negz.jpg" });
+   auto textureSkyBox = resourceManager.loadCubeMap("mySkyBox", {"./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg" });
 
 
 	Model* skybox = resourceManager.loadModel("./Res/skybox.obj");
@@ -437,12 +516,12 @@ Scene* sceneTesting()
     DrawableObject* sky = new DrawableObject(skybox, shaderSky, vec3(0.8f, 0.7f, 0.6f));
 
 
-    //  texture_skybox->load_from_files(paths);
     sky->setTexture(textureSkyBox);
 
     //obj_2->add_static_transform(new Scale(vec3(20.0f, 20.0f, 20.0f)));
     //obj_2->add_static_transform(new Transfer(vec3(10.0f, 1.0f, 10.0f)));
     scene->setSkyBox(sky);
+    
 
     Model* model = resourceManager.loadModel("./Res/cube.obj");
     ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
@@ -452,6 +531,11 @@ Scene* sceneTesting()
 
 	cube->setTexture(wood);
 
+    cube->addStaticTransform(new Custom(mat4(1.0, 0.0, 0.0, 0.0,
+                                              0.0, 1.0, 0.0, 0.0,
+                                              0.0, 0.0, 1.0, 0.0,
+                                              0.0, 0.0, 0.0, 20.0)));
+
 	scene->addEntity(cube);
 
     Model* cubeM = resourceManager.loadModel("./Res/cube.obj");
@@ -459,6 +543,10 @@ Scene* sceneTesting()
 	DrawableObject* cube_en = new DrawableObject(cubeM, shader, vec3(0.8f, 0.7f, 0.6f));
 
 	cube_en->addStaticTransform(new Translation(vec3(1.5f, 0.0f, 0.0f)));
+    cube_en->addStaticTransform(new Custom(mat4(1.0, 0.0, 0.0, 0.0,
+                                                0.0, 1.0, 0.0, 0.0,
+                                                0.0, 0.0, 1.0, 0.0,
+                                                0.0, 0.0, 0.0, 20.0)));
 
 	scene->addEntity(cube_en);
 
@@ -490,6 +578,8 @@ Scene* sceneTesting()
 	terain->setTexture(resourceManager.loadTexture("./Res/grass.png"));
     
 	scene->addEntity(terain);
+
+    
 
 	Camera* camera = new Camera();
 	camera->attach(shader);

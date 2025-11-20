@@ -1,6 +1,6 @@
 #version 330
 
-in vec4 worldPosition;
+in vec3 worldPosition;
 in vec3 worldNormal;
 		 
 uniform vec3 lightPosition;
@@ -9,6 +9,7 @@ uniform vec3 sourceObjectColor;
 uniform vec3 cameraPosition;
 
 out vec4 fragColor;
+
 
 void main () 
 {

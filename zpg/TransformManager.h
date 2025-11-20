@@ -22,7 +22,7 @@ private:
     mat4 mLocalDynamic;  // e.g. self-rotation
     mat4 mGlobalDynamic; // e.g. orbit motion
 
-    vector<mat4> mStaticMatricies; // 3 matrixes: translation, rotation, scale
+	vector<mat4> mStaticMatricies; // 3 matrixes: translation, rotation, scale, custom, component
 
     vector<pair<TransformBase*, mat4>> mLocalTransforms;
     vector<pair<TransformBase*, mat4>> mGlobalTransforms;
@@ -32,7 +32,7 @@ private:
 
 
 public:
-	TransformManager() : mCalculated(false), mFinalMatrix(1.0f), mLocalDynamic(1.0f), mGlobalDynamic(1.0f), mStaticMatricies(4, mat4(1.0f))
+	TransformManager() : mCalculated(false), mFinalMatrix(1.0f), mLocalDynamic(1.0f), mGlobalDynamic(1.0f), mStaticMatricies(5, mat4(1.0f))
     {
     
     }
@@ -98,7 +98,7 @@ public:
                 }
             }
 
-            mFinalMatrix = mParentGlobal* getGlobalDynamic() * mStaticMatricies[0] * getLocalDynamic() * mStaticMatricies[1] * mStaticMatricies[2] * mStaticMatricies[3]; // PG * G * Ts * L * R * S
+            mFinalMatrix = mParentGlobal* getGlobalDynamic() * mStaticMatricies[0] * getLocalDynamic() * mStaticMatricies[1] * mStaticMatricies[2] * mStaticMatricies[4] * mStaticMatricies[3]; // PG * G * Ts * L * R * S
         }
 
         return mFinalMatrix ;
@@ -126,9 +126,13 @@ public:
         {
             mStaticMatricies[2] *= t->getModelMatrix();
         }
-        else
+        else if (dynamic_cast<Custom *>(t))
         {
             mStaticMatricies[3] *= t->getModelMatrix();
+        }
+        else
+        {
+            mStaticMatricies[4] *= t->getModelMatrix();
         }
 
     }

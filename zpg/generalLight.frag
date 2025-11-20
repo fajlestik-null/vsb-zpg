@@ -1,6 +1,6 @@
 #version 330
 #define MAX_LIGHTS 8
-in vec4 worldPosition;
+in vec3 worldPosition;
 in vec3 worldNormal;
 in vec2 uv;
 
@@ -74,12 +74,12 @@ void main () {
             lightDirection = normalize(lights[i].position);
         }
         else if(lights[i].type == 2) {
-            lightDirection = normalize(lights[i].position - worldPosition.xyz);
-            att = attenuation( length(lights[i].position - worldPosition.xyz), 1.0, 0.14, 0.7, lights[i].distance ); //1.0, 0.14, 0.7
+            lightDirection = normalize(lights[i].position - worldPosition);
+            att = attenuation( length(lights[i].position - worldPosition), 1.0, 0.14, 0.7, lights[i].distance ); //1.0, 0.14, 0.7
         }
         else if(lights[i].type == 3) {
-            lightDirection = normalize(lights[i].position - worldPosition.xyz);
-            att = attenuation( length(lights[i].position - worldPosition.xyz), 0.0, 0.9, 0.32, lights[i].distance );
+            lightDirection = normalize(lights[i].position - worldPosition);
+            att = attenuation( length(lights[i].position - worldPosition), 0.0, 0.9, 0.32, lights[i].distance );
 
             spot = dot(normalize(lights[i].direction), -lightDirection);
 
