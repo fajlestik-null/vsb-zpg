@@ -79,9 +79,9 @@ void Application::run() {
 
     while (!glfwWindowShouldClose(mWindow)) {
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear frame  | GL_STENCIL_BUFFER_BIT
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);  // Clear frame  | GL_STENCIL_BUFFER_BIT
 
-        switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes, sceneSolarSystem, sceneTesting });
+        switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes, sceneSolarSystem, sceneWhacAMole, sceneTesting });
         currentTick = (float)glfwGetTime();
         deltaTime = currentTick - lastTick;
         lastTick = currentTick;

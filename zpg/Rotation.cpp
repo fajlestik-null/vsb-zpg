@@ -17,6 +17,11 @@ mat4 Rotation::getModelMatrix()
         return rot;
 }
 
+TransformBase* Rotation::getCopy() const
+{
+	return new Rotation(*this);
+}
+
 
 void Rotation::randomize()
 {

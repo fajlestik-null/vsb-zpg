@@ -158,5 +158,24 @@ public:
         return mGlobalDynamic;
     }
 
-	void setInheritOnlyTranslation(const InheritTransformation VALUE) { mInheritanceType = VALUE; }
+	void setInheritOnlyTransform(const InheritTransformation VALUE) { mInheritanceType = VALUE; }
+
+    shared_ptr<TransformManager> getCopy() const
+    {
+        shared_ptr<TransformManager> duplicate = make_shared<TransformManager>();
+
+        for (const auto& local : mLocalTransforms)
+        {
+            duplicate->addLocalTransform(local.first->getCopy());
+        }
+
+        for (const auto& global : mGlobalTransforms)
+        {
+            duplicate->addGlobalTransform(global.first->getCopy());
+        }
+
+        duplicate->mStaticMatricies = this->mStaticMatricies;
+
+		return duplicate;
+    }
 };

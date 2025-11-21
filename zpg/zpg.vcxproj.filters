@@ -84,6 +84,15 @@
     <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ParametricLineMovement.cpp">
+      <Filter>Source Files\Transformations</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldEntityGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -121,9 +130,6 @@
     </ClInclude>
     <ClInclude Include="TransformBase.h">
       <Filter>Header Files\Transformations</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformManager.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Translation.h">
       <Filter>Header Files\Transformations</Filter>
@@ -171,6 +177,15 @@
       <Filter>Header Files\Transformations</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParametricLineMovement.h">
+      <Filter>Header Files\Transformations</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformManager.h">
+      <Filter>Header Files\Transformations</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldEntityGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,3 +8,8 @@ mat4 Custom::getModelMatrix()
 {
 	return mMatrix;
 }
+
+TransformBase* Custom::getCopy() const
+{
+	return new Custom(*this);
+}

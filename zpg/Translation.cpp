@@ -12,6 +12,11 @@ mat4 Translation::getModelMatrix()
     return translate(mat4(1.0f), mVector);
 }
 
+TransformBase* Translation::getCopy() const
+{
+	return new Translation(*this);
+}
+
 void Translation::randomize()
 {
         if (mIsRandom)

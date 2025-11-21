@@ -18,4 +18,6 @@ public:
     void addTransformation(float timer, TransformBase* transformation);
 
     mat4 getModelMatrix() override;
+
+	TransformBase* getCopy() const override;
 };

@@ -40,3 +40,8 @@ mat4 TransformTimer::getModelMatrix()
     }
     return timerMatrix;
 }
+
+TransformBase* TransformTimer::getCopy() const
+{
+	return new TransformTimer(*this);
+}

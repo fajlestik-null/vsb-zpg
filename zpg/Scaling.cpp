@@ -12,6 +12,11 @@ mat4 Scaling::getModelMatrix()
     return scale(mat4(1.0f), mVector);
 }
 
+TransformBase* Scaling::getCopy() const
+{
+	return new Scaling(*this);
+}
+
 void Scaling::randomize()
 {
         if (mIsRandom)

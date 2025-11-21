@@ -17,4 +17,9 @@ mat4 TransformComponent::getModelMatrix()
     return resultMatrix;
 }
 
+TransformBase* TransformComponent::getCopy() const
+{
+	return new TransformComponent(*this);
+}
+
 

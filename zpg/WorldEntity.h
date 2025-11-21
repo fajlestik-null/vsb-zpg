@@ -20,7 +20,9 @@ protected:
 	vector<ShaderProgram*> mShaderPrograms;
     shared_ptr<TransformManager> mTransformManager;
     Texture* mTexture;
+    //need to add material
 
+    static GLuint sNextIndex;
 
 public:
     WorldEntity(): mModel(nullptr), mTransformManager(make_shared<TransformManager>()), mObjectColor(vec3(1.0f, 1.0f, 1.0f)), mTexture(nullptr), mStencilIndex(0){}
@@ -58,25 +60,33 @@ public:
     }
 
     virtual void update(GLFWwindow* window, float deltaTime, Controls* controls) {
+		mTransformManager->calculateTransform();
 		notifyObservers();
     };
 
     WorldEntity * getCopy() const
     {
+        if (sNextIndex++ > 255)
+        {
+            sNextIndex = 1;
+        }
+
         WorldEntity * duplicate = new WorldEntity();
 
-        duplicate->setStencilIndex(this->getStencilIndex()); // may be removed based on usage of Stencil buffer index
+        duplicate->mStencilIndex = sNextIndex;
 
-        duplicate->setToVisible(this->isVisible()); //currently not used
+        duplicate->mVisible = this->mVisible; //currently not used
 
-        duplicate->setColor(this->getColor());
+		duplicate->mObjectColor = this->mObjectColor;
 
-		duplicate->setModel(this->getModel());
-		duplicate->setTexture(this->getTexture());
-		duplicate->addShaderProgram(this->getShaderProgram()[0]); // only first shader program is copied - I use only one shader per entity currently anyway
+		duplicate->mModel = this->mModel;
+		duplicate->mTexture = this->mTexture;
+        duplicate->mShaderPrograms = this->mShaderPrograms;
+		
+        duplicate->mObservers = this->mObservers;
 
-        duplicate->setTransformManager(std::make_shared<TransformManager>());
-
+		duplicate->mTransformManager = this->mTransformManager->getCopy();
+        
         return duplicate;
     }
 
@@ -95,8 +105,23 @@ public:
     void setToVisible(const bool VISIBLE) { mVisible = VISIBLE; }
     void setColor(const vec3 COLOR) { mObjectColor = COLOR; }
 	void setStencilIndex(const int INDEX) { mStencilIndex = INDEX; }
+	void setNextStencilIndex(const int INDEX) { sNextIndex = INDEX; }
 
     SubjectType getType() const override { return SubjectType::WORLD_ENTITY; }
+
+    void nullifyTranslation()
+    {
+        // 1. Get the current overall final position (translation components from the 4th column)
+        glm::mat4 finalMatrix = mTransformManager->getFinalMatrix();
+        glm::vec3 currentPosition = glm::vec3(finalMatrix[3]); // This is the world position (X, Y, Z)
+
+        // 2. Add a new static translation that is the inverse of the current position.
+        // This moves the object back to the world origin (0, 0, 0).
+        glm::vec3 negation = -currentPosition;
+
+        // 3. Apply the negating translation.
+        this->addStaticTransform(new Translation(negation));
+    }
 
     void addStaticTransform(TransformBase* transformation)
     {

@@ -21,11 +21,8 @@ DrawableObject::~DrawableObject()
 
 void DrawableObject::update(GLFWwindow* window, float deltaTime, Controls* controls)
 {
-	this->getTransformManager().get()->calculateTransform();
-	if (!this->getTransformManager().get()->isCalculated())
-	{
-		this->notifyObservers();
-	}
+	this->getTransformManager()->calculateTransform();
+	this->notifyObservers();
 }
 
 SubjectType DrawableObject::getType() const

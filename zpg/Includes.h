@@ -21,6 +21,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+//#include <algorithm>
 //Namespaces
 using namespace std;
 using namespace glm;

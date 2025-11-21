@@ -155,6 +155,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClCompile Include="Custom.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="ParametricLineMovement.cpp" />
     <ClCompile Include="Rotation.cpp" />
     <ClCompile Include="Scaling.cpp" />
     <ClCompile Include="Subject.cpp" />
@@ -169,6 +170,8 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="TransformTimer.cpp" />
     <ClCompile Include="Translation.cpp" />
+    <ClCompile Include="WorldEntity.cpp" />
+    <ClCompile Include="WorldEntityGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -183,6 +186,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClInclude Include="Includes.h" />
     <ClInclude Include="LightType.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="ParametricLineMovement.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Rotation.h" />
     <ClInclude Include="Scaling.h" />
@@ -200,6 +204,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClInclude Include="TransformTimer.h" />
     <ClInclude Include="Translation.h" />
     <ClInclude Include="WorldEntity.h" />
+    <ClInclude Include="WorldEntityGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="blinn-phong.frag" />

@@ -18,4 +18,6 @@ public:
     void randomize();
 
     mat4 getModelMatrix() override;
+
+	TransformBase* getCopy() const override;
 };

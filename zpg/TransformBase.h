@@ -7,4 +7,6 @@ class TransformBase {
 public:
     virtual ~TransformBase() = default;
     virtual mat4 getModelMatrix() = 0;
+
+	virtual TransformBase* getCopy() const = 0;
 };
