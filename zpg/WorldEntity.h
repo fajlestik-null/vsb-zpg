@@ -5,6 +5,7 @@
 #include "TransformManager.h"
 #include "Controls.h"
 #include "Texture.h"
+#include "Material.h"
 
 #include "Includes.h"
 
@@ -19,13 +20,14 @@ protected:
 	Model* mModel;
 	vector<ShaderProgram*> mShaderPrograms;
     shared_ptr<TransformManager> mTransformManager;
+	Material* mMaterial;
     Texture* mTexture;
     //need to add material
 
     static GLuint sNextIndex;
 
 public:
-    WorldEntity(): mModel(nullptr), mTransformManager(make_shared<TransformManager>()), mObjectColor(vec3(1.0f, 1.0f, 1.0f)), mTexture(nullptr), mStencilIndex(0){}
+    WorldEntity(): mModel(nullptr), mTransformManager(make_shared<TransformManager>()), mObjectColor(vec3(1.0f, 1.0f, 1.0f)), mTexture(nullptr), mStencilIndex(0), mMaterial(new Material()){}
 
     virtual ~WorldEntity() = default;
 
@@ -41,6 +43,7 @@ public:
             if (mTexture != nullptr)
             {
                 shaderProgram->setUniform("textureUnitID", mTexture->getUnitIndex());
+				shaderProgram->setUniform(mMaterial);
 				shaderProgram->setUniform("hasTexture", 1);
                 mTexture->bind();
             }
@@ -81,6 +84,14 @@ public:
 
 		duplicate->mModel = this->mModel;
 		duplicate->mTexture = this->mTexture;
+
+        duplicate->mMaterial = new Material(
+            this->mMaterial->getAmbientFactor(),
+            this->mMaterial->getDiffuseFactor(),
+            this->mMaterial->getSpecularFactor(),
+            this->mMaterial->getShininess()
+        );
+
         duplicate->mShaderPrograms = this->mShaderPrograms;
 		
         duplicate->mObservers = this->mObservers;
@@ -97,6 +108,7 @@ public:
     vec3 getColor() const { return mObjectColor; }
     Texture* getTexture() const { return mTexture; }
     GLuint getStencilIndex() const { return mStencilIndex; }
+	Material* getMaterial() const { return mMaterial; }
     
     void setTexture(Texture* texture) { mTexture = texture; }
     void setModel(Model* model) { mModel = model; }
@@ -106,6 +118,7 @@ public:
     void setColor(const vec3 COLOR) { mObjectColor = COLOR; }
 	void setStencilIndex(const int INDEX) { mStencilIndex = INDEX; }
 	void setNextStencilIndex(const int INDEX) { sNextIndex = INDEX; }
+	void setMaterial(Material* material) { mMaterial = material; }
 
     SubjectType getType() const override { return SubjectType::WORLD_ENTITY; }
 

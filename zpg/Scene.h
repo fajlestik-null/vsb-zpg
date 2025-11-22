@@ -37,6 +37,7 @@ public:
 	void setEntityToHandle(WorldEntity* entity) { mEntitityToHandle = entity; }
 	void setSelectedEntity(Controls* controls);
 	void removeEntity(Controls* controls);
+	void removeAndInsertEntity(Controls* controls);	
 	void insertEntity(Controls* controls);
 	void transformEntity(Controls* controls);
 };

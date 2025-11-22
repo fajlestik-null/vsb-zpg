@@ -20,7 +20,7 @@ Light::Light(Model* model, ShaderProgram* shader,const vec3 COLOR)
 	this->setTexture(nullptr);
 }
 
-Light::Light(const LightType LIGHT_TYPE, const vec3 LIGHT_COLOR, const float INTENSITY, const float DISTANCE = 1.0f)
+Light::Light(const LightType LIGHT_TYPE, const vec3 LIGHT_COLOR, const float INTENSITY, const float DISTANCE = 1.0f) : mDistanceToRemember(0.0f)
 {
 	this->mID = LIGHT_COUNT++;
 	this->mLightType = LIGHT_TYPE;

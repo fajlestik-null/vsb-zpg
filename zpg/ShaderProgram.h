@@ -4,9 +4,12 @@
 #include "IObserver.h"
 #include "ShaderLoadType.h"
 
+
 class Camera;
 class Light;
 class WorldEntity;
+class DrawableObject;
+class Material;
 
 class ShaderProgram : public IObserver
 {
@@ -24,12 +27,15 @@ private:
     void setUniform( Camera* camera) const;
 
 
+
 public:
 	ShaderProgram();
     ShaderProgram(const ShaderLoadType LOAD_TYPE, const char* VERTEX_SHADER, const char* FRAGMENT_SHADER);
     ~ShaderProgram();
 
     void setUniform(const string& NAME, const int& INT) const;
+
+    void setUniform(Material* Material);
 
     bool loadShaderProgramFromFile(const string& VERTEX_SHADER, const string& FRAGMENT_SHADER);
 

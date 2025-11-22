@@ -21,10 +21,18 @@ vec3 direction;
 float distance;
 
 };
-
 uniform lightSource lights [MAX_LIGHTS];
 
 uniform int numLights;
+
+struct materialType {
+vec3 ambientFactor;
+vec3 diffuseFactor;
+vec3 specularFactor;
+int shininess;
+};
+
+uniform materialType material;
 
 float attenuation ( float d , float c , float l , float q, float distance)
 {
@@ -56,18 +64,17 @@ void main () {
             objectColor = texture(textureUnitID,uv).xyz;
     }
 
-
     vec4 finalColor = vec4(0.0);
     vec3 lightDirection = vec3(1.0);
     float att = 1.0;
     float spot = 1.0;
-    vec4 ambient =  vec4( objectColor * 0.1, 1.0);
+    vec4 ambient = vec4( objectColor * material.ambientFactor, 1.0);
     float specular = 0.0;
     vec4 diffuse = vec4(0.0);
     for(int i = 0; i < numLights; i++) {
 
         if(lights[i].type == 0) {
-            ambient =  vec4( objectColor * lights[i].intensity, 1.0);
+            ambient =  vec4( objectColor * lights[i].intensity * material.ambientFactor, 1.0);
             continue;
         }
         else if(lights[i].type == 1) {
@@ -89,7 +96,7 @@ void main () {
             if(dot(lightDirection, normalize(worldNormal)) <= 0.0)
                 continue;
             vec3 reflectDir = reflect(-lightDirection, normalize(worldNormal));
-            specular = pow(max(dot(normalize(cameraPosition), normalize(reflectDir)), 0.0), 32);
+            specular = pow(max(dot(normalize(cameraPosition), normalize(reflectDir)), 0.0), material.shininess);
             float dotProduct = max(dot(lightDirection, normalize(worldNormal)), 0.0);
             diffuse = dotProduct * vec4( objectColor, 1.0);
 
@@ -102,7 +109,7 @@ void main () {
                 spot=(spot-0.93)/(1-0.93);
             }
             
-            finalColor += (diffuse  + (specular * vec4(lights[i].color, 1.0))) * spot * att * lights[i].intensity; // texture(textureUnitID,uv) -> in case of missing texture returns 0
+            finalColor += (diffuse * vec4(material.diffuseFactor,1.0f)  + (specular * vec4(lights[i].color, 1.0) * vec4(material.specularFactor,1.0f))) * spot * att * lights[i].intensity; // texture(textureUnitID,uv) -> in case of missing texture returns 0
         }
     
     }

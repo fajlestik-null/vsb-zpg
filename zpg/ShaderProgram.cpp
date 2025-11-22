@@ -2,6 +2,8 @@
 #include "Camera.h"
 #include "Light.h"
 #include "WorldEntity.h"
+#include "DrawableObject.h"
+#include "Material.h"
 
 
 ShaderProgram::ShaderProgram()
@@ -143,6 +145,14 @@ void ShaderProgram::setUniform(Camera* camera) const
 		this->setUniform("viewMatrix", camera->getViewMatrix());
 }
 
+void ShaderProgram::setUniform(Material* material)
+{
+	this->setUniform("material.ambientFactor", material->getAmbientFactor());
+	this->setUniform("material.diffuseFactor", material->getDiffuseFactor());
+	this->setUniform("material.specularFactor", material->getSpecularFactor());
+	this->setUniform("material.shininess", material->getShininess());
+}
+
 void ShaderProgram::checkLinker() const
 {
 	GLint status;
@@ -178,8 +188,21 @@ void ShaderProgram::notify(Subject* subject)
 	glUseProgram(mID);
 	if (Camera* camera = dynamic_cast<Camera*>(subject)) {
 		this->setUniform(camera);
+		return;
 	}
 	else if (Light* light = dynamic_cast<Light*>(subject)) {
 		this->setUniform(light);
+	}
+
+	WorldEntity* we = dynamic_cast<WorldEntity*>(subject);
+
+	if (we != nullptr)
+	{
+		Material* mat = we->getMaterial();
+
+		if (mat != nullptr)
+		{
+			this->setUniform(mat);
+		}
 	}
 }

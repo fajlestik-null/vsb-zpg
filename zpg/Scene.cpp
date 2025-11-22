@@ -20,6 +20,7 @@ void Scene::render(GLFWwindow* window, float deltaTime, Controls* controls)
 	setSelectedEntity(controls);
 	insertEntity(controls);
 	removeEntity(controls);
+	removeAndInsertEntity(controls);
     transformEntity(controls); //needs to be after update to get correct position from controls
 
     for (auto entity : mWorldEntities)
@@ -63,12 +64,40 @@ void Scene::removeEntity(Controls* controls)
 	}
 }
 
+void Scene::removeAndInsertEntity(Controls* controls)
+{
+    if (controls->isKeyTriggered(GLFW_KEY_ENTER))
+    {
+        for (auto entity : mWorldEntities)
+        {
+            if (entity->getStencilIndex() == controls->getStencilIndex() && controls->getStencilIndex() != 0)
+            {
+                mEntitityToHandle = entity;
+                cout << "Selected entity with stencil index: " << controls->getStencilIndex() << endl;
+                break;
+            }
+        }
+
+        if (mEntitityToHandle != nullptr)
+        {
+            auto it = find(mWorldEntities.begin(), mWorldEntities.end(), mEntitityToHandle);
+            if (it != mWorldEntities.end())
+            {
+                delete* it;
+                mWorldEntities.erase(it);
+                mEntitityToHandle = nullptr;
+                this->mWorldEntities.insert(mWorldEntities.begin(), this->getWorldEntityGenerator()->generateEntityRandomly());
+            }
+        }
+    }
+}
+
 void Scene::insertEntity(Controls* controls)
 {
     if (controls->isKeyTriggered(GLFW_KEY_I) && mEntitityToHandle != nullptr)
     {
         WorldEntity* duplicate = mEntitityToHandle->getCopy();
-        //duplicate->nullifyTranslation();
+        duplicate->nullifyTranslation();
         duplicate->addStaticTransform(new Translation(controls->getPosition()));
 		this->mWorldEntities.insert(mWorldEntities.begin(), duplicate);
     }
@@ -250,8 +279,6 @@ Scene* sceneDefault()
 
 	 ground->setTexture(grass);
 
-    //modelPlain->setTexture(resourceManager.loadTexture("./Res/grass.png"));
-    
      ground->addStaticTransform(new TransformComponent({ 
          new Scaling(vec3(2.5f, 1.0f, 2.5f)),
          new Translation(vec3(1.0f, 0.0f, 1.0f))
@@ -377,102 +404,85 @@ Scene* sceneSolarSystem()
 
     ResourceManager& resourceManager = ResourceManager::getInstance();
 
-    auto textureSkyBox = resourceManager.loadCubeMap("mySkyBox", { "./Res/starfield1.jpg",
+    auto textureSkyBox = resourceManager.loadCubeMap("mySkyBox", 
+                                       { "./Res/starfield1.jpg",
                                          "./Res/starfield1.jpg",
                                          "./Res/starfield1.jpg",
                                          "./Res/starfield1.jpg",
                                          "./Res/starfield1.jpg",
                                          "./Res/starfield1.jpg" });
-
-
-    Model* skybox = resourceManager.loadModel("./Res/skybox.obj");
+        Model* skybox = resourceManager.loadModel("./Res/skybox.obj");
     ShaderProgram* shaderSky = resourceManager.loadShaderProgram("skyBox.vert", "skyBox.frag");
-
     DrawableObject* sky = new DrawableObject(skybox, shaderSky, vec3(1.0f, 1.0f, 1.0f));
-
     sky->setTexture(textureSkyBox);
-
 	scene->setSkyBox(sky);
 
 
     ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
-   //ShaderProgram* shaderT = resourceManager.loadShaderProgram("constant.vert", "constant.frag");
-
-
     Model* model = resourceManager.loadModel("./Res/planet.obj");
-
-	Texture* texture = resourceManager.loadTexture("./Res/sun.jpg");
 
 	float offset = -20.0f;
 	float slowCoefficient = 10.0f;
     float earthGlobalRotation = 1.0f/slowCoefficient;
     float earthSelftRotation = 366.256f/slowCoefficient;
 
+    Texture* texture = resourceManager.loadTexture("./Res/sun.jpg");
 	DrawableObject* sun = new DrawableObject(model, shader);
 	float sunSize = 15.0f;
 	sun->addStaticTransform(new Translation(vec3(0.0f, offset, 0.0f)));
 	sun->addStaticTransform(new Scaling(vec3(sunSize, sunSize, sunSize)));
+	sun->getMaterial()->setAmbientFactor(vec3(1.0f, 1.0f, 1.0f));
     sun->setTexture(texture);
 	scene->addEntity(sun);
 
+    texture = resourceManager.loadTexture("./Res/mercury.jpg");
     DrawableObject* mercury = new DrawableObject(model, shader);
 	mercury->addStaticTransform(new Translation(vec3(sunSize + 17.96, offset/2, 0.0f)));
 	mercury->addStaticTransform(new Scaling(vec3(0.38f, 0.38f, 0.38f)));
 	mercury->addGlobalTransform(new Rotation(vec3(0.0f, 4.15f*earthGlobalRotation, 0.0f)));
-    //tilt
-	//mercury->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 0.0034f)));
 	mercury->addLocalTransform(new Rotation(vec3(0.0f, 0.016f*earthSelftRotation, 0.0f)));
-	texture = resourceManager.loadTexture("./Res/mercury.jpg");
 	mercury->setTexture(texture);
+    mercury->getMaterial()->setSpecularFactor(vec3(0.0f));
     scene->addEntity(mercury);
 
+    texture = resourceManager.loadTexture("./Res/venus.jpg");
     DrawableObject* venus = new DrawableObject(model, shader);
 	venus->addStaticTransform(new Translation(vec3(sunSize + 33.16f, offset/2, 0.0f)));
 	venus->addStaticTransform(new Scaling(vec3(0.95f, 0.95f, 0.95f)));
 	venus->addGlobalTransform(new Rotation(vec3(0.0f, 3.07f*earthGlobalRotation, 0.0f)));
-	//tilt
-	//venus->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 177.4f)));
 	venus->addLocalTransform(new Rotation(vec3(0.0f, 0.004*earthSelftRotation, 0.0f)));
-	texture = resourceManager.loadTexture("./Res/venus.jpg");
 	venus->setTexture(texture);
+	venus->getMaterial()->setSpecularFactor(vec3(0.0f));
 	scene->addEntity(venus);
 
+    texture = resourceManager.loadTexture("./Res/earth.jpg");
 	DrawableObject* earth = new DrawableObject(model, shader);
     earth->addStaticTransform(new Translation(vec3(sunSize + 46.05f, offset/2, 0.0f)));
 	earth->addGlobalTransform(new Rotation(vec3(0.0f, earthGlobalRotation, 0.0f)));
-	//tilt
-	//earth->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 23.44f)));
-	earth->addStaticTransform(new Scaling(vec3(0.95f, 0.95f * 0.996f, 0.95f))); //a bit elliptical - in testing phase
+	earth->addStaticTransform(new Scaling(vec3(0.95f, 0.95f * 0.996f, 0.95f)));
 	earth->addLocalTransform(new Rotation(vec3(0.0f, earthSelftRotation, 0.0f)));
-	texture = resourceManager.loadTexture("./Res/earth.jpg");
 	earth->setTexture(texture);
+    earth->getMaterial()->setSpecularFactor(vec3(0.0f));
 	scene->addEntity(earth);
 
-
+    texture = resourceManager.loadTexture("./Res/moon.jpg");
     DrawableObject* moon = new DrawableObject(model, shader);
 	moon->addParent(earth->getTransformManager());
-    //tilt
-	//moon->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 6.68f)));
-	// moon orbit
     moon->addLocalTransform(new Rotation(vec3(0.0f, (earthSelftRotation / 27.3f) / slowCoefficient, 0.0f)));
-    // orbit radius
     moon->addStaticTransform(new Translation(vec3(2.8f, 0.0f, 0.0f)));
-    // moon size
     moon->addStaticTransform(new Scaling(vec3(0.27f)));
-
-	texture = resourceManager.loadTexture("./Res/moon.jpg");
 	moon->setTexture(texture);
+    moon->getMaterial()->setSpecularFactor(vec3(0.0f));
 	scene->addEntity(moon);
 
     DrawableObject* mars = new DrawableObject(model, shader);
 	mars->addStaticTransform(new Translation(vec3(sunSize + 70.0f, offset/2, 0.0f)));
-	mars->addStaticTransform(new Scaling(vec3(0.53f, 0.53f * 0.994f, 0.53f))); //a bit elliptical - in testing phase
+	mars->addStaticTransform(new Scaling(vec3(0.53f, 0.53f * 0.994f, 0.53f)));
 	mars->addGlobalTransform(new Rotation(vec3(0.0f, 0.81f*earthGlobalRotation, 0.0f)));
-	//tilt
-	//mars->addLocalTransform(new Rotation(vec3(0.0f, 0.0f, 25.19f)));
 	mars->addLocalTransform(new Rotation(vec3(0.0f, 0.97*earthSelftRotation, 0.0f)));
 	texture = resourceManager.loadTexture("./Res/mars.jpg");
 	mars->setTexture(texture);
+	mars->getMaterial()->setSpecularFactor(vec3(0.0f));
 	scene->addEntity(mars);
 
 
@@ -480,13 +490,11 @@ Scene* sceneSolarSystem()
 	light->addParent(sun->getTransformManager());
     light->attach(shaderSky);
     light->attach(shader);
-	//light->attach(shaderT);
     scene->addEntity(light);
 
     Camera* camera = new Camera();
     camera->attach(shader);
     camera->attach(shaderSky);
-    //camera->attach(shaderT);
     scene->addEntity(camera);
 
     sky->addParent(camera->getTransformManager());
@@ -516,9 +524,6 @@ Scene* sceneTesting()
 
 
     sky->setTexture(textureSkyBox);
-
-    //obj_2->add_static_transform(new Scale(vec3(20.0f, 20.0f, 20.0f)));
-    //obj_2->add_static_transform(new Transfer(vec3(10.0f, 1.0f, 10.0f)));
     scene->setSkyBox(sky);
     
 
@@ -534,6 +539,7 @@ Scene* sceneTesting()
                                               0.0, 1.0, 0.0, 0.0,
                                               0.0, 0.0, 1.0, 0.0,
                                               0.0, 0.0, 0.0, 20.0)));
+	cube->setStencilIndex(10);
 
 	scene->addEntity(cube);
 
@@ -542,10 +548,7 @@ Scene* sceneTesting()
 	DrawableObject* cube_en = new DrawableObject(cubeM, shader, vec3(0.8f, 0.7f, 0.6f));
 
 	cube_en->addStaticTransform(new Translation(vec3(1.5f, 0.0f, 0.0f)));
-    cube_en->addStaticTransform(new Custom(mat4(1.0, 0.0, 0.0, 0.0,
-                                                0.0, 1.0, 0.0, 0.0,
-                                                0.0, 0.0, 1.0, 0.0,
-                                                0.0, 0.0, 0.0, 20.0)));
+    cube_en->setStencilIndex(20);
 
 	scene->addEntity(cube_en);
 
@@ -557,7 +560,7 @@ Scene* sceneTesting()
 
     DrawableObject* shrek_en = new DrawableObject(shrek, shader, vec3(0.0f, 0.1f, 0.0f));
     shrek_en->setTexture(shrek_tx);
-    shrek_en->setStencilIndex(22);
+    shrek_en->setStencilIndex(30);
     scene->addEntity(shrek_en);
     
 
@@ -567,16 +570,9 @@ Scene* sceneTesting()
     fiona_en->setTexture(fiona_tx);
 
 	fiona_en->addStaticTransform(new Translation(vec3(1.0f, 0.0f, 0.0f)));
+    fiona_en->setStencilIndex(40);
 
     scene->addEntity(fiona_en);
-
-	ShaderProgram *shaderGrass = resourceManager.loadShaderProgram("grass.vert", "generalLight.frag");
-
-	DrawableObject* terain = new DrawableObject(resourceManager.loadModel("./Res/teren.obj"), shaderGrass, vec3(0.0f, 0.1f, 0.0f));
-
-	terain->setTexture(resourceManager.loadTexture("./Res/grass.png"));
-    
-	scene->addEntity(terain);
 
 	model = resourceManager.loadModel("./Res/beaver.obj");
 
@@ -589,9 +585,19 @@ Scene* sceneTesting()
 	beaver->addStaticTransform(new Scaling(vec3(0.1f, 0.1f, 0.1f)));
 	beaver->addStaticTransform(new Rotation(vec3(-90.0f, 0.0f, 0.0f)));
 
-	beaver->setStencilIndex(1);
+	beaver->setStencilIndex(50);
 
     scene->addEntity(beaver);
+
+    ShaderProgram* shaderGrass = resourceManager.loadShaderProgram("grass.vert", "generalLight.frag");
+
+    DrawableObject* terain = new DrawableObject(resourceManager.loadModel("./Res/teren.obj"), shaderGrass, vec3(0.0f, 0.1f, 0.0f));
+
+    terain->setTexture(resourceManager.loadTexture("./Res/grass.png"));
+
+	terain->getMaterial()->setSpecularFactor(vec3(0.0f));
+
+    scene->addEntity(terain);
 
 	Light* light = new Light(LightType::POINT, vec3(1.0f, 1.0f, 1.0f), 0.5f, 1.0f);
 	light->addStaticTransform(new Translation(vec3(2.0f, 2.0f, 2.0f)));
@@ -612,128 +618,40 @@ Scene* sceneTesting()
 	return scene;
 }
 
-/*
-// Helper function needed for the random Z component generation (assuming you don't have it globally)
-float randomFloat(float minVal, float maxVal)
-{
-    return minVal + static_cast<float>(rand()) / RAND_MAX * (maxVal - minVal);
-}
-
-Scene* sceneWhacAMole()
-{
-
-    Scene* scene = new Scene();
-    ResourceManager& rm = ResourceManager::getInstance();
-
-    // --- 1. Resources ---
-    ShaderProgram* shader = rm.loadShaderProgram("lambert.vert", "generalLight.frag");
-    Model* beaverModel = rm.loadModel("./Res/beaver.obj");
-    Texture* moleTexture = rm.loadTexture("./Res/beaver.jpg");
-
-    // --- 2. Static World Elements (Ground, Camera, Light) ---
-    // (Setup omitted for brevity)
-
-    // --- 3. Define Global Roaming Boundaries and Path ---
-    const float GLOBAL_BOUND = 50.0f; // Roam within +/- 50 units
-    const float ROAMING_HEIGHT_Y = 1.0f; // Fixed height (Y is vertical)
-    const float ROAMING_SPEED = 0.00005f; // Very slow speed to cover the distance
-
-    const int PATH_SEGMENTS = 20; // Number of points in the path
-
-    // Define a single, long zig-zag path across the terrain
-    std::vector<glm::vec3> global_roaming_path;
-
-    for (int i = 0; i <= PATH_SEGMENTS; ++i)
-    {
-        float x = (static_cast<float>(i) / PATH_SEGMENTS) * (GLOBAL_BOUND * 2.0f) - GLOBAL_BOUND;
-
-        // Use a sin wave or random Z component to create a zig-zag pattern
-        float z;
-        if (i % 2 == 0) {
-            z = randomFloat(-GLOBAL_BOUND, GLOBAL_BOUND); // Random Z
-        }
-        else {
-            z = (static_cast<float>(i) / PATH_SEGMENTS) * (GLOBAL_BOUND * 2.0f) - GLOBAL_BOUND; // Incremental Z
-        }
-
-        // The path points are in world space (since moles are now scene children)
-        global_roaming_path.push_back(glm::vec3(x, ROAMING_HEIGHT_Y, z));
-    }
-
-    const int NUM_BEAVERS = 10;
-
-    // --- 4. Beavers (Directly added to the scene) ---
-    for (int i = 0; i < NUM_BEAVERS; i++)
-    {
-        DrawableObject* mole = new DrawableObject(beaverModel, shader);
-        mole->setTexture(moleTexture);
-
-        // Static Transforms
-        mole->addStaticTransform(new Rotation(vec3(180.0f, 0.0f, 0.0f)));
-        mole->addStaticTransform(new Scaling(vec3(0.5f, 0.5f, 0.5f)));
-
-        // Dynamic Movement: Uses the pre-defined global path
-        float speed = ROAMING_SPEED + static_cast<float>(rand()) / RAND_MAX * 0.00001f;
-
-        // NOTE: All beavers will follow the SAME path, but at different offsets/speeds
-        mole->addLocalTransform(new ParametricLineMovement(global_roaming_path, speed));
-
-        scene->addEntity(mole);
-    }
-
-    return scene;
-}*/
-
 Scene* sceneWhacAMole()
 {
     Scene* scene = new Scene();
     ResourceManager& rm = ResourceManager::getInstance();
 
-    // 1. Resources
     ShaderProgram* shader = rm.loadShaderProgram("lambert.vert", "generalLight.frag");
 
-    // Models & Textures
     Model* sphereModel = rm.loadModel("./Res/planet.obj");
-    Texture* moleTexture = rm.loadTexture("./Res/beaver.jpg"); // Assuming a better texture
+    Texture* moleTexture = rm.loadTexture("./Res/beaver.jpg");
     Texture* boardTexture = rm.loadTexture("./Res/water.jpg");
- 
-    // ---
-    
-    // 3. Game Board (Parent Object)
-    /*DrawableObject* board = new DrawableObject(cubeModel, shader);
-    board->setTexture(boardTexture);
-    
-    // Place and size the board. We'll set its base at Z=0.25 (half of its scale).
-	board->addStaticTransform(new Rotation(vec3(90, 0, 0)));
-    board->addStaticTransform(new Scaling(vec3(6.0f, 6.0f, 0.5f))); 
-    board->addStaticTransform(new Translation(vec3(0, 0, 0.25f))); 
-    scene->addEntity(board);
-
-    // 3x3 grid positions (Hole centers, relative to the board's center (0, 0))
-    // Note: These positions are on the X-Y plane.
-    vector<vec3> holePositions = {
-        {-2.0f, -2.0f, 0.0f}, {0.0f, -2.0f, 0.0f}, {2.0f, -2.0f, 0.0f},
-        {-2.0f, 0.0f, 0.0f},  {0.0f, 0.0f, 0.0f},  {2.0f, 0.0f, 0.0f},
-        {-2.0f, 2.0f, 0.0f},  {0.0f, 2.0f, 0.0f},  {2.0f, 2.0f, 0.0f}
-    };*/
-    
-    // 4. Moles (Child Objects)
     Model* beaverModel = rm.loadModel("./Res/beaver.obj");
+    Model* skybox = rm.loadModel("./Res/skybox.obj");
+    ShaderProgram* shaderSky = rm.loadShaderProgram("skyBox.vert", "skyBox.frag");
+
+    auto textureSkyBox = rm.loadCubeMap("mySkyBox", {"./Res/posx.jpg",
+                                                     "./Res/negx.jpg",
+                                                     "./Res/posy.jpg",
+                                                     "./Res/negy.jpg",
+                                                     "./Res/posz.jpg",
+                                                     "./Res/negz.jpg"});
+
+
+    DrawableObject* sky = new DrawableObject(skybox, shaderSky, vec3(0.8f, 0.7f, 0.6f));
+    sky->setTexture(textureSkyBox);
+    scene->setSkyBox(sky);
 
     DrawableObject* beaver = new DrawableObject(beaverModel, shader);
-	beaver->addStaticTransform(new Rotation(vec3(-90.0f, 0.0f, 0.0f))); // Orient the mole upright)
-	beaver->addStaticTransform(new Scaling(vec3(0.1f, 0.1f, 0.1f))); // Initial scaling
+	beaver->addStaticTransform(new Rotation(vec3(-90.0f, 0.0f, 0.0f)));
+	beaver->addStaticTransform(new Scaling(vec3(0.1f, 0.1f, 0.1f)));
+	beaver->getMaterial()->setSpecularFactor(vec3(0.75));
+
 
     beaver->setTexture(moleTexture);
-        
 
-    vector<vec3> path = {
-        vec3(0, 0.05f, 0), // Hidden (Static Z=0 is the board center, so Z=-0.5 is low)
-        vec3(0, -3.0f, 0),   // Popped Up (0.5 units above the board center)
-        vec3(0, 0.05f, 0)
-    };
-
-    beaver->addLocalTransform(new ParametricLineMovement(path, 0.1));
 	scene->getWorldEntityGenerator()->setSampleEntity(beaver);
 
 	scene->getWorldEntityGenerator()->setMinRange(vec3(-15.0f, 0, -15.0f));
@@ -741,45 +659,50 @@ Scene* sceneWhacAMole()
 
     beaver->setStencilIndex(1);
 
-    //HERE IT works
-	//scene->addEntity(beaver);
+    vector<vec3> path = {
+    vec3(0, 0.05f, 0),
+    vec3(0, -3.0f, 0),
+    vec3(0, 0.05f, 0)
+    };
 
-    //HERE IT WON'T WORK
-	//scene->addEntity(beaver->getCopy());
-
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 4; i++)
     {
-        //HERE IT WON'T WORK
-        scene->addEntity(scene->getWorldEntityGenerator()->generateEntityRandomly());
+        auto newBeaver = scene->getWorldEntityGenerator()->generateEntityRandomly();
+        newBeaver->addLocalTransform(new ParametricLineMovement(path, 0.1f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (1.0f - 0.1f)))));
+        scene->addEntity(newBeaver);
     }
 
-    DrawableObject* board = new DrawableObject(sphereModel, shader);
-    board->setTexture(boardTexture);
+    beaver->addLocalTransform(new ParametricLineMovement(path, 0.1f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (1.0f - 0.1f)))));
 
-    //board->addStaticTransform(new Rotation(vec3(90, 0, 0)));
-    board->addStaticTransform(new Scaling(vec3(30.0f, 0.01f, 30.0f)));
-    board->addStaticTransform(new Translation(vec3(0, 0, 1)));
-    scene->addEntity(board);
 
-    // 2. Static World Elements (Ground, Camera, Light)
-// Ground
+    DrawableObject* pond = new DrawableObject(sphereModel, shader);
+    pond->setTexture(boardTexture);
+
+    pond->addStaticTransform(new Scaling(vec3(30.0f, 0.01f, 30.0f)));
+    pond->addStaticTransform(new Translation(vec3(0, 0, 1)));
+	pond->getMaterial()->setSpecularFactor(vec3(0.0f));
+    scene->addEntity(pond);
+
+
     DrawableObject* ground = new DrawableObject(rm.loadModel("./Res/teren.obj"), shader);
     ground->setTexture(rm.loadTexture("./Res/grass.png"));
-    //ground->addStaticTransform(new Scaling(vec3(10.0f, 1.0f, 10.0f)));
+    ground->getMaterial()->setSpecularFactor(vec3(0.0f));
     scene->addEntity(ground);
 
-    // Light
     Light* light = new Light(LightType::POINT, vec3(1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
     light->addStaticTransform(new Translation(vec3(50, 50, 50)));
     light->attach(shader);
+	light->attach(shaderSky);
     scene->addEntity(light);
 
-	// Camera - MUST BE ALWAYS (when using Stencil buffer) LAST 
     Camera* camera = new Camera();
+    
     camera->attach(shader);
-    //camera->addStaticTransform(new Translation(vec3(0, -8, 5)));
-    //camera->addStaticTransform(new Rotation(vec3(-30.0f, 0, 0)));
+	camera->attach(shaderSky);
     scene->addEntity(camera);
+
+    sky->addParent(camera->getTransformManager());
+    sky->getTransformManager()->setInheritOnlyTransform(InheritTransformation::TRANSLATION);
 
     return scene;
 }
