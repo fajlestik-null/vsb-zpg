@@ -60,7 +60,7 @@
     <ClCompile Include="ShaderLoadType.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scaling.cpp">
+    <ClCompile Include="Scale.cpp">
       <Filter>Source Files\Transformations</Filter>
     </ClCompile>
     <ClCompile Include="Rotation.cpp">
@@ -100,6 +100,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TransformManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -146,7 +149,7 @@
     <ClInclude Include="Rotation.h">
       <Filter>Header Files\Transformations</Filter>
     </ClInclude>
-    <ClInclude Include="Scaling.h">
+    <ClInclude Include="Scale.h">
       <Filter>Header Files\Transformations</Filter>
     </ClInclude>
     <ClInclude Include="TransformComponent.h">

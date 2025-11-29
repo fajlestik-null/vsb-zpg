@@ -88,7 +88,7 @@ void TransformManager::addStaticTransform(TransformBase* t)
     {
         mStaticMatricies[1] *= t->getModelMatrix();
     }
-    else if (dynamic_cast<Scaling*>(t))
+    else if (dynamic_cast<Scale*>(t))
     {
         mStaticMatricies[2] *= t->getModelMatrix();
     }

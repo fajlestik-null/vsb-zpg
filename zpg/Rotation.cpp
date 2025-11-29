@@ -1,6 +1,6 @@
 #include "Rotation.h"
 
-Rotation::Rotation(const vec3& angles = vec3(0.0f)) : mVector(angles) {}
+Rotation::Rotation(const vec3& AXIS = vec3(0.0f), const float ANGLE) : mVector(AXIS), mAngle(ANGLE) {}
 
 Rotation::Rotation(vec3 minRange, vec3 maxRange)
 : mVector(vec3(0.0f)), mRandomMin(minRange), mRandomMax(maxRange), mIsRandom(true) {}
@@ -11,9 +11,19 @@ mat4 Rotation::getModelMatrix()
         
         randomize();
 
-        rot = rotate(rot, radians(mVector.x), vec3(1, 0, 0));
-        rot = rotate(rot, radians(mVector.y), vec3(0, 1, 0));
-        rot = rotate(rot, radians(mVector.z), vec3(0, 0, 1));
+        if (mAngle == 0.0f)
+        {
+            // EULER
+            rot = rotate(rot, radians(mVector.x), vec3(1, 0, 0));
+            rot = rotate(rot, radians(mVector.y), vec3(0, 1, 0));
+            rot = rotate(rot, radians(mVector.z), vec3(0, 0, 1));
+        }
+        else
+        {
+            //AXIS
+            rot = rotate(rot, mAngle, mVector);
+        }
+
         return rot;
 }
 

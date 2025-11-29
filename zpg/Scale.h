@@ -3,7 +3,7 @@
 #include "TransformBase.h"
 
 //Child class for specific transformation
-class Scaling : public TransformBase {
+class Scale : public TransformBase {
 private:
     vec3 mVector;
     vec3 mRandomMin;
@@ -12,9 +12,9 @@ private:
 public:
 
     //x,z,y
-    Scaling(const vec3& vec);
+    Scale(const vec3& vec);
 
-    Scaling(vec3 min_range, vec3 max_range);
+    Scale(vec3 min_range, vec3 max_range);
 
     void randomize();
 

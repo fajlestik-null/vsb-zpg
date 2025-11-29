@@ -159,7 +159,8 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClCompile Include="ParametricLineMovement.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Rotation.cpp" />
-    <ClCompile Include="Scaling.cpp" />
+    <ClCompile Include="Scale.cpp" />
+    <ClCompile Include="SceneFactory.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
@@ -193,7 +194,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClInclude Include="ParametricLineMovement.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Rotation.h" />
-    <ClInclude Include="Scaling.h" />
+    <ClInclude Include="Scale.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Model.h" />

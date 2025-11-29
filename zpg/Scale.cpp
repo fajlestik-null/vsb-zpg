@@ -1,23 +1,23 @@
-#include "Scaling.h"
+#include "Scale.h"
 
-Scaling::Scaling(const vec3& vec = vec3(0.0f)) : mVector(vec) {}
+Scale::Scale(const vec3& vec = vec3(0.0f)) : mVector(vec) {}
 
-Scaling::Scaling(vec3 minRange, vec3 maxRange)
+Scale::Scale(vec3 minRange, vec3 maxRange)
 : mVector(vec3(0.0f)), mRandomMin(minRange), mRandomMax(maxRange), mIsRandom(true) {}
 
 
-mat4 Scaling::getModelMatrix()
+mat4 Scale::getModelMatrix()
 {
     randomize();
     return scale(mat4(1.0f), mVector);
 }
 
-TransformBase* Scaling::getCopy() const
+TransformBase* Scale::getCopy() const
 {
-	return new Scaling(*this);
+	return new Scale(*this);
 }
 
-void Scaling::randomize()
+void Scale::randomize()
 {
         if (mIsRandom)
         {

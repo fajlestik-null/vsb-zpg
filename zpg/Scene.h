@@ -3,7 +3,6 @@
 #include "DrawableObject.h"
 #include "Camera.h"
 #include "Light.h"
-#include "ResourceManager.h"
 #include "WorldEntityGenerator.h"
 
 class Scene
