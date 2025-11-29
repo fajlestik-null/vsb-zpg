@@ -93,6 +93,15 @@
     <ClCompile Include="WorldEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BezierCurveMovement.cpp">
+      <Filter>Source Files\Transformations</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -164,7 +173,7 @@
     <ClInclude Include="LightType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="generalLight.frag">
+    <ClInclude Include="generalPhongLight.frag">
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
@@ -188,6 +197,9 @@
     <ClInclude Include="WorldEntityGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BezierCurveMovement.h">
+      <Filter>Header Files\Transformations</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="constant.vert">
@@ -196,7 +208,7 @@
     <None Include="constant.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="lambert.vert">
+    <None Include="generalVertexShader.vert">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="lambert.frag">
@@ -205,7 +217,7 @@
     <None Include="phong.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="blinn-phong.frag">
+    <None Include="generalBlinnLight.frag">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="firefly.frag">

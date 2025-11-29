@@ -81,7 +81,7 @@ void Application::run() {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);  // Clear frame  | GL_STENCIL_BUFFER_BIT
 
-        switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes, sceneSolarSystem, sceneWhacAMole, sceneTesting });
+        switchScene({ sceneDefault, sceneSpheres, sceneTreesAndBushes, sceneSolarSystem, sceneWhacAMole, sceneTesting, sceneLogin, sceneFormula });
         currentTick = (float)glfwGetTime();
         deltaTime = currentTick - lastTick;
         lastTick = currentTick;
@@ -103,4 +103,9 @@ void Application::switchScene(vector<Scene* (*)()> scenes)
             mGeneralScene = scenes[i]();
         }
     }
+}
+
+GLFWwindow* Application::GetWindow() const
+{
+    return mWindow;
 }

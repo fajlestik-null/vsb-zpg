@@ -17,6 +17,7 @@ private:
     GLuint mID;
     Shader* mVertexShader;
     Shader* mFragmentShader;
+    bool mDebugFlag = false;
 
     void checkLinker() const;
 
@@ -34,7 +35,6 @@ public:
     ~ShaderProgram();
 
     void setUniform(const string& NAME, const int& INT) const;
-
     void setUniform(Material* Material);
 
     bool loadShaderProgramFromFile(const string& VERTEX_SHADER, const string& FRAGMENT_SHADER);
@@ -43,4 +43,7 @@ public:
 
     void useShader() const;
     void useShader(const mat4 MATRIX, const vec3 COLOR) const;
+
+    void turnDebugOn();
+    void turnDebugOff();
 };

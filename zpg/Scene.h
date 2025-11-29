@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ArraysOfVertices.h"
 #include "DrawableObject.h"
 #include "Camera.h"
 #include "Light.h"
@@ -10,7 +9,7 @@
 class Scene
 {
 private:
-	WorldEntity* mSkyBox;
+	WorldEntity* mSkyBox; //NOTE: DO NOT FORGET TO ATTACH ITS SHADER TO OBSERVER (light, camera)
 	WorldEntity* mActiveCamera;
 	WorldEntity* mEntitityToHandle;
 	vector<WorldEntity*> mWorldEntities;
@@ -19,14 +18,7 @@ private:
 public:
 	Scene():mSkyBox(nullptr), mWorldEntityGenerator(new WorldEntityGenerator()){};
 	~Scene();
-	void addEntity(WorldEntity* entity) { 
-		mWorldEntities.push_back(entity);
-
-		if (Camera* camera = dynamic_cast<Camera*>(entity)) {
-			mActiveCamera = camera;
-		}
-	}
-
+	void addEntity(WorldEntity* entity);
 	void render(GLFWwindow* window, float deltaTime, Controls* controls);
 	WorldEntity* getSkyBox() const { return mSkyBox; } // useless
 	WorldEntity* getActiveCamera() const { return mActiveCamera; } // useless
@@ -40,6 +32,8 @@ public:
 	void removeAndInsertEntity(Controls* controls);	
 	void insertEntity(Controls* controls);
 	void transformEntity(Controls* controls);
+	void selectPointsForBezier(Controls* controls);
+	void spawnBezierEntity(Controls* controls);
 };
 
 Scene* sceneDefault();
@@ -53,3 +47,7 @@ Scene* sceneSolarSystem();
 Scene* sceneTesting();
 
 Scene* sceneWhacAMole();
+
+Scene* sceneLogin();
+
+Scene* sceneFormula();

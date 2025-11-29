@@ -66,7 +66,7 @@ int Light::getID() const
 	return this->mID;
 }
 
-void Light::processKeyboard(GLFWwindow* window, float delta_time, Controls* controls)
+void Light::processKeyboard(GLFWwindow* window, float deltaTime, Controls* controls)
 {
 	if (isActive() == false)
 		return;

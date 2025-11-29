@@ -22,7 +22,7 @@ public:
 	Light(const LightType LIGHT_TYPE, const vec3 LIGHT_COLOR, const float INTENSITY, const float DISTANCE);
 
 	void processKeyboard(GLFWwindow* window, float deltaTime, Controls* controls);
-	void update(GLFWwindow* window, float delta_time, Controls* controls);
+	void update(GLFWwindow* window, float deltaTime, Controls* controls);
 
 	vec3 getLightColor() const;
 	float getIntensity() const;

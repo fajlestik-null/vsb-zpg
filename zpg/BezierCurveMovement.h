@@ -1,8 +1,8 @@
 #pragma once
 #include "Includes.h"
-#include "IncludeTransformations.h"
+#include "TransformBase.h"
 
-class ParametricLineMovement : public TransformBase
+class BezierCurveMovement : public TransformBase
 {
 private:
     vector<vec3> mPoints;
@@ -10,15 +10,14 @@ private:
     float mCurrentT = 0.0f;
 
     float mLastTime = 0.0f;
-
-    vec3 mlastPosition;
     bool mfirstUpdate = true;
 
+    mat4 mLastMatrix = mat4(1.0f);
+
 public:
-    ParametricLineMovement(const vector<vec3>& POINTS,const float SPEED);
+    BezierCurveMovement(const vector<vec3>& POINTS, const float SPEED);
 
     mat4 getModelMatrix() override;
-
-
     TransformBase* getCopy() const override;
+
 };

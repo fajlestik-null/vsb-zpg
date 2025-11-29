@@ -1,4 +1,6 @@
 #include "Scene.h"
+#include "ArraysOfVertices.h" //for compilation optimalization included in Scene.cpp
+
 
 Scene::~Scene()
 {
@@ -7,6 +9,16 @@ Scene::~Scene()
         delete we;
     }
 }
+
+void Scene::addEntity(WorldEntity* entity)
+{
+    mWorldEntities.push_back(entity);
+
+    if (Camera* camera = dynamic_cast<Camera*>(entity)) {
+        mActiveCamera = camera;
+    }
+}
+
 
 void Scene::render(GLFWwindow* window, float deltaTime, Controls* controls)
 {
@@ -17,11 +29,14 @@ void Scene::render(GLFWwindow* window, float deltaTime, Controls* controls)
         glClear(GL_DEPTH_BUFFER_BIT);
     }
 
+    selectPointsForBezier(controls);
+    spawnBezierEntity(controls);
 	setSelectedEntity(controls);
 	insertEntity(controls);
 	removeEntity(controls);
 	removeAndInsertEntity(controls);
-    transformEntity(controls); //needs to be after update to get correct position from controls
+    transformEntity(controls); 
+
 
     for (auto entity : mWorldEntities)
     {   
@@ -43,7 +58,9 @@ void Scene::setSelectedEntity(Controls* controls)
             if (entity->getStencilIndex() == controls->getStencilIndex() && controls->getStencilIndex() != 0)
             {
                 mEntitityToHandle = entity;
-				cout << "Selected entity with stencil index: " << controls->getStencilIndex() << endl;
+                this->mWorldEntityGenerator->setSampleEntity(entity);
+                
+				//cout << "Selected entity with stencil index: " << controls->getStencilIndex() << endl;
                 break;
             }
 		}
@@ -73,7 +90,7 @@ void Scene::removeAndInsertEntity(Controls* controls)
             if (entity->getStencilIndex() == controls->getStencilIndex() && controls->getStencilIndex() != 0)
             {
                 mEntitityToHandle = entity;
-                cout << "Selected entity with stencil index: " << controls->getStencilIndex() << endl;
+                //cout << "Selected entity with stencil index: " << controls->getStencilIndex() << endl;
                 break;
             }
         }
@@ -138,6 +155,28 @@ void Scene::transformEntity(Controls* controls)
     }
 }
 
+void Scene::selectPointsForBezier(Controls* controls)
+{
+    if (controls->isKeyTriggered(GLFW_KEY_B))
+    {
+        vec3 point = controls->getPosition();
+        mWorldEntityGenerator->addPointForBezier(point);
+    }
+}
+
+void Scene::spawnBezierEntity(Controls* controls)
+{
+    if (controls->isKeyTriggered(GLFW_KEY_N))
+    {
+        WorldEntity* bezierEntity = mWorldEntityGenerator->generateBezierEntity();
+        if (bezierEntity != nullptr)
+        {
+            this->mWorldEntities.insert(mWorldEntities.begin(), bezierEntity);
+            this->mWorldEntityGenerator->clearPointsForBezier();
+        }
+    }
+}
+
 
 Scene* sceneDefault()
 {
@@ -152,7 +191,7 @@ Scene* sceneDefault()
     Model* modelTriangle = new Model(triangle);
     Model* modelSphere = new Model(sphere);
 
-	ShaderProgram* shaderProgram = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "generalLight.frag");
+	ShaderProgram* shaderProgram = new ShaderProgram(ShaderLoadType::FILE, "generalVertexShader.vert", "generalBlinnLight.frag");
 
     DrawableObject* entity = new DrawableObject(modelTriangle, shaderProgram, vec3(1,0,0));
 
@@ -189,8 +228,8 @@ Scene* sceneDefault()
      Model* model;
      //ShaderProgram* shaderConstant = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
      //ShaderProgram* shaderLambert = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "lambert.frag");
-     ShaderProgram* shaderPhong = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "phong.frag");
-     ShaderProgram* reflector = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "reflector.frag");
+     ShaderProgram* shaderPhong = new ShaderProgram(ShaderLoadType::FILE, "generalVertexShader.vert", "generalPhongLight.frag");
+     ShaderProgram* reflector = new ShaderProgram(ShaderLoadType::FILE, "generalVertexShader.vert", "reflector.frag");
      
      DrawableObject* drawableObject;
      vec3 objectColor = vec3(1.0f, 0.0f, 0.0f);
@@ -263,27 +302,37 @@ Scene* sceneDefault()
      Scene* scene = new Scene();
      ResourceManager& resourceManager = ResourceManager::getInstance();
 
+     auto textureSkyBox = resourceManager.loadCubeMap("night", { "./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg",
+                                        "./Res/starfield1.jpg" });
+     Model* skybox = resourceManager.loadModel("./Res/skybox.obj");
+     ShaderProgram* shaderSky = resourceManager.loadShaderProgram("skyBox.vert", "skyBox.frag");
+     DrawableObject* sky = new DrawableObject(skybox, shaderSky, vec3(1.0f, 1.0f, 1.0f));
+     sky->setTexture(textureSkyBox);
+     scene->setSkyBox(sky);
+
      Model* model = new Model();
 
-     ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "generalLight.frag");
-     ShaderProgram* shaderTexture = new ShaderProgram(ShaderLoadType::FILE, "lambert.vert", "generalLight.frag");
-     ShaderProgram* shaderFirefly = new ShaderProgram(ShaderLoadType::FILE, "constant.vert", "constant.frag");
+     ShaderProgram* shader = new ShaderProgram(ShaderLoadType::FILE, "generalVertexShader.vert", "generalPhongLight.frag");
+     ShaderProgram* shaderTexture = new ShaderProgram(ShaderLoadType::FILE, "generalVertexShader.vert", "generalPhongLight.frag");
+     ShaderProgram* shaderGrass = resourceManager.loadShaderProgram("grass.vert", "generalPhongLight.frag");
 
 	 Texture * grass = resourceManager.loadTexture("./Res/grass.png");
-	 model = resourceManager.loadModel("./Res/square.obj");
+	 model = resourceManager.loadModel("./Res/teren.obj");
 
 
-     DrawableObject* ground = new DrawableObject();
+    DrawableObject* ground = new DrawableObject();
 
-     ground = new DrawableObject(model, shaderTexture, vec3(0.5f, 0.2f, 0.2f));
+    ground = new DrawableObject(model, shaderGrass, vec3(0.5f, 0.2f, 0.2f));
 
-	 ground->setTexture(grass);
+	ground->setTexture(grass);
 
-     ground->addStaticTransform(new TransformComponent({ 
-         new Scaling(vec3(2.5f, 1.0f, 2.5f)),
-         new Translation(vec3(1.0f, 0.0f, 1.0f))
-         }));
-
+    ground->addStaticTransform(new Scaling(vec3(0.06f, 0.06f, 0.06f)));
+    ground->addStaticTransform(new Translation(vec3(2.5f, 0.0f, 3.6f)));
+    ground->getMaterial()->setSpecularFactor(vec3(0));
  	scene->addEntity(ground);
 
     DrawableObject* entity = new DrawableObject();
@@ -359,40 +408,52 @@ Scene* sceneDefault()
 
     for (int i = 0; i < 5; i++)
     {
-        light = new Light(LightType::POINT, vec3(0.886f, 1.0f, 0.6f), 1.0f, 0.2f);
+        light = new Light(LightType::POINT, vec3(0.886f, 1.0f, 0.6f), 1.0f, 0.9f);
         light->setModel(model);
-        light->addShaderProgram(shaderFirefly);
+        light->addShaderProgram(shader);
         light->addStaticTransform(new Scaling(vec3(0.002f, 0.002f, 0.002f)));
-
         light->addStaticTransform(new Translation(vec3(2.0f, 0.5f, 4.0f)));
+		light->getMaterial()->setAmbientFactor(vec3(1.0f, 1.0f, 1.0f));
+		light->getMaterial()->setDiffuseFactor(vec3(0.0f, 0.0f, 0.0f));
+		light->getMaterial()->setSpecularFactor(vec3(0.0f, 0.0f, 0.0f));
+
 
         light->addLocalTransform(new TransformTimer({{0.5, new Rotation(vec3(0.0f, -(40.0f), 0.0f), vec3(0.0f, (40.0f), 0.0f))}, {0, new Translation(vec3(0.005f, 0.0f, 0.0f))}})); //{min},{max}
         light->attach(shader);
 		light->attach(shaderTexture);
-		light->attach(shaderFirefly);
+        light->attach(shaderSky);
+        light->attach(shaderGrass);
         scene->addEntity(light);
     }
 
     Camera* camera = new Camera();
     camera->attach(shader);
-    camera->attach(shaderFirefly);
 	camera->attach(shaderTexture);
+    camera->attach(shaderSky);
+    camera->attach(shaderGrass);
     scene->addEntity(camera);
 
-    light = new Light(LightType::REFLECTOR, vec3(0.90f, 0.95f, 1.0f), 2.0f, 0.75f);
+	sky->addParent(camera->getTransformManager());
+    sky->getTransformManager()->setInheritOnlyTransform(InheritTransformation::TRANSLATION);
+
+    light = new Light(LightType::REFLECTOR, vec3(0.90f, 0.95f, 1.0f), 1.3f, 0.1f);
     //light->setModel(model);
     //light->addShaderProgram(shader);
     light->addParent(camera->getTransformManager());
     light->setActive(true);
     light->attach(shader);
 	light->attach(shaderTexture);
+    light->attach(shaderSky);
+    light->attach(shaderGrass);
     scene->addEntity(light);
 
-    light = new Light(LightType::AMBIENT, vec3(0.90f, 0.95f, 1.0f),0.01f, 0.75f);
+    light = new Light(LightType::AMBIENT, vec3(0.90f, 0.95f, 1.0f),1.0f, 0.75f);
     //light->setModel(model);
     //light->addShaderProgram(shader);
     light->attach(shader);
     light->attach(shaderTexture);
+    light->attach(shaderSky);
+    light->attach(shaderGrass);
     scene->addEntity(light);
 
  	return scene;
@@ -404,7 +465,7 @@ Scene* sceneSolarSystem()
 
     ResourceManager& resourceManager = ResourceManager::getInstance();
 
-    auto textureSkyBox = resourceManager.loadCubeMap("mySkyBox", 
+    auto textureSkyBox = resourceManager.loadCubeMap("night", 
                                        { "./Res/starfield1.jpg",
                                          "./Res/starfield1.jpg",
                                          "./Res/starfield1.jpg",
@@ -418,7 +479,7 @@ Scene* sceneSolarSystem()
 	scene->setSkyBox(sky);
 
 
-    ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
+    ShaderProgram* shader = resourceManager.loadShaderProgram("generalVertexShader.vert", "generalPhongLight.frag");
     Model* model = resourceManager.loadModel("./Res/planet.obj");
 
 	float offset = -20.0f;
@@ -431,7 +492,7 @@ Scene* sceneSolarSystem()
 	float sunSize = 15.0f;
 	sun->addStaticTransform(new Translation(vec3(0.0f, offset, 0.0f)));
 	sun->addStaticTransform(new Scaling(vec3(sunSize, sunSize, sunSize)));
-	sun->getMaterial()->setAmbientFactor(vec3(1.0f, 1.0f, 1.0f));
+	sun->getMaterial()->setAmbientFactor(vec3(10.0f, 10.0f, 10.0f));
     sun->setTexture(texture);
 	scene->addEntity(sun);
 
@@ -475,6 +536,18 @@ Scene* sceneSolarSystem()
     moon->getMaterial()->setSpecularFactor(vec3(0.0f));
 	scene->addEntity(moon);
 
+
+    Model* loginModel = resourceManager.loadModel("./Res/login.obj");
+    DrawableObject* login = new DrawableObject(loginModel, shader, vec3(0.8f, 0.7f, 0.6f));
+    login->addParent(earth->getTransformManager());
+    login->addLocalTransform(new Rotation(vec3(0.0f, 10 / slowCoefficient, 0.0f)));
+    login->addStaticTransform(new Translation(vec3(-6.0f, 0.0f, 0.0f)));
+    login->addStaticTransform(new Scaling(vec3(0.5f)));
+    login->getMaterial()->setSpecularFactor(vec3(0.0f));
+    login->setTexture(resourceManager.loadTexture("./Res/grass.png"));
+    scene->addEntity(login);
+
+
     DrawableObject* mars = new DrawableObject(model, shader);
 	mars->addStaticTransform(new Translation(vec3(sunSize + 70.0f, offset/2, 0.0f)));
 	mars->addStaticTransform(new Scaling(vec3(0.53f, 0.53f * 0.994f, 0.53f)));
@@ -486,11 +559,15 @@ Scene* sceneSolarSystem()
 	scene->addEntity(mars);
 
 
-   Light* light = new Light(LightType::POINT,vec3(0.385, 0.647, 0.812), 1.0f, 1.0f);
-	light->addParent(sun->getTransformManager());
+    Light* light = new Light(LightType::POINT, vec3(1.0f, 1.0f, 0.9f), 1.0f, 200.0f);
+    light->addParent(sun->getTransformManager());
     light->attach(shaderSky);
     light->attach(shader);
     scene->addEntity(light);
+
+    Light* lightA = new Light(LightType::AMBIENT, vec3(1.0f, 1.0f, 1.0f), 0.1f, 0.0f);
+    lightA->attach(shader);
+    scene->addEntity(lightA);
 
     Camera* camera = new Camera();
     camera->attach(shader);
@@ -509,7 +586,7 @@ Scene* sceneTesting()
 
 	ResourceManager& resourceManager = ResourceManager::getInstance();
 
-   auto textureSkyBox = resourceManager.loadCubeMap("mySkyBox", {"./Res/starfield1.jpg",
+   auto textureSkyBox = resourceManager.loadCubeMap("night", {"./Res/starfield1.jpg",
                                         "./Res/starfield1.jpg",
                                         "./Res/starfield1.jpg",
                                         "./Res/starfield1.jpg",
@@ -528,7 +605,7 @@ Scene* sceneTesting()
     
 
     Model* model = resourceManager.loadModel("./Res/cube.obj");
-    ShaderProgram* shader = resourceManager.loadShaderProgram("lambert.vert", "generalLight.frag");
+    ShaderProgram* shader = resourceManager.loadShaderProgram("generalVertexShader.vert", "generalPhongLight.frag");
     Texture* wood = resourceManager.loadTexture("./Res/wooden_fence.png");
 
 	DrawableObject* cube = new DrawableObject(model, shader, vec3(0.8f, 0.7f, 0.6f));
@@ -569,7 +646,7 @@ Scene* sceneTesting()
     Texture* fiona_tx = resourceManager.loadTexture("./Res/fiona.png");
     fiona_en->setTexture(fiona_tx);
 
-	fiona_en->addStaticTransform(new Translation(vec3(1.0f, 0.0f, 0.0f)));
+	fiona_en->addStaticTransform(new Translation(vec3(-2.0f, 0.0f, 0.0f)));
     fiona_en->setStencilIndex(40);
 
     scene->addEntity(fiona_en);
@@ -583,13 +660,17 @@ Scene* sceneTesting()
 
     beaver->addStaticTransform(new Translation(vec3(5.0f, 0.0f, 3.0f)));
 	beaver->addStaticTransform(new Scaling(vec3(0.1f, 0.1f, 0.1f)));
-	beaver->addStaticTransform(new Rotation(vec3(-90.0f, 0.0f, 0.0f)));
+	beaver->addStaticTransform(new Rotation(vec3(-90.0f, 0.0f, -90.0f)));
+    beaver->addLocalTransform(new BezierCurveMovement({vec3(5.0f, -2.0f, 3.0f),
+                                                    vec3(5.0f, 2.0f, 3.0f),
+                                                    vec3(7.0f, 2.0f, 3.0f),
+                                                    vec3(7.0f, -2.0f, 3.0f)} , 1.0f));
 
 	beaver->setStencilIndex(50);
 
     scene->addEntity(beaver);
 
-    ShaderProgram* shaderGrass = resourceManager.loadShaderProgram("grass.vert", "generalLight.frag");
+    ShaderProgram* shaderGrass = resourceManager.loadShaderProgram("grass.vert", "generalPhongLight.frag");
 
     DrawableObject* terain = new DrawableObject(resourceManager.loadModel("./Res/teren.obj"), shaderGrass, vec3(0.0f, 0.1f, 0.0f));
 
@@ -623,16 +704,19 @@ Scene* sceneWhacAMole()
     Scene* scene = new Scene();
     ResourceManager& rm = ResourceManager::getInstance();
 
-    ShaderProgram* shader = rm.loadShaderProgram("lambert.vert", "generalLight.frag");
+    ShaderProgram* shader = rm.loadShaderProgram("generalVertexShader.vert", "generalPhongLight.frag");
+    ShaderProgram* shaderGrass = rm.loadShaderProgram("grass.vert", "generalPhongLight.frag");
 
     Model* sphereModel = rm.loadModel("./Res/planet.obj");
     Texture* moleTexture = rm.loadTexture("./Res/beaver.jpg");
     Texture* boardTexture = rm.loadTexture("./Res/water.jpg");
     Model* beaverModel = rm.loadModel("./Res/beaver.obj");
     Model* skybox = rm.loadModel("./Res/skybox.obj");
+	Model* modelTree = new Model(tree);
+
     ShaderProgram* shaderSky = rm.loadShaderProgram("skyBox.vert", "skyBox.frag");
 
-    auto textureSkyBox = rm.loadCubeMap("mySkyBox", {"./Res/posx.jpg",
+    auto textureSkyBox = rm.loadCubeMap("day", {"./Res/posx.jpg",
                                                      "./Res/negx.jpg",
                                                      "./Res/posy.jpg",
                                                      "./Res/negy.jpg",
@@ -645,7 +729,7 @@ Scene* sceneWhacAMole()
     scene->setSkyBox(sky);
 
     DrawableObject* beaver = new DrawableObject(beaverModel, shader);
-	beaver->addStaticTransform(new Rotation(vec3(-90.0f, 0.0f, 0.0f)));
+	beaver->addStaticTransform(new Rotation(vec3(-90.0f, 0.0f, -90.0f)));
 	beaver->addStaticTransform(new Scaling(vec3(0.1f, 0.1f, 0.1f)));
 	beaver->getMaterial()->setSpecularFactor(vec3(0.75));
 
@@ -659,32 +743,57 @@ Scene* sceneWhacAMole()
 
     beaver->setStencilIndex(1);
 
-    vector<vec3> path = {
-    vec3(0, 0.05f, 0),
-    vec3(0, -3.0f, 0),
-    vec3(0, 0.05f, 0)
-    };
+    vector<vec3> path = {vec3(5.0f, -2.0f, 3.0f),
+                         vec3(5.0f, 2.0f, 3.0f),
+                         vec3(7.0f, 2.0f, 3.0f),
+                         vec3(7.0f, -2.0f, 3.0f)}
+    ;
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 9; i++)
     {
         auto newBeaver = scene->getWorldEntityGenerator()->generateEntityRandomly();
-        newBeaver->addLocalTransform(new ParametricLineMovement(path, 0.1f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (1.0f - 0.1f)))));
+        newBeaver->addLocalTransform(new BezierCurveMovement(path, 0.1f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (0.5f)))));
         scene->addEntity(newBeaver);
     }
 
-    beaver->addLocalTransform(new ParametricLineMovement(path, 0.1f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (1.0f - 0.1f)))));
+    beaver->addLocalTransform(new BezierCurveMovement(path, 0.5f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (0.5f)))));
 
+    DrawableObject* treeEn = new DrawableObject();
+
+    vec3 pondCenter = vec3(0, 0, 1);
+    float pondRadius = 30.0f;
+
+        for (int i = 0; i < 20; i++)
+        {
+            treeEn = new DrawableObject(modelTree, shader, vec3(0.65f, 0.16f, 0.16f));
+
+            vec3 pos;
+            do {
+                pos.x = static_cast<float>(rand() % 50) - 25.0f;
+                pos.z = static_cast<float>(rand() % 50) - 25.0f;
+                pos.y = 0.0f;
+            } while (length(vec2(pos.x - pondCenter.x, pos.z - pondCenter.z)) < pondRadius);
+
+            treeEn->addStaticTransform(new Translation(pos));
+
+            float random = static_cast<float>(rand() % 20) / 100.0f + 0.5f;
+            treeEn->addStaticTransform(new Scaling(vec3(random, random, random)));
+
+			treeEn->getMaterial()->setSpecularFactor(vec3(0.0f));
+
+            scene->addEntity(treeEn);
+        }
 
     DrawableObject* pond = new DrawableObject(sphereModel, shader);
     pond->setTexture(boardTexture);
 
-    pond->addStaticTransform(new Scaling(vec3(30.0f, 0.01f, 30.0f)));
-    pond->addStaticTransform(new Translation(vec3(0, 0, 1)));
+    pond->addStaticTransform(new Scaling(vec3(pondRadius, 0.01f, pondRadius)));
+    pond->addStaticTransform(new Translation(pondCenter));
 	pond->getMaterial()->setSpecularFactor(vec3(0.0f));
     scene->addEntity(pond);
 
 
-    DrawableObject* ground = new DrawableObject(rm.loadModel("./Res/teren.obj"), shader);
+    DrawableObject* ground = new DrawableObject(rm.loadModel("./Res/teren.obj"), shaderGrass);
     ground->setTexture(rm.loadTexture("./Res/grass.png"));
     ground->getMaterial()->setSpecularFactor(vec3(0.0f));
     scene->addEntity(ground);
@@ -693,12 +802,108 @@ Scene* sceneWhacAMole()
     light->addStaticTransform(new Translation(vec3(50, 50, 50)));
     light->attach(shader);
 	light->attach(shaderSky);
+    light->attach(shaderGrass);
     scene->addEntity(light);
 
     Camera* camera = new Camera();
     
     camera->attach(shader);
 	camera->attach(shaderSky);
+    camera->attach(shaderGrass);
+    scene->addEntity(camera);
+
+    sky->addParent(camera->getTransformManager());
+    sky->getTransformManager()->setInheritOnlyTransform(InheritTransformation::TRANSLATION);
+
+    return scene;
+}
+
+Scene* sceneLogin()
+{
+    Scene* scene = new Scene();
+    ResourceManager& rm = ResourceManager::getInstance();
+
+    ShaderProgram* shader = rm.loadShaderProgram("generalVertexShader.vert", "generalPhongLight.frag");
+
+    Model* model = rm.loadModel("./Res/login.obj");
+    DrawableObject* login = new DrawableObject(model, shader, vec3(0.8f, 0.7f, 0.6f));
+    login->setTexture(rm.loadTexture("./Res/grass.png"));
+    scene->addEntity(login);
+
+
+    Light* light = new Light(LightType::POINT, vec3(1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
+    light->addStaticTransform(new Translation(vec3(50, 50, 50)));
+    light->attach(shader);
+    scene->addEntity(light);
+
+    Camera* camera = new Camera();
+    camera->attach(shader);
+    scene->addEntity(camera);
+
+    return scene;
+}
+
+Scene* sceneFormula()
+{
+    Scene* scene = new Scene();
+    ResourceManager& rm = ResourceManager::getInstance();
+
+    Model* skyModel = rm.loadModel("./Res/skybox.obj");
+    Model* terenModel = rm.loadModel("./Res/teren.obj");
+    Model* formulaModel = rm.loadModel("./Res/formula1.obj");
+
+    ShaderProgram* shader = rm.loadShaderProgram("generalVertexShader.vert", "generalPhongLight.frag");
+    ShaderProgram* skyShader = rm.loadShaderProgram("skyBox.vert", "skyBox.frag");    
+    ShaderProgram* grassShader = rm.loadShaderProgram("grass.vert", "generalPhongLight.frag");
+
+    Texture* grassTextre = rm.loadTexture("./Res/grass.png");
+
+
+    DrawableObject* sky = new DrawableObject(skyModel, skyShader);
+
+    auto skyTexture = rm.loadCubeMap("day", { "./Res/posx.jpg",
+                                                     "./Res/negx.jpg",
+                                                     "./Res/posy.jpg",
+                                                     "./Res/negy.jpg",
+                                                     "./Res/posz.jpg",
+                                                     "./Res/negz.jpg" });
+
+    sky->setTexture(skyTexture);
+    scene->setSkyBox(sky);
+
+    DrawableObject* formula = new DrawableObject(formulaModel, shader, vec3(1.0f, 0.0f, 0.0f));
+    formula->addStaticTransform(new Scaling(vec3(0.05f, 0.05f, 0.05f)));
+    formula->addStaticTransform(new Rotation(vec3(0.0f, 90.f, 0.0f)));
+    formula->addLocalTransform(new BezierCurveMovement({
+    vec3(0.0f, 0.0f, 0.0f),
+    vec3(7.0f, 0.0f, 9.0f),
+    vec3(10.0f, 0.0f, 6.0f),
+    vec3(15.0f, 0.0f, 3.0f),
+    vec3(20.0f, 0.0f, 0.0f),
+    vec3(25.0f, 0.0f, -5.0f),
+    vec3(20.0f, 0.0f, -10.0f) }, 1.0f
+    ));
+    formula->getMaterial()->setSpecularFactor(vec3(0.5f, 0.5f, 0.5f));
+    formula->getMaterial()->setShininess(40);
+    scene->addEntity(formula);
+
+
+    DrawableObject* ground = new DrawableObject(terenModel, grassShader);
+    ground->setTexture(grassTextre);
+    ground->getMaterial()->setSpecularFactor(vec3(0.0f));
+    scene->addEntity(ground);
+
+    Light* light = new Light(LightType::POINT, vec3(1.0f, 1.0f, 1.0f), 1.0f, 1.0f);
+    light->addStaticTransform(new Translation(vec3(50, 50, 50)));
+    light->attach(shader);
+    light->attach(skyShader);
+    light->attach(grassShader);
+    scene->addEntity(light);
+
+    Camera* camera = new Camera();
+    camera->attach(shader);
+    camera->attach(skyShader);
+    camera->attach(grassShader);
     scene->addEntity(camera);
 
     sky->addParent(camera->getTransformManager());

@@ -18,7 +18,7 @@ public:
 	void unbind() const;
 
 	GLuint getID() const;
-	GLenum getUnit() const { return mTextureUnit; }
+	GLenum getUnit() const;
 
 	int getUnitIndex() const;
 };

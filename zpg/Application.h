@@ -20,5 +20,5 @@ public:
     bool init();
     void run();
     void switchScene(vector<Scene* (*)()> scenes);
-    GLFWwindow* GetWindow() const { return mWindow; }
+    GLFWwindow* GetWindow() const; 
 };

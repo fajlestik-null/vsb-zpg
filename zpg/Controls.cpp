@@ -62,7 +62,7 @@ void Controls::nextFrame()
 	resetMouseDelta();
 }
 
-void Controls::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Controls::keyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods)
 {
     if (action == GLFW_PRESS)
         keys[key] = true;
@@ -109,4 +109,47 @@ void Controls::resetMouseDelta()
     mouseDeltaY = 0.0;
 }
 
-void Controls::errorCallback(int error, const char* description) { std::cout << "Error: " << description << std::endl; }
+double Controls::getMouseX() const
+{
+    return mouseX;
+}
+
+double Controls::getMouseY() const
+{
+    return mouseY;
+}
+
+double Controls::getMouseDeltaX() const
+{
+    return mouseDeltaX;
+}
+
+double Controls::getMouseDeltaY() const
+{
+    return mouseDeltaY;
+}
+
+vec3 Controls::getPosition() const
+{
+    return sPosition;
+}
+
+void Controls::setPosition(const vec3& position)
+{
+    sPosition = position;
+}
+
+GLuint Controls::getStencilIndex() const
+{
+    return sStencilIndex;
+}
+
+void Controls::setStencilIndex(const GLuint index)
+{
+    sStencilIndex = index;
+}
+
+void Controls::errorCallback(int error, const char* description) 
+{ 
+    cout << "Error: " << description << endl;
+}

@@ -77,7 +77,7 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -150,12 +150,14 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BezierCurveMovement.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Controls.cpp" />
     <ClCompile Include="Custom.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="ParametricLineMovement.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Rotation.cpp" />
     <ClCompile Include="Scaling.cpp" />
     <ClCompile Include="Subject.cpp" />
@@ -168,6 +170,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
+    <ClCompile Include="TransformManager.cpp" />
     <ClCompile Include="TransformTimer.cpp" />
     <ClCompile Include="Translation.cpp" />
     <ClCompile Include="WorldEntity.cpp" />
@@ -176,11 +179,12 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="ArraysOfVertices.h" />
+    <ClInclude Include="BezierCurveMovement.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Controls.h" />
     <ClInclude Include="Custom.h" />
     <ClInclude Include="DrawableObject.h" />
-    <ClInclude Include="generalLight.frag" />
+    <ClInclude Include="generalPhongLight.frag" />
     <ClInclude Include="IncludeTransformations.h" />
     <ClInclude Include="IObserver.h" />
     <ClInclude Include="Includes.h" />
@@ -207,13 +211,13 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClInclude Include="WorldEntityGenerator.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="blinn-phong.frag" />
+    <None Include="generalBlinnLight.frag" />
     <None Include="constant.frag" />
     <None Include="constant.vert" />
     <None Include="firefly.frag" />
     <None Include="grass.vert" />
     <None Include="lambert.frag" />
-    <None Include="lambert.vert" />
+    <None Include="generalVertexShader.vert" />
     <None Include="phong.frag" />
     <None Include="reflector.frag" />
     <None Include="skyBox.frag" />

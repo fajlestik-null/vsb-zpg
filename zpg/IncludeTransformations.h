@@ -7,3 +7,4 @@
 #include "TransformComponent.h"
 #include "TransformTimer.h"
 #include "ParametricLineMovement.h"
+#include "BezierCurveMovement.h"

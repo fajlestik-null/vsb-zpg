@@ -21,6 +21,8 @@ private:
 	int mWindowWidth;
 	int mWindowHeight;
 
+	bool mDebugFlag;
+
 public:
 	Camera();
 	~Camera();
@@ -33,6 +35,9 @@ public:
 	mat4 getProjectionMatrix();
 	mat4 getViewMatrix();
 	vec3 getPosition();
+
+	void turnDebugOn();
+	void turnDebugOff();
 
 	SubjectType getType() const override;
 };

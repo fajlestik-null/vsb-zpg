@@ -108,3 +108,8 @@ int Texture::getUnitIndex() const
 {
     return (int)(mTextureUnit - GL_TEXTURE0);
 }
+
+GLenum Texture::getUnit() const
+{
+    return mTextureUnit;
+}

@@ -18,8 +18,8 @@ public:
 	vec3 getSpecularFactor();
 	int getShininess();
 
-	void setAmbientFactor(const vec3& ambient);
-	void setDiffuseFactor(const vec3& diffuse);
-	void setSpecularFactor(const vec3& specular);
-	void setShininess(const int shininess);
+	void setAmbientFactor(const vec3& AMBIENT);
+	void setDiffuseFactor(const vec3& DIFFUSE);
+	void setSpecularFactor(const vec3& SPECULAR);
+	void setShininess(const int SHININESS);
 };

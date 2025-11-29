@@ -50,18 +50,23 @@ void Camera::getStencilPosition(GLFWwindow* window, Controls * constrols)
 	glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 	glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
 
-	cout << "Clicked on pixel " << x << ", " << y << ", color " << std::hex << (int)color[0] << (int)color[1] << (int)color[2] << (int)color[3] << std::dec << ", depth " << depth << ", stencil index " << index << std::endl;
+	if (mDebugFlag)
+	{
+		cout << "Clicked on pixel " << x << ", " << y << ", color " << hex << (int)color[0] << (int)color[1] << (int)color[2] << (int)color[3] << dec << ", depth " << depth << ", stencil index " << index << endl;
+	}
 
 	glm::vec3 screenX = glm::vec3(x, newy, depth);
 	
 	glm::vec4 viewPort = glm::vec4(0, 0, mWindowWidth, mWindowHeight);
 	glm::vec3 pos = glm::unProject(screenX, mViewMatrix, mProjectionMatrix, viewPort);
 
-	cout << "unProject "<< pos.x << " " << pos.y << " " << pos.z;
+	if (mDebugFlag)
+	{
+		cout << "unProject " << pos.x << " " << pos.y << " " << pos.z;
+	}
 
 	constrols->setPosition(pos);
 	constrols->setStencilIndex(index);
-		//Mùžeme nastavit vybrané tìleso scena->setSelect(index-1);
 }
 
 void Camera::processMouse(double xOffset, double yOffset)
@@ -145,4 +150,14 @@ void Camera::update(GLFWwindow* window, float deltaTime, Controls* controls)
 	this->getTransformManager()->setFinalMatrix(cameraFollowMatrix);
 
 	this->getStencilPosition(window, controls);
+}
+
+void Camera::turnDebugOn()
+{
+	mDebugFlag = true;
+}
+
+void Camera::turnDebugOff()
+{
+	mDebugFlag = false;
 }

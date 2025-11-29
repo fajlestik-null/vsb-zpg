@@ -72,7 +72,7 @@ void ShaderProgram::setUniform(const string& NAME, const mat4& MATRIX) const
 {
 
 	GLint location = glGetUniformLocation(mID, NAME.c_str());
-	if (location == -1)
+	if (location == -1 && mDebugFlag)
 	{
 		cerr << "Uniform " << NAME << " not found in shader!" << endl;
 		
@@ -86,7 +86,7 @@ void ShaderProgram::setUniform(const string& NAME, const float& FLOAT) const
 {
 
 	GLint location = glGetUniformLocation(mID, NAME.c_str());
-	if (location == -1)
+	if (location == -1 && mDebugFlag)
 	{
 		cerr << "Uniform " << NAME << " not found in shader!" << endl;
 
@@ -99,7 +99,7 @@ void ShaderProgram::setUniform(const string& NAME, const int& INT) const
 {
 	glUseProgram(mID);
 	GLint location = glGetUniformLocation(mID, NAME.c_str());
-	if (location == -1)
+	if (location == -1 && mDebugFlag)
 	{
 		cerr << "Uniform " << NAME << " not found in shader!" << endl;
 
@@ -111,7 +111,7 @@ void ShaderProgram::setUniform(const string& NAME, const int& INT) const
 void ShaderProgram::setUniform(const string& NAME, const vec3& VECTOR) const
 {
 	GLint location = glGetUniformLocation(mID, NAME.c_str());
-	if (location == -1)
+	if (location == -1 && mDebugFlag)
 	{
 		cerr << "Uniform " << NAME << " not found in shader!" << endl;
 		return;
@@ -179,6 +179,16 @@ void ShaderProgram::useShader(const mat4 MATRIX, const vec3 COLOR) const
 	glUseProgram(mID);
 	this->setUniform("modelMatrix", MATRIX);
 	this->setUniform("sourceObjectColor", COLOR);
+}
+
+void ShaderProgram::turnDebugOn()
+{
+	mDebugFlag = true;
+}
+
+void ShaderProgram::turnDebugOff()
+{
+	mDebugFlag = false;
 }
 
 void ShaderProgram::notify(Subject* subject)
