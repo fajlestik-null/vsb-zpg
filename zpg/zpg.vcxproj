@@ -160,7 +160,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Rotation.cpp" />
     <ClCompile Include="Scale.cpp" />
-    <ClCompile Include="SceneFactory.cpp" />
+    <ClCompile Include="Scenes.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
@@ -187,6 +187,7 @@ xcopy /Y /D "..\Lib\Assimp\bin\x64\assimp-vc143-mt.dll" "$(OutDir)"</Command>
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="generalPhongLight.frag" />
     <ClInclude Include="IncludeTransformations.h" />
+    <ClInclude Include="InheritTransformationType.h" />
     <ClInclude Include="IObserver.h" />
     <ClInclude Include="Includes.h" />
     <ClInclude Include="LightType.h" />

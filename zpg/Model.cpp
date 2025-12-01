@@ -8,7 +8,7 @@ Model::Model(const vector<float> &VERTICES): mVertices(VERTICES)
 	glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), mVertices.data(), GL_STATIC_DRAW);
 
 	glGenVertexArrays(1, &mVAO); //generate the VAO id
-	glBindVertexArray(mVAO); //bind the VAO
+	glBindVertexArray(mVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // position
@@ -19,24 +19,6 @@ Model::Model(const vector<float> &VERTICES): mVertices(VERTICES)
 
 Model::Model(const vector<float>& VERTICES, int i) : mVertices(VERTICES)
 {
-    /*//vertex buffer object (VBO)
-    GLuint VBO = 0;
-    glGenBuffers(1, &VBO); // generate the VBO
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), mVertices.data(), GL_STATIC_DRAW);
-    //vertex attribute object(VAO)
-    GLuint VAO = 0;
-    glGenVertexArrays(1, &VAO); //generate the VAO
-    glBindVertexArray(VAO); //bind the VAO
-    glEnableVertexAttribArray(0); //enable vertex attributes
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(6 * sizeof(float)));*/
-
     // Generate and bind VAO first
     glGenVertexArrays(1, &mVAO);
     glBindVertexArray(mVAO);
@@ -66,7 +48,6 @@ Model::~Model()
 {
 	glDeleteVertexArrays(1, &mVAO);
 	glDeleteBuffers(1, &mVBO);
-	//glDeleteBuffers(1, &mEBO);
 }
 
 void Model::put() const
@@ -79,7 +60,7 @@ void Model::put() const
 }
 
 
-
+//Normal texture only possible with resource manager loading models from file
 bool Model::loadModelFromFile(const string& PATH)
 {
     Assimp::Importer importer;
@@ -87,12 +68,12 @@ bool Model::loadModelFromFile(const string& PATH)
         aiProcess_Triangulate |
         aiProcess_GenNormals |
         aiProcess_JoinIdenticalVertices |
-        aiProcess_GenUVCoords);
+        aiProcess_GenUVCoords |
+        aiProcess_CalcTangentSpace);
 
     if (!scene || !scene->mRootNode || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE))
     {
-        std::cerr << "Failed to load model: " << PATH << "\n"
-            << importer.GetErrorString() << std::endl;
+        cerr << "Failed to load model: " << PATH << "\n" << importer.GetErrorString() << endl;
         return false;
     }
 
@@ -103,26 +84,33 @@ bool Model::loadModelFromFile(const string& PATH)
     vector<unsigned int> indices;
 
 	//detection of UVs
-    int stride = hasUVs ? 8 : 6;
-    data.reserve(mesh->mNumVertices * stride);
+    const int componentsPerVertex = 11;
+    data.reserve(mesh->mNumVertices * componentsPerVertex);
 
     for (unsigned int i = 0; i < mesh->mNumVertices; ++i)
     {
         aiVector3D pos = mesh->mVertices[i];
-        data.push_back(pos.x);
-        data.push_back(pos.y);
-        data.push_back(pos.z);
+        data.push_back(pos.x); data.push_back(pos.y); data.push_back(pos.z);
 
         aiVector3D normal = mesh->HasNormals() ? mesh->mNormals[i] : aiVector3D(0, 0, 0);
-        data.push_back(normal.x);
-        data.push_back(normal.y);
-        data.push_back(normal.z);
+        data.push_back(normal.x); data.push_back(normal.y); data.push_back(normal.z);
 
-        if (hasUVs)
-        {
+        if (hasUVs) {
             aiVector3D uv = mesh->mTextureCoords[0][i];
-            data.push_back(uv.x);
-            data.push_back(uv.y);
+            data.push_back(uv.x); data.push_back(uv.y);
+        }
+        else {
+            data.push_back(0.0f); data.push_back(0.0f);
+        }
+
+        if (mesh->HasTangentsAndBitangents()) {
+            aiVector3D tangent = mesh->mTangents[i];
+            data.push_back(tangent.x); data.push_back(tangent.y); data.push_back(tangent.z);
+        }
+        else {
+            data.push_back(0.0f);
+            data.push_back(0.0f);
+            data.push_back(0.0f);
         }
     }
 
@@ -147,29 +135,23 @@ bool Model::loadModelFromFile(const string& PATH)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(unsigned int), mIndices.data(), GL_STATIC_DRAW);
 
+    int strideSize = componentsPerVertex * sizeof(float);
+
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (GLvoid*)(0));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, strideSize, (GLvoid*)(0));
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, strideSize, (GLvoid*)(3 * sizeof(float)));
 
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, strideSize, (GLvoid*)(6 * sizeof(float)));
 
-    if (hasUVs)
-    {
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (GLvoid*)(6 * sizeof(float)));
-    }
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, strideSize, (GLvoid*)(8 * sizeof(float)));
 
     glBindVertexArray(0);
-
-   
     
-    std::cout << "Model loaded via Assimp : " << PATH
-        << " (" << mesh->mNumVertices << " vertices, UVs: "
-        << (hasUVs ? "yes" : "no") << ")" << endl;
-
-
-
+    cout << "Model loaded via Assimp : " << PATH << " (" << "UVs: " << (hasUVs ? "yes" : "no") << ")" << endl;
 
     return true;
 }

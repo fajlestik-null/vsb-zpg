@@ -55,10 +55,15 @@ void Camera::getStencilPosition(GLFWwindow* window, Controls * constrols)
 		cout << "Clicked on pixel " << x << ", " << y << ", color " << hex << (int)color[0] << (int)color[1] << (int)color[2] << (int)color[3] << dec << ", depth " << depth << ", stencil index " << index << endl;
 	}
 
-	glm::vec3 screenX = glm::vec3(x, newy, depth);
-	
-	glm::vec4 viewPort = glm::vec4(0, 0, mWindowWidth, mWindowHeight);
-	glm::vec3 pos = glm::unProject(screenX, mViewMatrix, mProjectionMatrix, viewPort);
+	vec3 pos = vec3(0.0f);
+
+	if (depth != 1)
+	{
+		vec3 screenX = vec3(x, newy, depth);
+
+		vec4 viewPort = vec4(0, 0, mWindowWidth, mWindowHeight);
+		pos = unProject(screenX, mViewMatrix, mProjectionMatrix, viewPort);
+	}
 
 	if (mDebugFlag)
 	{
@@ -95,6 +100,11 @@ vec3 Camera::getPosition()
 	return mEye;
 }
 
+void Camera::setPosition(const vec3 POSITION)
+{
+	mEye = POSITION;
+}
+
 SubjectType Camera::getType() const
 { 
 	return SubjectType::CAMERA;
@@ -122,14 +132,13 @@ void Camera::recalculateCameraVectors()
 	mUp = normalize(cross(mRight, mTarget));
 
 	mViewMatrix = lookAt(mEye, mEye + mTarget, mUp);
-	//60° Field of View, window ratio (default -> 4:3 ratio), display range : 0.1 unit <-> 100 units
-
 	//Zero division protection
 	if (mWindowWidth == 0 || mWindowHeight == 0)
 		return;
 
 	float ratio = (float)mWindowWidth / (float)mWindowHeight;
 
+	//60° Field of View, window ratio (default -> 4:3 ratio), display range : 0.1 unit <-> 100 units
 	mProjectionMatrix = perspective(radians(60.0f), ratio, 0.1f, 100.0f);
 	}
 

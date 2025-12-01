@@ -55,7 +55,7 @@ mat4 TransformManager::getFinalMatrix()
                 {
                     mat4 parentFinal = p->getFinalMatrix();
                     vec3 scaleFactors = vec3(length(vec3(parentFinal[0])), length(vec3(parentFinal[1])), length(vec3(parentFinal[2])));
-                    mParentGlobal *= glm::scale(mat4(1.0f), scaleFactors);
+                    mParentGlobal *= scale(mat4(1.0f), scaleFactors);
                 }
                 else
                 {

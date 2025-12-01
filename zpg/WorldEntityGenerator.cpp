@@ -42,11 +42,9 @@ WorldEntity* WorldEntityGenerator::generateEntityRandomly()
 }
 
 
-// Added methods for Bezier curve entity generation
 void WorldEntityGenerator::addPointForBezier(const vec3 POINT)
 {
 	mPointsForBezier.push_back(POINT);
-	cout << "Added point for Bezier: " << POINT.x << ", " << POINT.y << ", " << POINT.z << endl;
 }
 
 void WorldEntityGenerator::clearPointsForBezier()
@@ -63,7 +61,7 @@ WorldEntity* WorldEntityGenerator::generateBezierEntity()
 	newEntity->getTransformManager()->clearDynamicTransforms();
 	newEntity->getTransformManager()->clearStaticTranslations();
 
-	newEntity->addLocalTransform(new BezierCurveMovement(mPointsForBezier, 0.5f)); //can modify speed by changing constant
+	newEntity->addLocalTransform(new BezierCurveMovement(mPointsForBezier, 0.5f)); //SPEED CAN BE MODIFIED BY THE CNSTANT
 	
 	return newEntity;
 }

@@ -12,7 +12,7 @@ BezierCurveMovement::BezierCurveMovement(const vector<vec3>& POINTS, const float
     }
 
     mLastMatrix = mat4(1.0f);
-
+    mLastTime = (float)glfwGetTime();
 }
 
 mat4 BezierCurveMovement::getModelMatrix()
@@ -90,13 +90,10 @@ mat4 BezierCurveMovement::getModelMatrix()
 
     mLastMatrix = currentMatrix;
 
-
     return deltaMatrix;
 }
 
 TransformBase* BezierCurveMovement::getCopy() const
 {
-    auto* copy = new BezierCurveMovement(*this);
-    copy->mfirstUpdate = true;
-    return copy;
+    return new BezierCurveMovement(this->mPoints,this->mSpeedT);
 }

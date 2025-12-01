@@ -2,7 +2,7 @@
 
 GLuint WorldEntity::sNextIndex = 1;
 
-WorldEntity::WorldEntity() : mModel(nullptr), mTransformManager(make_shared<TransformManager>()), mObjectColor(vec3(1.0f, 1.0f, 1.0f)), mTexture(nullptr), mStencilIndex(0), mMaterial(new Material()) {}
+WorldEntity::WorldEntity() : mModel(nullptr), mTransformManager(make_shared<TransformManager>()), mObjectColor(vec3(1.0f, 1.0f, 1.0f)), mTexture(nullptr), mNormalMap(nullptr), mStencilIndex(0), mMaterial(new Material()) {}
 
 void WorldEntity::draw()
 {
@@ -12,17 +12,29 @@ void WorldEntity::draw()
     for (auto& shaderProgram : mShaderPrograms)
     {
         shaderProgram->useShader(mTransformManager->getFinalMatrix(), mObjectColor);
+        shaderProgram->setUniform(mMaterial);
+
 
         if (mTexture != nullptr)
         {
             shaderProgram->setUniform("textureUnitID", mTexture->getUnitIndex());
-            shaderProgram->setUniform(mMaterial);
             shaderProgram->setUniform("hasTexture", 1);
             mTexture->bind();
         }
         else
         {
             shaderProgram->setUniform("hasTexture", 0);
+        }
+
+        if (mNormalMap != nullptr)
+        {
+            shaderProgram->setUniform("normalMapUnitID", mNormalMap->getUnitIndex());
+            shaderProgram->setUniform("hasNormalMap", 1);
+            mTexture->bind();
+        }
+        else
+        {
+            shaderProgram->setUniform("hasNormalMap", 0);
         }
     }
 
@@ -31,6 +43,10 @@ void WorldEntity::draw()
     if (mTexture != nullptr)
     {
         mTexture->unbind();
+    }
+    if (mNormalMap != nullptr)
+    {
+        mNormalMap->unbind();
     }
 }
 
@@ -80,10 +96,12 @@ shared_ptr<TransformManager> WorldEntity::getTransformManager() const { return m
 bool WorldEntity::isVisible() const { return mVisible; }
 vec3 WorldEntity::getColor() const { return mObjectColor; }
 Texture* WorldEntity::getTexture() const { return mTexture; }
+Texture* WorldEntity::getNormalMap() const { return mNormalMap; }
 GLuint WorldEntity::getStencilIndex() const { return mStencilIndex; }
 Material* WorldEntity::getMaterial() const { return mMaterial; }
 
 void WorldEntity::setTexture(Texture* texture) { mTexture = texture; }
+void WorldEntity::setNormalMap(Texture* texture) { mNormalMap = texture; }
 void WorldEntity::setModel(Model* model) { mModel = model; }
 void WorldEntity::addShaderProgram(ShaderProgram* shaderProgram) { mShaderPrograms.push_back(shaderProgram); }
 void WorldEntity::setTransformManager(shared_ptr<TransformManager> transformManager) { mTransformManager = transformManager; }
@@ -97,10 +115,10 @@ SubjectType WorldEntity::getType() const { return SubjectType::WORLD_ENTITY; }
 
 void WorldEntity::nullifyTranslation()
 {
-    glm::mat4 finalMatrix = mTransformManager->getFinalMatrix();
-    glm::vec3 currentPosition = glm::vec3(finalMatrix[3]);
+    mat4 finalMatrix = mTransformManager->getFinalMatrix();
+    vec3 currentPosition = vec3(finalMatrix[3]);
 
-    glm::vec3 negation = -currentPosition;
+    vec3 negation = -currentPosition;
 
     this->addStaticTransform(new Translation(negation));
 }
@@ -120,7 +138,7 @@ void WorldEntity::addGlobalTransform(TransformBase* transformation)
     mTransformManager->addGlobalTransform(transformation);
 }
 
-void WorldEntity::addParent(std::shared_ptr<TransformManager> parent)
+void WorldEntity::addParent(shared_ptr<TransformManager> parent)
 {
     mTransformManager->addParent(parent);
 }

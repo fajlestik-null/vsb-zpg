@@ -3,7 +3,7 @@
 Rotation::Rotation(const vec3& AXIS = vec3(0.0f), const float ANGLE) : mVector(AXIS), mAngle(ANGLE) {}
 
 Rotation::Rotation(vec3 minRange, vec3 maxRange)
-: mVector(vec3(0.0f)), mRandomMin(minRange), mRandomMax(maxRange), mIsRandom(true) {}
+: mVector(vec3(0.0f)), mRandomMin(minRange), mRandomMax(maxRange), mIsRandom(true), mAngle(0.0f) {}
 
 mat4 Rotation::getModelMatrix()
 {

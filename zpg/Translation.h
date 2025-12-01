@@ -2,7 +2,6 @@
 #include "Includes.h"
 #include "TransformBase.h"
 
-//Child class for specific transformation
 class Translation : public TransformBase {
 private:
     vec3 mVector;

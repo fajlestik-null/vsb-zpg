@@ -50,6 +50,5 @@ public:
 
     static void errorCallback(int error, const char* description);
 
-    // Reset mouse delta after using it
     void resetMouseDelta();
 };

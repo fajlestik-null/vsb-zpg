@@ -2,7 +2,6 @@
 #include "Includes.h"
 #include "TransformBase.h"
 
-//Child class for specific transformation
 class Scale : public TransformBase {
 private:
     vec3 mVector;
@@ -11,7 +10,6 @@ private:
     bool mIsRandom = false;
 public:
 
-    //x,z,y
     Scale(const vec3& vec);
 
     Scale(vec3 min_range, vec3 max_range);

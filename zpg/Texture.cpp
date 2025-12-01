@@ -14,7 +14,7 @@ Texture::Texture(const string& PATH)
     unsigned char* data = stbi_load(PATH.c_str(), &width, &height, &channels, 4);
 
     if (!data) {
-        std::cerr << "Error loading texture: " << PATH << std::endl;
+        cerr << "Error loading texture: " << PATH << endl;
         mTextureID = 0;
         return;
     }
@@ -22,8 +22,8 @@ Texture::Texture(const string& PATH)
     glGenTextures(1, &mTextureID);
 
 	mTarget = GL_TEXTURE_2D;
-    mTextureUnit = GL_TEXTURE0 + sNextUnit;   // assign next free unit
-    sNextUnit++;                               // increment for next texture
+    mTextureUnit = GL_TEXTURE0 + sNextUnit;
+    sNextUnit++;                               
 
     glActiveTexture(mTextureUnit);
     glBindTexture(GL_TEXTURE_2D, mTextureID);
@@ -44,7 +44,7 @@ Texture::Texture(const vector<string>& PATHS)
 {
     if (PATHS.size() != 6)
     {
-        std::cerr << "Error: Skybox requires 6 images." << std::endl;
+        cerr << "Error: Skybox requires 6 images." << endl;
         return;
     }
 
@@ -69,7 +69,7 @@ Texture::Texture(const vector<string>& PATHS)
         }
         else
         {
-            std::cerr << "Failed to load cubemap face: " << PATHS[i] << std::endl;
+            cerr << "Failed to load cubemap face: " << PATHS[i] << endl;
             stbi_image_free(data);
         }
     }

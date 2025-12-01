@@ -50,3 +50,5 @@ Scene* sceneWhacAMole();
 Scene* sceneLogin();
 
 Scene* sceneFormula();
+
+Scene* sceneTestNormalMapping();

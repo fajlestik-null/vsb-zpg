@@ -2,14 +2,9 @@
 
 #include "Includes.h"
 #include "IncludeTransformations.h"
+#include "InheritTransformationType.h"
 
-enum class InheritTransformation
-{
-    TRANSLATION,
-    ROTATION,
-    SCALE,
-    ALL
-};
+
 
 class TransformManager : public enable_shared_from_this<TransformManager>
 {

@@ -21,6 +21,7 @@ protected:
     shared_ptr<TransformManager> mTransformManager;
     Material* mMaterial;
     Texture* mTexture;
+	Texture* mNormalMap;
 
     static GLuint sNextIndex;
 
@@ -41,10 +42,12 @@ public:
     bool isVisible() const;
     vec3 getColor() const;
     Texture* getTexture() const;
+    Texture* getNormalMap() const;
     GLuint getStencilIndex() const;
     Material* getMaterial() const;
 
     void setTexture(Texture* texture);
+    void setNormalMap(Texture* texture);
     void setModel(Model* model);
     void addShaderProgram(ShaderProgram* shaderProgram);
     void setTransformManager(shared_ptr<TransformManager> transformManager);
@@ -62,5 +65,5 @@ public:
     void addLocalTransform(TransformBase* transformation);
     void addGlobalTransform(TransformBase* transformation);
 
-    void addParent(std::shared_ptr<TransformManager> parent);
+    void addParent(shared_ptr<TransformManager> parent);
 };

@@ -9,6 +9,7 @@ private:
     float mCurrentTime;
     float mLastTime;
 
+    //{INTERVAL_WHEN_TO_APLY,TRANSFORMATION}, TIMER==INTERVAL->RESET
     vector<pair<pair<float, TransformBase *>, float>> mTransformTimers;
 
 public:

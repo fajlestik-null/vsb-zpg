@@ -11,11 +11,8 @@ Shader::~Shader()
 
 void Shader::createShader(const GLenum SHADER_TYPE, const char* SHADER_CODE)
 {
-	// Creates an empty shader
 	this->mShaderID = glCreateShader(SHADER_TYPE);
-	// Sets the source code of the shader.
 	glShaderSource(mShaderID, 1, &SHADER_CODE, NULL);
-	// Compiles the shader source code
 	glCompileShader(mShaderID);
 
 	GLint success;
@@ -24,15 +21,14 @@ void Shader::createShader(const GLenum SHADER_TYPE, const char* SHADER_CODE)
 	{
 		GLint logLength;
 		glGetShaderiv(mShaderID, GL_INFO_LOG_LENGTH, &logLength);
-		std::vector<GLchar> infoLog(logLength);
+		vector<GLchar> infoLog(logLength);
 		glGetShaderInfoLog(mShaderID, logLength, NULL, infoLog.data());
-		std::cerr << "Shader compilation failed: " << infoLog.data() << std::endl;
+		cerr << "Shader compilation failed: " << infoLog.data() << endl;
 	}
 }
 
 bool Shader::createShaderFromFile(const GLenum SHADER_TYPE, const char* SHADER_FILE)
 {
-	//Loading the contents of a file into a variable
 	ifstream file(SHADER_FILE);
 	if (!file.is_open())
 	{
@@ -61,6 +57,5 @@ bool Shader::createShaderFromFile(const GLenum SHADER_TYPE, const string& SHADER
 
 void Shader::attachShader(const GLuint SHADER_PROGRAM_ID) const
 {
-	//Attaches the shader to the shaderProgram
 	glAttachShader(SHADER_PROGRAM_ID, mShaderID);
 }

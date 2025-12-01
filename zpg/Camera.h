@@ -35,6 +35,7 @@ public:
 	mat4 getProjectionMatrix();
 	mat4 getViewMatrix();
 	vec3 getPosition();
+	void setPosition(const vec3 POSITION);
 
 	void turnDebugOn();
 	void turnDebugOff();

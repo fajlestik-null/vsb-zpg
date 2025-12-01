@@ -2,7 +2,6 @@
 #include "Includes.h"
 #include "TransformBase.h"
 
-//Child class for specific transformation
 class Rotation : public TransformBase {
 protected:
     float mAngle;

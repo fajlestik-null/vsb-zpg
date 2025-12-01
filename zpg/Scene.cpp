@@ -57,8 +57,6 @@ void Scene::setSelectedEntity(Controls* controls)
             {
                 mEntitityToHandle = entity;
                 this->mWorldEntityGenerator->setSampleEntity(entity);
-                
-				//cout << "Selected entity with stencil index: " << controls->getStencilIndex() << endl;
                 break;
             }
 		}
@@ -88,7 +86,6 @@ void Scene::removeAndInsertEntity(Controls* controls)
             if (entity->getStencilIndex() == controls->getStencilIndex() && controls->getStencilIndex() != 0)
             {
                 mEntitityToHandle = entity;
-                //cout << "Selected entity with stencil index: " << controls->getStencilIndex() << endl;
                 break;
             }
         }
@@ -144,12 +141,10 @@ void Scene::transformEntity(Controls* controls)
                 mEntitityToHandle->addStaticTransform(new Rotation(vec3(0.0f, 1.0f, 0.0f)));
             }
         }
-        //scalling
         if(controls->isKeyPressed(GLFW_KEY_UP))
         mEntitityToHandle->addStaticTransform(new Scale(vec3(1.01f, 1.01f, 1.01f)));
         if (controls->isKeyPressed(GLFW_KEY_DOWN))
         mEntitityToHandle->addStaticTransform(new Scale(vec3(0.99f, 0.99f, 0.99f)));
-
     }
 }
 

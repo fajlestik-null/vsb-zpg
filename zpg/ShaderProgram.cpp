@@ -60,11 +60,6 @@ bool ShaderProgram::loadShaderProgramFromFile(const string& VERTEX_SHADER, const
 
 		this->checkLinker();
 
-		// cleanup
-		//glDeleteShader(vertex_shader);
-		//glDeleteShader(fragment_shader);
-
-
 		return true;
 }
 

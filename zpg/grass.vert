@@ -11,6 +11,7 @@ uniform mat4 projectionMatrix;
 out vec3 worldPosition;
 out vec3 worldNormal;
 out vec2 uv;
+out mat3 TBN;
 
 uniform float w = 1.0f;
 
@@ -24,4 +25,6 @@ void main ()
     worldPosition = wp.xyz / wp.w;
     worldNormal = localNormal * vn;
     uv = 10*vu;
+
+    TBN = mat3(1.0); 
 };

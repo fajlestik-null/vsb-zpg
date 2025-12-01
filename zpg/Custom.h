@@ -2,7 +2,6 @@
 #include "Includes.h"
 #include "TransformBase.h"
 
-//Child class for specific transformation
 class Custom : public TransformBase {
 private:
     mat4 mMatrix;

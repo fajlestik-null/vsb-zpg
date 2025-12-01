@@ -3,7 +3,6 @@
 #include "Includes.h"
 #include "TransformBase.h"
 
-//Child class for specific transformation
 class TransformComponent : public TransformBase {
 private:
     vector<TransformBase*> mTransforms;

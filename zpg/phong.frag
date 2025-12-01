@@ -6,7 +6,6 @@ in vec3 worldPosition;
 in vec3 worldNormal;
 		 
 uniform vec3 sourceObjectColor;
-//uniform vec3 lightColor;
 uniform vec3 cameraPosition;
 
 out vec4 fragColor;

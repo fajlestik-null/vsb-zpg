@@ -15,6 +15,7 @@ private:
     mat4 mLastMatrix = mat4(1.0f);
 
 public:
+	//OBJECT MUST FACE THE CAMERA FOR DERIVATION TO WORK PROPERLY
     BezierCurveMovement(const vector<vec3>& POINTS, const float SPEED);
 
     mat4 getModelMatrix() override;
