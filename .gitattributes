@@ -64,5 +64,5 @@
 
 ###############################################################################
 # Exclude languages
-Lib/** linguist-detectable=false
+Lib/** linguist-vendored
 zpg.sln linguist-detectable=false
