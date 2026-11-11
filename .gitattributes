@@ -1,0 +1,4 @@
+* text=auto
+
+Lib/** linguist-vendored=true linguist-detectable=false
+zpg.sln linguist-detectable=false
